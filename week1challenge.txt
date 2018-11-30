@@ -1,0 +1,3 @@
+Week 1:
+This week's challenge will be simple.  Make an animation of a square moving in a circular path.  You will win my extra love and affection if you change the orientation of
+square as it moves.
