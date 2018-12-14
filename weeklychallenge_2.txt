@@ -1,0 +1,2 @@
+In this second-week challenge, our objective is to have some object (e.g. a rectangle) collect smaller objects and update a counter.  This case requires you to look at collisions
+between two or more entities and cause one type of those objects to disappear, which is the basic mechanism of when games have collectables like coins.
