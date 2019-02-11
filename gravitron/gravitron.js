@@ -1,42 +1,81 @@
-var yGravity = 0.01;
-
-class Rectangle{
-	constructor(x, y, xVector, yVector){
+class Actor {	//anything
+	constructor(x, y, w, h) {
 		this.x = x;
-		this.y = y;
-		this.height = 15;
-		this.width = 15;
-		this.xVector = xVector;
-		this.yVector = yVector;
-		this.spacebarPressed = false;
-		this.color = "#000000";
+		this.y = y; 
+		this.width = w;
+		this.height = h;
 	}
-	
-	update(){
-		var prevY = this.y;
-		var prevX = this.x;
-		
-		if (this.spacebarPressed == true){
-			this.yVector = -3;
-		}
-		
-		this.yVector += yGravity;
-		this.x += this.xVector;
-		this.y += this.yVector;
-		
-		if (this.y > (window.innerHeight - (this.height + 15))){
-			this.yVector = 0;
-			this.y = prevY;
-		}
-		
+	update() {}
+	render() {}	
+}
+
+class Motile extends Actor { //anything which changes velocity on its own
+	constructor(x, y, w, h, v) {
+		super(x, y, w, h);
+		this.velocity = v;
+		this.dx = 0;
+		this.dy = 0;
+		this.theta = 0;
+		this.dtheta = 0;
 	}
-	
-	render(){
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x, this.y, this.height, this.width);
+	update() {
+		this.dx = v * Math.sin(this.theta);
+		this.dy = v * Math.cos(this.theta);
+		this.x += dx;
+		this.y += dy;
 	}
 }
 
+class Player extends Motile { //the player
+	constructor(x, y, w, h, v, up, down, left, right) {
+		super(x, y, w, h, v);
+		//denotes the keys that control the character
+		this.upKey = up;
+		this.downKey = down;
+		this.leftKey = left;
+		this.rightKey = right;
+		this.goUp = false;
+		this.goDown = false;
+		this.goLeft = false;
+		this.goRight = false;
+	}
+	update() {	//a temporary thing for testing
+		this.dx = 0;
+		this.dy = 0;
+		if (this.goUp) {
+			this.dy -= this.velocity;
+		}
+		if (this.goDown) {
+			this.dy += this.velocity;
+		}
+		if (this.goLeft) {
+			this.dx -= this.velocity;
+		}
+		if (this.goRight) {
+			this.dx += this.velocity;
+		}
+		this.x += this.dx;
+		this.y += this.dy;
+	}
+	
+	render() {
+		ctx.fillStyle = "#000000"
+		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+	}
+	
+}
+
+class Enemy extends Motile {	//motiles which try to destroy the player
+	constructor(x, y, w, h, target) {
+		super(x, y, w, h);
+		this.target = target
+	}
+	
+	update()
+	{
+		//the enemy always attempts to point closer to the player
+	}
+}
 
 window.onload = function(){
 	canvas = document.getElementById("canvas");
@@ -46,30 +85,47 @@ window.onload = function(){
 	
 	document.addEventListener("keydown",keydown);
 	document.addEventListener("keyup",keyup);
-	setInterval(main, 1);
+	setInterval(main, 6);
 }
 
-var rect = new Rectangle(30, window.innerHeight - 47, 0, 0);
+var player = new Player(200, 200, 15, 15, 5, 38, 40, 37, 39);
  
 function main(){
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-	rect.update();
-	rect.render();
+	player.update();
+	player.render();
 }
 
 function keydown(e){
 	switch(e.keyCode){
-		case 32:
-			rect.spacebarPressed = true;
+		case player.upKey:
+			player.goUp = true;
+			break;
+		case player.downKey:
+			player.goDown = true;
+			break;
+		case player.leftKey:
+			player.goLeft = true;
+			break;
+		case player.rightKey:
+			player.goRight = true;
 			break;
 	}
 }
-
 function keyup(e){
 	switch(e.keyCode){
-		case 32:
-			rect.spacebarPressed = false;
+		case player.upKey:
+			player.goUp = false;
+			break;
+		case player.downKey:
+			player.goDown = false;
+			break;
+		case player.leftKey:
+			player.goLeft = false;
+			break;
+		case player.rightKey:
+			player.goRight = false;
 			break;
 	}
 }
