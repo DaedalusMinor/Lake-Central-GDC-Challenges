@@ -54,11 +54,19 @@ class Player extends Motile { //the player
 		if (this.goRight) {
 			this.dx += this.velocity;
 		}
-		this.move();
-		//slightly naive coding here, but Actor doesn't have a move function...
 		this.hBar.update();
-		this.hBar.x += this.dx;
-		this.hBar.y += this.dy;
+		if (this.hBar.stat <= 0)
+		{	
+			//kill the player in some dramatic way,
+			//then destroy all references to the object
+		}
+		else
+		{
+			this.move();
+			//slightly naive coding here, but Actor doesn't have a move function...
+			this.hBar.x += this.dx;
+			this.hBar.y += this.dy;
+		}
 	}
 	
 	render() {
@@ -101,7 +109,6 @@ class statMeter extends Actor {
 		}
 		if (this.stat > 0){ //prevents the bar from underflowing for negative values
 			ctx.fillRect(this.x - (this.width/2), this.y - (this.height/2), this.width * (this.stat/this.maxStat), this.height);
-			//console.log(ctx.fillStyle);
 		}
 		//possibly add a descriptor here (words or symbols so it has meaning)
 	}
@@ -124,7 +131,7 @@ Mouse = function(){
 }
 function mouseActorCollision(a) { //takes one actor as input
 	return mouse.x > a.x - (a.width / 2) && mouse.x < a.x + (a.width / 2) &&
-			mouse.y > a.y - (a.height / 2) && mouse.y < a.y + (a.height / 2);
+		mouse.y > a.y - (a.height / 2) && mouse.y < a.y + (a.height / 2);
 }
 
 window.onload = function(){
