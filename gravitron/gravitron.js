@@ -70,10 +70,12 @@ class Player extends Motile { //the player
 	}
 	
 	render() {
-		ctx.fillStyle = "#000000"
-		//drawing the box like this makes x and y the center of the box
-		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
-		this.hBar.render();
+		if (this.hBar.stat > 0) {
+			ctx.fillStyle = "#000000"
+			//drawing the box like this makes x and y the center of the box
+			ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+			this.hBar.render();
+		}
 	}	
 }
 
