@@ -5,9 +5,27 @@ class Actor {	//anything
 		this.width = w;
 		this.height = h;
 	}
-	update() {}
+	update() { this.render(); }
 	render() {}	
 }
+function actorActorCollision(a1, a2) { //takes two actors
+	return 	a1.x - a1.width/2 < a2.x + a2.width/2 &&
+			a1.x + a1.width/2 > a2.x - a2.width/2 &&
+			a1.y - a1.height/2 < a2.y + a2.height/2 &&
+			a1.y + a1.height/2 > a2.y - a2.height/2;
+}
+
+class Wall extends Actor { // a barrier that doesn't move and can't be traveled through
+	constructor(x, y, w, h) {
+		super(x, y, w, h);
+	}
+	render() {
+		ctx.fillStyle = "#000000";
+		//drawing the box like this makes x and y the center of the box
+		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+	}
+}
+var wallArray = [new Wall(200, 400, 100, 350)];
 
 class Motile extends Actor { //anything which changes velocity on its own
 	constructor(x, y, w, h, v) {
@@ -42,22 +60,61 @@ class Player extends Motile { //the player
 	update() {	//a temporary thing for testing
 		this.dx = 0;
 		this.dy = 0;
+		/**	all of repetitive code here could probably be simplified into a function
+			also, most of this is probably very inefficient and should be improved
+		*/
 		if (this.goUp) {
 			this.dy -= this.velocity;
+			this.prevdy = this.dy;
+			this.y += this.dy;
+			for (b = 0; b < wallArray.length; b++) {
+				if (actorActorCollision(this, wallArray[b]))
+				{
+					this.dy += this.velocity; //undoes the change in velocity since it can't move into a wall
+				}
+			}
+			this.y -= this.prevdy;
 		}
 		if (this.goDown) {
 			this.dy += this.velocity;
+			this.prevdy = this.dy;
+			this.y += this.dy;
+			for (b = 0; b < wallArray.length; b++) {
+				if (actorActorCollision(this, wallArray[b]))
+				{
+					this.dy -= this.velocity;
+				}
+			}
+			this.y -= this.prevdy;
 		}
 		if (this.goLeft) {
 			this.dx -= this.velocity;
+			this.prevdx = this.dx;
+			this.x += this.dx;
+			for (b = 0; b < wallArray.length; b++) {
+				if (actorActorCollision(this, wallArray[b]))
+				{
+					this.dx += this.velocity;
+				}
+			}
+			this.x -= this.prevdx;
 		}
 		if (this.goRight) {
 			this.dx += this.velocity;
+			this.prevdx = this.dx;
+			this.x += this.dx;
+			for (b = 0; b < wallArray.length; b++) {
+				if (actorActorCollision(this, wallArray[b]))
+				{
+					this.dx -= this.velocity;
+				}
+			}
+			this.x -= this.prevdx;
 		}
 		this.hBar.update();
 		if (this.hBar.stat <= 0)
 		{	
-			//kill the player in some dramatic way,
+			//give the player a dramatic death animation,
 			//then destroy all references to the object
 		}
 		else
@@ -66,16 +123,14 @@ class Player extends Motile { //the player
 			//slightly naive coding here, but Actor doesn't have a move function...
 			this.hBar.x += this.dx;
 			this.hBar.y += this.dy;
+			this.render();
 		}
 	}
 	
 	render() {
-		if (this.hBar.stat > 0) {
-			ctx.fillStyle = "#000000"
-			//drawing the box like this makes x and y the center of the box
-			ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
-			this.hBar.render();
-		}
+		ctx.fillStyle = "#000000"
+		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+		this.hBar.render();
 	}	
 }
 
@@ -155,8 +210,10 @@ player = new Player(200, 200, 30, 30, 5, 38, 40, 37, 39, playerHealth);
 function main(){
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+	for (b = 0; b < wallArray.length; b++){
+		wallArray[b].update();
+	}
 	player.update();
-	player.render();
 }
 
 /** By choosing to code key inputs like this, it becomes easy
