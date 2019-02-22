@@ -14,6 +14,19 @@ class Rectangle {
 		this.up = false;
 		this.down = false;
 	}
+	update(){
+		
+	}
+	render() {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
+class Player extends Rectangle {
+	constructor(x, y, width, height) {
+		super(x, y, width, height);
+	}
 	update() {
 		var prevx = this.x;
 		var prevy = this.y;
@@ -58,13 +71,12 @@ class Rectangle {
 		}
 	}
 	render() {
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = "#FFFFFF";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
 class Enemy extends Rectangle {
-	// create constructor and render
 		constructor(x, y, width, height) {
 		super (x, y, width, height);
 	}
@@ -73,6 +85,7 @@ class Enemy extends Rectangle {
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
+
 class Bullet extends Rectangle {
 	constructor(x, y, width, height) {
 		super (x, y, width, height);
@@ -87,6 +100,16 @@ class Bullet extends Rectangle {
 	
 }
 
+class Border extends Rectangle{
+	constructor(x,y,width, height){
+		super(x,y,width,height);
+	}
+	render(){
+		ctx.fillStyle="#FFFFFF";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
 function enemyShoots() { //causes enemy1 to shoot
 		var shot = new Bullet(enemy1.x + 25, enemy1.y + 50, 10, 10);
 		bulletArray.push(shot)
@@ -98,38 +121,34 @@ function enemyShoots2() { //causes enemy2 to shoot
 		rectArray.push(shotSlow)
 }
 */
-class Border extends Rectangle{
-	constructor(x,y,width, height){
-		super(x,y,width,height);
-	}
-	render(){
-		ctx.fillStyle="#FFFFFF";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-}
+
 /* arr.slice (1;0) The slice() method returns a shallow copy of a portion of an array
 object selected from begin to end (end not included). The original array will not be modified.*/
 
 //adding things
-var player = new Rectangle(475, 475, 30, 30);
+var player = new Player(475, 475, 30, 30);
 //left/right, up/down, length, width
-var wallRight = new Rectangle(950, 0, 30, 950);
-var wallBottom = new Rectangle(0, 950, 980, 30);
+var wallRight = new Border(950, 0, 30, 950);
+var wallBottom = new Border(0, 950, 980, 30);
 var enemy1 = new Enemy(100, 100, 50, 50);
 var enemy2 = new Enemy(700, 700, 50, 50);
 var border1 = new Border(0, 0, 0, window.innerHeight);
 var border2 = new Border(0,0,window.innerWidth, 0);
 
+//arrays
 var rectArray = [];
+var playerArray = [];
 var enemyArray = [];
 var borderArray = [];
 var bulletArray = [];
+var playerArray = [];
 
-rectArray.push(player);
-rectArray.push(border1);
-rectArray.push(border2);
-rectArray.push(wallRight);
-rectArray.push(wallBottom);
+//push arrays
+playerArray.push(player);
+borderArray.push(border1);
+borderArray.push(border2);
+borderArray.push(wallRight);
+borderArray.push(wallBottom);
 enemyArray.push(enemy1);
 enemyArray.push(enemy2);
 
@@ -155,9 +174,9 @@ function main() {
 	ctx.fillRect(0,0,950,950);
 	
 	//update and render
-	for (var i = 0; i < rectArray.length; i++) {
-		rectArray[i].update();
-		rectArray[i].render();
+	for (var i = 0; i < playerArray.length; i++) {
+		playerArray[i].update();
+		playerArray[i].render();
 	}
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
@@ -171,6 +190,7 @@ function main() {
 		bulletArray[i].update();
 		bulletArray[i].render();
 	}
+	
 }
 
 function keydown(e) {
