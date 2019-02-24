@@ -1,14 +1,20 @@
 class Actor {	//anything
-	constructor(x, y, w, h) {
+	constructor(x, y, w, h, c) {
 		this.x = x;
 		this.y = y; 
 		this.width = w;
 		this.height = h;
+		this.color = c;
 	}
 	update() { this.render(); }
-	render() {}	
+	render() { 	
+		//drawing the box like this makes x and y the center of the box
+		ctx.fillStyle = this.color;
+		ctx.rotate(0);
+		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+	}	
 }
-function actorActorCollision(a1, a2) { //takes two actors
+function actorActorCollision(a1, a2) { //takes two actors and sees whether they're touching
 	return 	a1.x - a1.width/2 < a2.x + a2.width/2 &&
 			a1.x + a1.width/2 > a2.x - a2.width/2 &&
 			a1.y - a1.height/2 < a2.y + a2.height/2 &&
@@ -16,24 +22,34 @@ function actorActorCollision(a1, a2) { //takes two actors
 }
 
 class Wall extends Actor { // a barrier that doesn't move and can't be traveled through
-	constructor(x, y, w, h) {
-		super(x, y, w, h);
+	constructor(x, y, w, h, c) {
+		super(x, y, w, h, c);
 	}
-	render() {
-		ctx.fillStyle = "#000000";
-		//drawing the box like this makes x and y the center of the box
-		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+	update() {
+		for (var c = 0; c < bulletArray.length; c++) {
+			if (actorActorCollision(this, bulletArray[c])) {
+				bulletArray.splice(c, 1);
+				c--;
+			}
+		}
+		this.render();
 	}
 }
-var wallArray = [new Wall(200, 400, 100, 350)];
+var wallArray = [new Wall(200, 400, 100, 350, "#000000")];
+//borders of the screen (so nothing goes outside off of the screen)
+nWall = new Wall(window.innerWidth/2, 0, window.innerWidth, 0, "#000000");
+sWall = new Wall(window.innerWidth/2, window.innerHeight, window.innerWidth, 0, "#000000")
+wWall = new Wall(0, window.innerHeight/2, 0, window.innerHeight, "#000000")
+eWall = new Wall(window.innerWidth, window.innerHeight/2, 0, window.innerHeight, "#000000")
+wallArray.push(nWall); wallArray.push(sWall); wallArray.push(wWall); wallArray.push(eWall);
 
 class Motile extends Actor { //anything which changes velocity on its own
-	constructor(x, y, w, h, v) {
-		super(x, y, w, h);
+	constructor(x, y, w, h, c, v, t) {
+		super(x, y, w, h, c);
 		this.velocity = v;
 		this.dx = 0;
 		this.dy = 0;
-		this.theta = 0;
+		this.theta = t;
 		this.dtheta = 0;
 	}
 	move() {
@@ -44,8 +60,8 @@ class Motile extends Actor { //anything which changes velocity on its own
 }
 
 class Player extends Motile { //the player
-	constructor(x, y, w, h, v, up, down, left, right, hBar) {
-		super(x, y, w, h, v);
+	constructor(x, y, w, h, c, v, up, down, left, right, hBar) {
+		super(x, y, w, h, c, v);
 		//denotes the keys that control the character
 		this.upKey = up;
 		this.downKey = down;
@@ -57,59 +73,60 @@ class Player extends Motile { //the player
 		this.goRight = false;
 		this.hBar = hBar;
 	}
-	update() {	//a temporary thing for testing
-		this.dx = 0;
-		this.dy = 0;
-		/**	all of repetitive code here could probably be simplified into a function
-			also, most of this is probably very inefficient and should be improved
-		*/
+	update() {	
+		//a temporary thing for moving without going through anything
+		var prevx = this.x;
+		var prevy = this.y;
+		var dx = 0;
+		var dy = 0;
 		if (this.goUp) {
-			this.dy -= this.velocity;
-			this.prevdy = this.dy;
-			this.y += this.dy;
-			for (b = 0; b < wallArray.length; b++) {
-				if (actorActorCollision(this, wallArray[b]))
-				{
-					this.dy += this.velocity; //undoes the change in velocity since it can't move into a wall
-				}
-			}
-			this.y -= this.prevdy;
+			this.y -= this.velocity;
+			dy -= this.velocity;
 		}
 		if (this.goDown) {
-			this.dy += this.velocity;
-			this.prevdy = this.dy;
-			this.y += this.dy;
-			for (b = 0; b < wallArray.length; b++) {
-				if (actorActorCollision(this, wallArray[b]))
-				{
-					this.dy -= this.velocity;
-				}
+			this.y += this.velocity;
+			dy += this.velocity;
+		}
+		for (var c = 0; c < wallArray.length; c++) {
+			if (actorActorCollision(this, wallArray[c])) {
+				this.y = prevy;
+				dy = 0;
 			}
-			this.y -= this.prevdy;
+		}
+		for (c = 0; c < enemyArray.length; c++) {
+			if (actorActorCollision(this, enemyArray[c])) {
+				this.y = prevy;
+				dy = 0;
+			}
 		}
 		if (this.goLeft) {
-			this.dx -= this.velocity;
-			this.prevdx = this.dx;
-			this.x += this.dx;
-			for (b = 0; b < wallArray.length; b++) {
-				if (actorActorCollision(this, wallArray[b]))
-				{
-					this.dx += this.velocity;
-				}
-			}
-			this.x -= this.prevdx;
+			this.x -= this.velocity;
+			dx -= this.velocity;
 		}
 		if (this.goRight) {
-			this.dx += this.velocity;
-			this.prevdx = this.dx;
-			this.x += this.dx;
-			for (b = 0; b < wallArray.length; b++) {
-				if (actorActorCollision(this, wallArray[b]))
-				{
-					this.dx -= this.velocity;
-				}
+			this.x += this.velocity;
+			dx += this.velocity;
+		}
+		for (c = 0; c < wallArray.length; c++) {
+			if (actorActorCollision(this, wallArray[c])) {
+				this.x = prevx;
+				dx = 0;
 			}
-			this.x -= this.prevdx;
+		}
+		for (c = 0; c < enemyArray.length; c++) {
+			if (actorActorCollision(this, enemyArray[c])) {
+				this.x = prevx;
+				dx = 0;
+			}
+		}
+		
+		//deals damage to the player if being hit by bullets
+		for (c = 0; c < bulletArray.length; c++) {
+			if (actorActorCollision(this, bulletArray[c])) {
+				bulletArray.splice(c, 1);
+				this.hBar.stat--;
+				c--;
+			}
 		}
 		this.hBar.update();
 		if (this.hBar.stat <= 0)
@@ -121,32 +138,17 @@ class Player extends Motile { //the player
 		{
 			this.move();
 			//slightly naive coding here, but Actor doesn't have a move function...
-			this.hBar.x += this.dx;
-			this.hBar.y += this.dy;
+			this.hBar.x += dx;
+			this.hBar.y += dy;
 			this.render();
 		}
 	}
 	
 	render() {
-		ctx.fillStyle = "#000000"
-		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+		super.render();
 		this.hBar.render();
 	}	
 }
-
-class Enemy extends Motile {	//motiles which try to destroy the player with ranged attacks
-	constructor(x, y, w, h, target, f) {
-		super(x, y, w, h);
-		this.target = target;
-		this.fireRate = f;
-	}	
-	update()
-	{
-		//the enemy always attempts to point closer to the player
-		//the enemy may (or may not) move as well
-	}
-}
-
 class statMeter extends Actor {
 	constructor(x, y, w, h, stat){
 		super(x, y, w, h);
@@ -157,6 +159,7 @@ class statMeter extends Actor {
 		//figure out a way to change this simultaneously with another variable
 	}
 	render() {
+		ctx.rotate(0);
 		if (this.maxStat / 2 < this.stat){
 			ctx.fillStyle = "#00ff00"; //green
 		} else if (this.maxStat / 10 < this.stat){
@@ -170,6 +173,133 @@ class statMeter extends Actor {
 		//possibly add a descriptor here (words or symbols so it has meaning)
 	}
 }
+playerHealth = new statMeter(200, 175, 50, 5, 15);
+//player controlled by the arrow keys
+player = new Player(200, 200, 30, 30, "#FFFFFF", 5, 38, 40, 37, 39, playerHealth);
+
+class Enemy extends Motile {	//motiles which try to destroy the player with ranged attacks
+	constructor(x, y, w, h, c, v, t, target, f) {
+		super(x, y, w, h, c, v, t);
+		this.target = target;
+		this.fireRate = f;
+		this.cooldown = this.fireRate;
+	}	
+	update()
+	{
+		//the enemy always attempts to point closer to the player
+		//the enemy may (or may not) move as well
+		this.move();
+		this.render();
+		this.cooldown -= 1;
+		if (this.cooldown == 0) {
+			//creates a bullet directed towards where it is aiming
+			bulletArray.push(new Bullet(this.x + 1.01 * this.width * Math.sin(this.theta), 
+										this.y + 1.01 * this.height * Math.cos(this.theta),
+										10, 10, "#808000", 4, this.theta));
+			this.cooldown = this.fireRate;
+		}
+	}
+}
+var enemyArray = [];
+enemy1 = new Enemy(400, 200, 50, 50, "#B22222", 0, 0, player, 100);
+enemyArray.push(enemy1);
+
+class Bullet extends Motile {
+	constructor(x, y, w, h, c, v, t){
+		super(x, y, w, h, c, v, t);
+	}
+	update() {
+		this.dx = this.velocity * Math.sin(this.theta);
+		this.dy = this.velocity * Math.cos(this.theta);
+		this.move();
+		this.render();
+	}
+}
+var bulletArray = [];
+strayBullet = new Bullet(window.innerWidth / 2, window.innerHeight / 2, 10, 10, "#808000", 4);
+bulletArray.push(strayBullet);
+
+PHI = (Math.sqrt(5) + 1) / 2; //the golden ratio, useful for button aesthetics
+class MenuButton extends Actor {
+	constructor(x, y, w, h, t, wF, f){
+		super(x, y, w, h);
+		this.txt = t;
+		this.wordFont = wF;
+		this.wordSize = 0;
+		this.funct = f; //yes, you can make entire functions a variable!
+	}
+	update() {
+		if (mouseActorCollision(this)) {
+			this.color = "#555555";
+		} else {
+			this.color = "#666666";
+		}
+		this.wordSize = (PHI * this.width) / this.txt.length;
+		if (this.wordSize > this.height){
+			this.wordSize = this.height;
+		}
+		fontStyling(this.wordFont, this.wordSize, "#000000", true, "center");
+		this.render();
+	}
+	render(){
+		super.render();
+		fontStyling(this.wordFont, this.wordSize, "#000000", true, "center");
+		ctx.strokeText(this.txt, this.x, this.y + (this.wordSize / 4));
+	}
+}
+class boolButton extends MenuButton {
+	constructor(x, y, w, h, t, wF, f, b) {
+		super(x, y, w, h, t, wF, f);
+		this.bool = b;
+	}
+	update() {
+		super.update();
+		if (this.bool)
+		{
+			if (mouseActorCollision(this)) {
+				this.color = "#00cc00";
+			} else {
+				this.color = "#009900";
+			}
+		} else {
+			if (mouseActorCollision(this)) {
+				this.color = "#cc0000";
+			} else {
+				this.color = "#990000";
+			}
+		}
+		if (2 * this.wordSize > this.height){
+			fontStyling(this.wordFont, this.height/ 2, true, "#000000", "center");
+		}
+		this.render();
+	}
+	render() {
+		ctx.fillStyle = this.color;
+		ctx.rotate(0);
+		ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+		ctx.strokeText(this.txt, this.x , this.y - this.wordSize / 8);
+		if (this.bool){
+			ctx.strokeText("Yes", this.x, this.y + (5 * this.wordSize / 8)); 
+		} else {
+			ctx.strokeText("No", this.x, this.y + (5 * this.wordSize / 8));
+		}
+	}
+}
+function fontStyling(font, fontSize, color, strokeBool, alignment){
+	ctx.font = fontSize + "px " + font;
+	if (strokeBool == true){
+		ctx.strokeStyle = color;
+	} else {
+		ctx.fillStyle = color;
+	}
+	ctx.textAlign = alignment;
+}
+var buttonArray = [];
+keyButton = new boolButton(window.innerWidth * 7/8, window.innerHeight / 8, 150, 70, "Arrow Keys?", "Times New Roman",
+			function() { if (this.bool) { player.upKey = 87; player.downKey = 83; player.leftKey = 65; player.rightKey = 68; }
+						else { player.upKey = 38; player.downKey = 40; player.leftKey = 37; player.rightKey = 39;} 
+						this.bool = !this.bool; }, true);
+buttonArray.push(keyButton);
 
 Mouse = function(){
 	var mouse = {};
@@ -181,6 +311,11 @@ Mouse = function(){
 	}
 	function click(e){
 		//stuff that happens when left click
+		for (x = 0; x < buttonArray.length; x++) {
+			if (mouseActorCollision(buttonArray[x])) {
+				buttonArray[x].funct();
+			}
+		}
 	}
 	canvas.addEventListener('mousemove', move);
 	canvas.addEventListener('click', click);
@@ -195,30 +330,34 @@ window.onload = function(){
 	canvas = document.getElementById("canvas");
 	ctx = canvas.getContext("2d");
 	canvas.height = window.innerHeight;
-	canvas.width = window.innerWidth;
-	
+	canvas.width = window.innerWidth;	
 	document.addEventListener("keydown",keydown);
 	document.addEventListener("keyup",keyup);
 	mouse = new Mouse();
 	setInterval(main, 100/6);
 }
-
-playerHealth = new statMeter(200, 175, 50, 5, 15);
-//player controlled by the arrow keys
-player = new Player(200, 200, 30, 30, 5, 38, 40, 37, 39, playerHealth);
  
 function main(){
-	ctx.fillStyle = "#FFFFFF";
+	ctx.fillStyle = "#110422";
 	ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 	for (b = 0; b < wallArray.length; b++){
 		wallArray[b].update();
+	}
+	for (b = 0; b < enemyArray.length; b++){
+		enemyArray[b].update();
+	}
+	for (b = 0; b < bulletArray.length; b++){
+		bulletArray[b].update();
+	}
+	for (b = 0; b < buttonArray.length; b++){
+		buttonArray[b].update();
 	}
 	player.update();
 }
 
 /** By choosing to code key inputs like this, it becomes easy
-	to change what key presses do what task, which could be useful
-	for a menu or something later. */
+	to change what key presses do what task, which is useful
+	for the menu I implemented. */
 function keydown(e){
 	switch(e.keyCode){
 		case player.upKey:
