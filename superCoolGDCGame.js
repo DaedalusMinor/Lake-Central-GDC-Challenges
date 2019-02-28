@@ -51,6 +51,12 @@ class Player extends Rectangle {
 				this.x = prevx;
 			}
 		}
+		for (var i = 0; i < borderArray.length; i++) {
+			if (checkCollision(this, borderArray[i])) {
+				this.y = prevy;
+				this.x = prevx;
+			}
+		}
 		for (var i = 0; i < rectArray.length; i++) {
 			if (checkCollision(this, rectArray[i])) {
 				this.y = prevy;
