@@ -23,6 +23,36 @@ class Rectangle {
 	}
 }
 
+class RectMobile {
+	constructor(x, y, lBound, rBound, uBound, dBound, width, height, move) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.color = "#FFFFFF";
+		
+		this.lBound = lBound;
+		this.rBound = rBound;
+		this.uBound = uBound;
+		this.dBound = dBound;
+		this.move = move;
+	}
+	
+	/* EXPLANATION:
+	move is a variable that holds the speed
+	lBound is the left most x coordinate that determines when move will turn around
+	rBound is the right most x coordinate that determines when move will turn around
+	uBound is the upper most y coordinate that determines when move will start going down
+	dBound is the lower most y coordinate that determines when move will start going up
+	*/
+	update() {
+	}
+	render() {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
 class Player extends Rectangle {
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
@@ -59,6 +89,12 @@ class Player extends Rectangle {
 		}
 		for (var i = 0; i < rectArray.length; i++) {
 			if (checkCollision(this, rectArray[i])) {
+				this.y = prevy;
+				this.x = prevx;
+			}
+		}
+		for (var i = 0; i < enemyMobileArray.length; i++) {
+			if (checkCollision(this, enemyMobileArray[i])) {
 				this.y = prevy;
 				this.x = prevx;
 			}
@@ -115,6 +151,35 @@ class Enemy extends Rectangle {
 	}
 }
 
+class EnemyMobile extends RectMobile {
+	constructor(x, y, lBound, rBound, uBound, dBound, width, height, move) {
+		super (x, y, lBound, rBound, uBound, dBound, width, height, move);
+		this.buffer = 40;
+	}
+	
+	update() {
+		if (this.x != this.lBound && this.x != this.rBound) {
+			this.x += this.move;
+		}
+		if (this.x <= this.lBound || this.x >= this.rBound) {
+			this.move *= -1;
+			this.x += this.move;
+		}
+	}
+
+	render() {
+		ctx.fillStyle="#800000";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+	
+	shoot(){
+		var theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), player.x + player.width/2 - (this.x + this.width/2));	//finds the angle to aim bullet
+		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(theta);
+		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(theta);	//makes sure the bullet doesn't immediately shoot the enemy it came from
+		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(theta), 4*Math.sin(theta)));
+	}
+}
+
 class Bullet extends Rectangle {
 	constructor(x, y, dx, dy) {
 		super (x, y, 10, 10);
@@ -162,6 +227,7 @@ var wallRight = new Border(950, 0, 30, 950);
 var wallBottom = new Border(0, 950, 980, 30);
 var enemy1 = new Enemy(100, 100, 50, 50);
 var enemy2 = new Enemy(700, 700, 50, 50);
+var mobileEnemy1 = new EnemyMobile(200, 800, 0, 800, 800, 800, 50, 50, 2);
 var border1 = new Border(0, 0, 0, window.innerHeight);
 var border2 = new Border(0,0,window.innerWidth, 0);
 
@@ -172,6 +238,7 @@ var enemyArray = [];
 var borderArray = [];
 var bulletArray = [];
 var playerArray = [];
+var enemyMobileArray = [];
 
 //push arrays
 playerArray.push(player);
@@ -181,6 +248,7 @@ borderArray.push(wallRight);
 borderArray.push(wallBottom);
 enemyArray.push(enemy1);
 enemyArray.push(enemy2);
+enemyMobileArray.push(mobileEnemy1);
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
 
@@ -225,7 +293,14 @@ function main() {
 		bulletArray[i].update();
 		bulletArray[i].render();
 	}
-
+	for (var i = 0; i < enemyMobileArray.length; i++){
+		enemyMobileArray[i].update();
+		enemyMobileArray[i].render();
+		if(shootTimer % FIRE_INTERVAL == 0){
+			shootTimer = 0;
+			enemyMobileArray[i].shoot();
+		}
+	}
 }
 
 function keydown(e) {
