@@ -1,5 +1,4 @@
-//Tetris 99 is dead we gonna make Tetris 100
-//fortnite is dead Tetris 99 supreme
+var gravityBar = document.getElementById("gravityBar");
 
 class Rectangle {
 	constructor(x, y, w, h) {
@@ -30,14 +29,14 @@ class RectMobile {
 		this.width = width;
 		this.height = height;
 		this.color = "#FFFFFF";
-		
+
 		this.lBound = lBound;
 		this.rBound = rBound;
 		this.uBound = uBound;
 		this.dBound = dBound;
 		this.move = move;
 	}
-	
+
 	/* EXPLANATION:
 	move is a variable that holds the speed
 	lBound is the left most x coordinate that determines when move will turn around
@@ -57,57 +56,63 @@ class Player extends Rectangle {
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
 		this.condense = false;
+		this.gravityPoints = 150;
 	}
 	update() {
 		var prevx = this.x;
 		var prevy = this.y;
 
-		if (this.left == true) {
+		if (this.left) {
 			this.x -= 5;
 		}
-		if (this.right == true) {
+		if (this.right) {
 			this.x += 5;
 		}
-
-		if (this.up == true) {
+		if (this.up) {
 			this.y -= 5;
 		}
-		if (this.down == true) {
+		if (this.down) {
 			this.y += 5;
 		}
+
 		for (var i = 0; i < enemyArray.length; i++) {
 			if (checkCollision(this, enemyArray[i])) {
 				this.y = prevy;
 				this.x = prevx;
 			}
 		}
+
 		for (var i = 0; i < borderArray.length; i++) {
 			if (checkCollision(this, borderArray[i])) {
 				this.y = prevy;
 				this.x = prevx;
 			}
 		}
-		for (var i = 0; i < rectArray.length; i++) {
-			if (checkCollision(this, rectArray[i])) {
-				this.y = prevy;
-				this.x = prevx;
-			}
-		}
+
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			if (checkCollision(this, enemyMobileArray[i])) {
 				this.y = prevy;
 				this.x = prevx;
 			}
 		}
+
+		for (var i = 0; i < rectArray.length; i++) {
+			if (checkCollision(this, rectArray[i])) {
+				this.y = prevy;
+				this.x = prevx;
+			}
+		}
+
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
+				this.gravityPoint = 150;
 			}
-			if(this.condense){
+			if(this.condense && this.gravityPoints > 0){
 				var xDist = this.x - bulletArray[i].x;
 				var yDist = this.y - bulletArray[i].y;
 				var distance = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
-				var pull = 10/distance;
+				var pull = 20/distance;
 				if(xDist > 0){
 					bulletArray[i].dx += pull;
 				}
@@ -121,10 +126,16 @@ class Player extends Rectangle {
 				else{
 					bulletArray[i].dy -= pull;
 				}
-
-
 			}
+
 		}
+		if(this.condense && this.gravityPoints > 0){
+			this.gravityPoints -= 0.8;
+		}
+		else if(!this.condense && this.gravityPoints < 150){
+			this.gravityPoints += 0.3;
+		}
+		gravityBar.value =  this.gravityPoints;
 	}
 	render() {
 		ctx.fillStyle = "#FFFFFF";
@@ -138,6 +149,14 @@ class Enemy extends Rectangle {
 		this.buffer = 40;
 	}
 
+	update(){
+		for (var i = 0; i < bulletArray.length; i++) {
+			if(checkCollision(this, bulletArray[i])){
+				enemyArray.splice(enemyArray.indexOf(this), 1);
+				bulletArray.splice(i, 1);
+			}
+		}
+	}
 	render() {
 		ctx.fillStyle="#B22222";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -156,7 +175,7 @@ class EnemyMobile extends RectMobile {
 		super (x, y, lBound, rBound, uBound, dBound, width, height, move);
 		this.buffer = 40;
 	}
-	
+
 	update() {
 		if (this.x != this.lBound && this.x != this.rBound) {
 			this.x += this.move;
@@ -171,7 +190,7 @@ class EnemyMobile extends RectMobile {
 		ctx.fillStyle="#800000";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
-	
+
 	shoot(){
 		var theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), player.x + player.width/2 - (this.x + this.width/2));	//finds the angle to aim bullet
 		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(theta);
