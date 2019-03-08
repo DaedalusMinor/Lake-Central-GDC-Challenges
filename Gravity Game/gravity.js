@@ -184,6 +184,12 @@ class EnemyMobile extends RectMobile {
 			this.move *= -1;
 			this.x += this.move;
 		}
+		for (var i = 0; i < bulletArray.length; i++) {
+			if(checkCollision(this, bulletArray[i])){
+				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
+				bulletArray.splice(i, 1);
+			}
+		}
 	}
 
 	render() {
