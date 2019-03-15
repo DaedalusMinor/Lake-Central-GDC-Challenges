@@ -1,6 +1,8 @@
-var gravityBar = document.getElementById("gravityBar");
+//COMMENT YOUR STUFF PLEASE
+//var gravityBar = document.getElementById("gravityBar");
+//<progress id = "gravityBar" value = "150" max = "150" style = "position:absolute; top: 20px; left: 20px;"></progress>
 
-class Rectangle {
+class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
 		this.y = y;
@@ -22,7 +24,29 @@ class Rectangle {
 	}
 }
 
-class RectMobile {
+class RectColored { //rectangles that you can modify the color of
+	constructor(x, y, w, h, color) {
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
+		this.color = color;
+
+		this.left = false;
+		this.right = false;
+		this.up = false;
+		this.down = false;
+	}
+	update(){
+
+	}
+	render() {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height, this.color);
+	}
+}
+
+class RectMobile { //base moving rectangle
 	constructor(x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove) {
 		this.x = x;
 		this.y = y;
@@ -72,7 +96,7 @@ class RectMobile {
 	}
 }
 
-class Player extends Rectangle {
+class Player extends Rectangle { //the player
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
 		this.condense = false;
@@ -94,11 +118,12 @@ class Player extends Rectangle {
 		if (this.down) {
 			this.y += 5;
 		}
-
+		
+		//collisions
 		for (var i = 0; i < enemyArray.length; i++) {
 			if (checkCollision(this, enemyArray[i])) {
-				this.y = prevy;
-				this.x = prevx;
+				location.reload();
+				this.gravityPoint = 150;
 			}
 		}
 
@@ -111,8 +136,8 @@ class Player extends Rectangle {
 
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			if (checkCollision(this, enemyMobileArray[i])) {
-				this.y = prevy;
-				this.x = prevx;
+				location.reload();
+				this.gravityPoint = 150;
 			}
 		}
 
@@ -122,7 +147,14 @@ class Player extends Rectangle {
 				this.x = prevx;
 			}
 		}
-
+		
+		for (var i = 0; i < energyArray.length; i++) {
+			if (checkCollision(this, energyArray[i])) {
+				energyArray.splice(i, 1);
+				this.gravityPoints = 150;
+			}
+		}
+		//gravity succ
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
@@ -149,20 +181,26 @@ class Player extends Rectangle {
 			}
 
 		}
+		//manage gravityPoints
 		if(this.condense && this.gravityPoints > 0){
 			this.gravityPoints -= 0.8;
 		}
 		else if(!this.condense && this.gravityPoints < 150){
 			this.gravityPoints += 0.3;
 		}
-		
-		if(this.gravityPoints == 0) {
-			while (this.gravityPoints < 10) {
-				
+		//bar cooldown when it hits 0
+		if(this.gravityPoints <= 0) {
+			forceStop = true;
+			this.condense == false;
+		}
+		if(forceStop == true) {
+			this.condense == false;
+			if (this.gravityPoints >= 100) {
+				forceStop = false;
 			}
 		}
 	
-		gravityBar.value = this.gravityPoints;
+		gravityBar.width = this.gravityPoints;
 	}
 	render() {
 		if (this.condense == false) {
@@ -174,7 +212,7 @@ class Player extends Rectangle {
 	}
 }
 
-class Enemy extends Rectangle {
+class Enemy extends Rectangle { //stationary enemies
 		constructor(x, y, width, height) {
 		super (x, y, width, height);
 		this.buffer = 40;
@@ -201,7 +239,7 @@ class Enemy extends Rectangle {
 	}
 }
 
-class EnemyMobile extends RectMobile {
+class EnemyMobile extends RectMobile { //moving enemies
 	constructor(x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove) {
 		super (x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove);
 		this.buffer = 40;
@@ -228,7 +266,7 @@ class EnemyMobile extends RectMobile {
 	}
 }
 
-class Bullet extends Rectangle {
+class Bullet extends Rectangle { //the bullets
 	constructor(x, y, dx, dy) {
 		super (x, y, 10, 10);
 		this.dx = dx;
@@ -254,13 +292,24 @@ class Bullet extends Rectangle {
 
 }
 
-class Border extends Rectangle{
+class Border extends Rectangle{ //the outside walls
 	constructor(x,y,width, height){
 		super(x,y,width,height);
 	}
-
+	
 	render(){
 		ctx.fillStyle="#FFFFFF";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
+class Energy extends Rectangle{ //gravityPoint refill pickup
+		constructor(x,y,width, height){
+		super(x,y,width,height);
+	}
+	
+	render(){
+		ctx.fillStyle="#7FFF00";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
@@ -275,13 +324,17 @@ var wallRight = new Border(950, 0, 30, 950);
 var wallBottom = new Border(0, 950, 980, 30);
 var enemy1 = new Enemy(100, 100, 50, 50);
 var enemy2 = new Enemy(700, 700, 50, 50);
+var energyPickup1 = new Energy(200, 200, 20, 20);
 //x, y, lbound, rbound, ubound, dbound, length, width, xMove, yMove
 var mobileEnemy1 = new EnemyMobile(200, 800, 100, 800, 800, 800, 50, 50, 4, 0);
 var mobileEnemy2 = new EnemyMobile(800, 100, 200, 850, 50, 600, 50, 50, -2, 2);
 var border1 = new Border(0, 0, 0, window.innerHeight);
 var border2 = new Border(0,0,window.innerWidth, 0);
+var gravityBarBack = new RectColored (20, 20, 150, 15, "#FFFFFF")
+var gravityBar = new RectColored (20, 20, 150, 15, "#00FFFF")
 var fps = 0;
 var timer = 0;
+var forceStop = false;
 
 //arrays
 var rectArray = [];
@@ -291,6 +344,8 @@ var borderArray = [];
 var bulletArray = [];
 var playerArray = [];
 var enemyMobileArray = [];
+var energyArray = [];
+var invulnArray = [];
 
 //push arrays
 playerArray.push(player);
@@ -302,6 +357,9 @@ enemyArray.push(enemy1);
 enemyArray.push(enemy2);
 enemyMobileArray.push(mobileEnemy1);
 enemyMobileArray.push(mobileEnemy2);
+energyArray.push(energyPickup1);
+rectArray.push(gravityBarBack);
+rectArray.push(gravityBar);
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
 
@@ -330,8 +388,19 @@ function main() {
 		timer += 1;
 		fps = 0;
 	}
+	
+	//changes color of bar
+	if (forceStop == true) {
+		gravityBar.color = "#A9A9A9";
+	}
+	else
+		gravityBar.color = "#00FFFF"
 
 	//update and render
+	for (var i = 0; i < rectArray.length; i++) {
+		rectArray[i].update();
+		rectArray[i].render();
+	}
 	for (var i = 0; i < playerArray.length; i++) {
 		playerArray[i].update();
 		playerArray[i].render();
@@ -353,6 +422,10 @@ function main() {
 		bulletArray[i].update();
 		bulletArray[i].render();
 	}
+	for (var i = 0; i < energyArray.length; i++){
+		energyArray[i].update();
+		energyArray[i].render();
+	}
 	for (var i = 0; i < enemyMobileArray.length; i++){
 		enemyMobileArray[i].update();
 		enemyMobileArray[i].render();
@@ -371,20 +444,22 @@ function main() {
 
 function keydown(e) {
 	switch(e.keyCode) {
-		case 65:
+		case 65://move left
 			player.left = true;
 			break;
-		case 87:
+		case 87://move up
 			player.up = true;
 			break;
-		case 68:
+		case 68://move right
 			player.right = true;
 			break;
-		case 83:
+		case 83:// move down
 			player.down = true;
 			break;
-		case 32:
+		case 32://activate gravity
+		if (forceStop == false) {
 			player.condense = true;
+		}
 			break;
 	}
 }
