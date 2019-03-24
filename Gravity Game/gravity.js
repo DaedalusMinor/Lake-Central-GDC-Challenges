@@ -2,6 +2,104 @@
 //var gravityBar = document.getElementById("gravityBar");
 //<progress id = "gravityBar" value = "150" max = "150" style = "position:absolute; top: 20px; left: 20px;"></progress>
 
+var MAX_LEVEL = 1;
+var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
+	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
+	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
+	and even other JSON objects! Wack. The components of a JSON object are the key value names, that come
+	before the ":" and the resulting value, after the ":". Creating a JSON object must be started and ended
+	by a "{" and "}", respectively.  And then the attributes of the object are listed so
+	var jsnObject = {
+		"key name1" : <value>,
+		key2 : <value>
+	};
+	Notice the commas.  Also note that the only semicolon is at the end of the json object instantiation,
+	just like a regular var.  Also notice that the pattern is nested in levelData below, meaning we have multiple
+	JSON objects in our JSON object. <INCEPTION JOKE TAKEN OUT>.  I also stored some arrays in there.
+	The basic format of levelData is:
+
+	"level number" : {
+		class(enemies, walls, etc.) : [
+			{
+				x: <value>,
+				y: <value>
+				other parameters for constructor method using the same pattern
+			},
+
+			{
+				...
+			},
+
+			...
+
+			{
+				...
+			}
+		],
+		other class(same as before) : [
+			...
+		],
+		...
+	}
+	*/
+
+	"0" : { // level number
+		barriers : [ //all the barrier objects contained within this level
+			{	//the attributes of each barrier object in this level
+				x : 150,
+				y : 140,
+				width : 20,
+				height : 140
+			},
+
+			{
+				x : window.innerWidth,
+				y : 405,
+				width : 140,
+				height : 30
+			},
+
+			{
+				x : 0,
+				y : 140,
+				width : 120,
+				height : 10
+			}
+		],
+
+		enemies : [
+			{
+				x : 0,
+				y : 0,
+				width : 20,
+				height : 20
+			}
+		]
+
+	},
+
+	"1" : {
+		enemies: [
+			{
+				x: 300,
+				y: 400,
+				width: 20,
+				height: 20
+			}
+		],
+
+		barriers: [
+			{
+				x: 400,
+				y: 400,
+				width: window.innerWidth,
+				height: 10
+			}
+		]
+	}
+}
+
+
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -53,7 +151,7 @@ class RectMobile { //base moving rectangle
 		this.width = width;
 		this.height = height;
 		this.color = "#FFFFFF";
-		
+
 		this.lBound = lBound;
 		this.rBound = rBound;
 		this.uBound = uBound;
@@ -61,7 +159,7 @@ class RectMobile { //base moving rectangle
 		this.xMove = xMove;
 		this.yMove = yMove;
 	}
-	
+
 	/* EXPLANATION:
 	xMove is a variable that holds the horizontal speed (set to 0 if you want to move straight vertically)
 	yMove is a variable that holds the vertical speed (set to 0 if you want to move straight horizontally)
@@ -70,7 +168,7 @@ class RectMobile { //base moving rectangle
 	uBound is the upper most y coordinate that determines when move will start going down
 	dBound is the lower most y coordinate that determines when move will start going up
 	*/
-	
+
 	update() {
 		//horizontal movement
 		if (this.x != this.lBound && this.x != this.rBound) {
@@ -89,19 +187,21 @@ class RectMobile { //base moving rectangle
 			this.y += this.yMove;
 		}
 	}
-	
+
 	render() {
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
-class Player extends Rectangle { //the player
+class Player extends Rectangle {
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
 		this.condense = false;
 		this.gravityPoints = 150;
+		this.level = 0;
 	}
+
 	update() {
 		var prevx = this.x;
 		var prevy = this.y;
@@ -118,51 +218,55 @@ class Player extends Rectangle { //the player
 		if (this.down) {
 			this.y += 5;
 		}
-		
-		//collisions
+
 		for (var i = 0; i < enemyArray.length; i++) {
-			if (checkCollision(this, enemyArray[i])) {
-				location.reload();
-				this.gravityPoint = 150;
-			}
+				if(!isOpenX(this, enemyArray[i])){
+					this.x = prevx;
+				}
+				if(!isOpenY(this, enemyArray[i])){
+					this.y = prevy;
+				}
 		}
 
+		var playerRight = this.x + this.width;
+		var playerDown = this.y + this.height;
 		for (var i = 0; i < borderArray.length; i++) {
-			if (checkCollision(this, borderArray[i])) {
-				this.y = prevy;
-				this.x = prevx;
+			if(checkCollision(this, borderArray[i])){
+				if((playerRight <= borderArray[i].x + 5 && playerRight >= borderArray[i].x - 5) || (this.x >= borderArray[i].x + borderArray[i].width - 5 && this.x <= borderArray[i].x + borderArray[i].width + 5)){
+					this.x = prevx;
+				}
+				if((playerDown >= borderArray[i].y - 5 && playerDown <= borderArray[i].y + 5) || (this.y <= borderArray[i].y + borderArray[i].height + 5 && this.y >= borderArray[i].y + borderArray[i].height - 5)){
+					this.y = prevy;
+				}
 			}
 		}
 
 		for (var i = 0; i < enemyMobileArray.length; i++) {
-			if (checkCollision(this, enemyMobileArray[i])) {
-				location.reload();
-				this.gravityPoint = 150;
+			if(!isOpenX(this, enemyMobileArray[i])){
+				this.x = prevx;
+			}
+			if(!isOpenY(this, enemyMobileArray[i])){
+				this.y = prevy;
 			}
 		}
 
 		for (var i = 0; i < rectArray.length; i++) {
-			if (checkCollision(this, rectArray[i])) {
-				this.y = prevy;
+			if(!isOpenX(this, rectArray[i])){
 				this.x = prevx;
 			}
-		}
-		
-		for (var i = 0; i < energyArray.length; i++) {
-			if (checkCollision(this, energyArray[i])) {
-				energyArray.splice(i, 1);
-				this.gravityPoints = 150;
+			if(!isOpenY(this, rectArray[i])){
+				this.y = prevy;
 			}
 		}
-		//gravity succ
+
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
-				this.gravityPoint = 150;
+				this.gravityPoints = 150;
 			}
 			if(this.condense && this.gravityPoints > 0){
-				var xDist = this.x - bulletArray[i].x;
-				var yDist = this.y - bulletArray[i].y;
+				var xDist = this.x + this.width/2 - bulletArray[i].x;
+				var yDist = this.y + this.height/2 - bulletArray[i].y;
 				var distance = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
 				var pull = 20/distance;
 				if(xDist > 0){
@@ -181,26 +285,20 @@ class Player extends Rectangle { //the player
 			}
 
 		}
-		//manage gravityPoints
 		if(this.condense && this.gravityPoints > 0){
-			this.gravityPoints -= 0.8;
+			this.gravityPoints -= 0.5;
 		}
 		else if(!this.condense && this.gravityPoints < 150){
 			this.gravityPoints += 0.3;
 		}
-		//bar cooldown when it hits 0
-		if(this.gravityPoints <= 0) {
-			forceStop = true;
-			this.condense == false;
-		}
-		if(forceStop == true) {
-			this.condense == false;
-			if (this.gravityPoints >= 100) {
-				forceStop = false;
+
+		if(this.gravityPoints == 0) {
+			while (this.gravityPoints < 10) {
+
 			}
 		}
-	
-		gravityBar.width = this.gravityPoints;
+
+		gravityBar.value = this.gravityPoints;
 	}
 	render() {
 		if (this.condense == false) {
@@ -212,13 +310,13 @@ class Player extends Rectangle { //the player
 	}
 }
 
-class Enemy extends Rectangle { //stationary enemies
+class Enemy extends Rectangle {
 		constructor(x, y, width, height) {
-		super (x, y, width, height);
-		this.buffer = 40;
-	}
+			super(x, y, width, height);
+			this.buffer = this.width + 15;
+		}
 
-	kill(){
+	update(){
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				enemyArray.splice(enemyArray.indexOf(this), 1);
@@ -226,6 +324,7 @@ class Enemy extends Rectangle { //stationary enemies
 			}
 		}
 	}
+
 	render() {
 		ctx.fillStyle="#B22222";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -257,7 +356,7 @@ class EnemyMobile extends RectMobile { //moving enemies
 		ctx.fillStyle="#800000";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
-	
+
 	shoot(){
 		var theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), player.x + player.width/2 - (this.x + this.width/2));	//finds the angle to aim bullet
 		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(theta);
@@ -266,37 +365,43 @@ class EnemyMobile extends RectMobile { //moving enemies
 	}
 }
 
-class Bullet extends Rectangle { //the bullets
+class Bullet extends Rectangle {
 	constructor(x, y, dx, dy) {
 		super (x, y, 10, 10);
 		this.dx = dx;
 		this.dy = dy;
 	}
+
 	update() {
 		this.y += this.dy;
 		this.x += this.dx;
-
-		for(var i = 0; i < borderArray.length; i++){
-			if(checkCollisionX(this, borderArray[i])){	//checks for any horizontal collisions
-				this.dx *= -1;	//reflection
-			}
-			if(checkCollisionY(this, borderArray[i])){	//checks for any vertical collisions
-				this.dy *= -1;	//reflection
+		var bulletDown = this.y + this.height;
+		var bulletRight = this.x + this.width;
+		for (var i = 0; i < borderArray.length; i++) {
+			if(checkCollision(this, borderArray[i])){
+				if((bulletRight <= borderArray[i].x + this.dx && bulletRight >= borderArray[i].x - this.dx) || (this.x <= borderArray[i].x + borderArray[i].width - this.dx && this.x >= borderArray[i].x + borderArray[i].width + this.dx)){
+					/*Checks if the bullet hits from the left or right. The approach I took was a "margin-of-error" one, seeing the bullet
+					was just in the range of the left or right of the walls.  This prevents any bullets "jumping over" the boundaries of the barriers*/
+					this.dx *= -1;
+				}
+				if((bulletDown >= borderArray[i].y - this.dy && bulletDown <= borderArray[i].y + this.dy) || (this.y >= borderArray[i].y + borderArray[i].height + this.dy && this.y <= borderArray[i].y + borderArray[i].height - this.dy)){
+					this.dy *= -1;
+				}
 			}
 		}
 	}
+
 	render() {
 		ctx.fillStyle="#808000";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
-
 }
 
 class Border extends Rectangle{ //the outside walls
 	constructor(x,y,width, height){
 		super(x,y,width,height);
 	}
-	
+
 	render(){
 		ctx.fillStyle="#FFFFFF";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -307,7 +412,7 @@ class Energy extends Rectangle{ //gravityPoint refill pickup
 		constructor(x,y,width, height){
 		super(x,y,width,height);
 	}
-	
+
 	render(){
 		ctx.fillStyle="#7FFF00";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -320,16 +425,14 @@ object selected from begin to end (end not included). The original array will no
 //adding things
 var player = new Player(475, 475, 30, 30);
 //left/right, up/down, length, width
-var wallRight = new Border(950, 0, 30, 950);
+/* var wallRight = new Border(950, 0, 30, 950);
 var wallBottom = new Border(0, 950, 980, 30);
 var enemy1 = new Enemy(100, 100, 50, 50);
 var enemy2 = new Enemy(700, 700, 50, 50);
 var energyPickup1 = new Energy(200, 200, 20, 20);
 //x, y, lbound, rbound, ubound, dbound, length, width, xMove, yMove
 var mobileEnemy1 = new EnemyMobile(200, 800, 100, 800, 800, 800, 50, 50, 4, 0);
-var mobileEnemy2 = new EnemyMobile(800, 100, 200, 850, 50, 600, 50, 50, -2, 2);
-var border1 = new Border(0, 0, 0, window.innerHeight);
-var border2 = new Border(0,0,window.innerWidth, 0);
+var mobileEnemy2 = new EnemyMobile(800, 100, 200, 850, 50, 600, 50, 50, -2, 2); */
 var gravityBarBack = new RectColored (20, 20, 150, 15, "#FFFFFF")
 var gravityBar = new RectColored (20, 20, 150, 15, "#00FFFF")
 var fps = 0;
@@ -342,22 +445,29 @@ var playerArray = [];
 var enemyArray = [];
 var borderArray = [];
 var bulletArray = [];
-var playerArray = [];
 var enemyMobileArray = [];
 var energyArray = [];
 var invulnArray = [];
 
+var player = new Player(475, 400, 30, 30);
+var timer = 0;
+
+//arrays
+var rectArray = [];
+var playerArray = [];
+var enemyArray = [];
+var borderArray = [];
+var bulletArray = [];
+var enemyMobileArray = [];
+
+createLevel(0);
 //push arrays
 playerArray.push(player);
-borderArray.push(border1);
-borderArray.push(border2);
-borderArray.push(wallRight);
-borderArray.push(wallBottom);
-enemyArray.push(enemy1);
-enemyArray.push(enemy2);
-enemyMobileArray.push(mobileEnemy1);
-enemyMobileArray.push(mobileEnemy2);
-energyArray.push(energyPickup1);
+borderArray.push(new Border(0, -5 , window.innerWidth, 5));	//upper border
+borderArray.push(new Border(-5, 0, 5, window.innerHeight));	//left border
+borderArray.push(new Border(window.innerWidth, 0, 5, window.innerHeight));	//right border
+borderArray.push(new Border(0, window.innerHeight, window.innerWidth, 5));	//lower border
+
 rectArray.push(gravityBarBack);
 rectArray.push(gravityBar);
 var shootTimer = 0;
@@ -379,16 +489,15 @@ window.onload = function() {
 function main() {
 	//clear screen
 	ctx.fillStyle = "#110422";
-	//window.innerWidth, window.innerHeight
 	shootTimer += 1;
-	ctx.fillRect(0,0,950,950);
-	
+	ctx.fillRect(0,0, window.innerWidth, window.innerHeight);
+
 	fps += 1;
 	if (fps == 60) {
 		timer += 1;
 		fps = 0;
 	}
-	
+
 	//changes color of bar
 	if (forceStop == true) {
 		gravityBar.color = "#A9A9A9";
@@ -408,7 +517,6 @@ function main() {
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
 		enemyArray[i].render();
-		enemyArray[i].kill();
 		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			enemyArray[i].shoot();
@@ -437,9 +545,40 @@ function main() {
 	}
 	//text
 	ctx.fillStyle = "#F33";
-	ctx.font = "24px Times New Roman";
-	ctx.fillText("Time: ", 200, 35);
-	ctx.fillText(timer, 260, 35);
+	ctx.font = "24px Arial";
+	ctx.fillText("Level: " + player.level, window.innerWidth - 100, 35);
+	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
+	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
+		player.level++;
+		createLevel(player.level);
+	}
+}
+
+function createLevel(n) {	//this function is going to use levelData to create the nth level
+	rectArray = [];
+	enemyArray = [];
+	borderArray = [];
+	bulletArray = [];
+	enemyMobileArray = [];
+
+	if(n > MAX_LEVEL){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
+		n = 0;
+	}
+
+	n = "" + n;
+	timer = 0;
+	shootTimer = 0;
+
+	var newEnemies = levelData[n]["enemies"];	//gets the enemies from the nth level of levelData
+	var newBorders = levelData[n]["barriers"]; //gets the barriers/borders from the nth level of levelData
+
+	for(var i = 0; i < newEnemies.length; i++){	//searches through the enemies array of levelData
+		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
+	}
+
+	for(var i = 0; i < newBorders.length; i++){
+		borderArray.push(new Border(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
+	}
 }
 
 function keydown(e) {
@@ -491,12 +630,20 @@ function checkCollision(rect1, rect2) {
 			rect1.height + rect1.y > rect2.y);
 }
 
-function checkCollisionX(rect1, rect2) {
+function checkCollisionX(rect1, rect2) {	//takes the x-component of checkCollision
 	return  (rect1.x < rect2.x + rect2.width &&
 			rect1.x + rect1.width > rect2.x);
 }
 
-function checkCollisionY(rect1, rect2) {
+function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollision
 	return (rect1.y < rect2.y + rect2.height &&
 			rect1.height + rect1.y > rect2.y);
+}
+
+function isOpenX(rect1, rect2) {	//checks whether the x components of two rectangles are touching
+	return  !((rect1.x + rect1.width == rect2.x || rect1.x == rect2.x + rect2.width) && checkCollisionY(rect1, rect2));
+}
+
+function isOpenY(rect1, rect2) {	//checks whether the y componenets of two rectangles are touching
+	return  !((rect1.y + rect1.height == rect2.y || rect1.y == rect2.y + rect2.height) && checkCollisionX(rect1, rect2));
 }
