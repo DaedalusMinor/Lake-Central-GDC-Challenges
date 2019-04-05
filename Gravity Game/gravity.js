@@ -459,14 +459,6 @@ var invulnArray = [];
 var player = new Player(475, 400, 30, 30);
 var timer = 0;
 
-//arrays
-var rectArray = [];
-var playerArray = [];
-var enemyArray = [];
-var borderArray = [];
-var bulletArray = [];
-var enemyMobileArray = [];
-
 createLevel(0);
 //push arrays
 playerArray.push(player);
