@@ -285,20 +285,26 @@ class Player extends Rectangle {
 			}
 
 		}
+		//manage gravityPoints
 		if(this.condense && this.gravityPoints > 0){
-			this.gravityPoints -= 0.5;
+			this.gravityPoints -= 0.8;
 		}
 		else if(!this.condense && this.gravityPoints < 150){
 			this.gravityPoints += 0.3;
 		}
-
-		if(this.gravityPoints == 0) {
-			while (this.gravityPoints < 10) {
-
+			//bar cooldown when gravityPoints hits 0
+		if(this.gravityPoints <= 0) {
+			forceStop = true;
+			player.condense == false;
+		}
+		if(forceStop == true) {
+			this.condense == false;
+			if (this.gravityPoints >= 100) {
+				forceStop = false;
 			}
 		}
-
-		gravityBar.value = this.gravityPoints;
+	
+		gravityBar.width = this.gravityPoints;
 	}
 	render() {
 		if (this.condense == false) {
