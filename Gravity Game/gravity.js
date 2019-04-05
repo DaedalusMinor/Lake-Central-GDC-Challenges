@@ -2,7 +2,7 @@
 //var gravityBar = document.getElementById("gravityBar");
 //<progress id = "gravityBar" value = "150" max = "150" style = "position:absolute; top: 20px; left: 20px;"></progress>
 
-var MAX_LEVEL = 1;
+var MAX_LEVEL = 2;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -44,6 +44,14 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 	*/
 
 	"0" : { // level number
+		
+		player: {
+			x: 500,
+			y: 500,
+			width: 30,
+			height: 30
+		}, 
+		
 		barriers : [ //all the barrier objects contained within this level
 			{	//the attributes of each barrier object in this level
 				x : 150,
@@ -79,6 +87,13 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 	},
 
 	"1" : {
+		player: {
+			x: 500,
+			y: 500,
+			width: 30,
+			height: 30
+		}, 
+		
 		enemies: [
 			{
 				x: 300,
@@ -94,6 +109,40 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y: 400,
 				width: window.innerWidth,
 				height: 10
+			}
+		]
+	},
+	
+	"2" : {
+		player: {
+			x: 400,
+			y: 400,
+			width: 30,
+			height: 30
+		},
+		
+		enemies: [
+			{
+				x: 400,
+				y: 100,
+				width: 20,
+				height: 20
+			},
+			
+			{
+				x: 100,
+				y: 200,
+				width: 20,
+				height: 20
+			}
+		],
+		
+		barriers: [
+			{
+				x: 250,
+				y: 0,
+				width: 5,
+				height: window.innerHeight
 			}
 		]
 	}
@@ -250,7 +299,6 @@ class Player extends Rectangle {
 			}
 		}
 
-		/*
 		for (var i = 0; i < rectArray.length; i++) {
 			if(!isOpenX(this, rectArray[i])){
 				this.x = prevx;
@@ -259,7 +307,7 @@ class Player extends Rectangle {
 				this.y = prevy;
 			}
 		}
-		*/
+
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
@@ -498,7 +546,7 @@ function main() {
 	}
 
 	//changes color of bar
-	if (forceStop == true) {
+	if (forceStop == true){
 		gravityBar.color = "#A9A9A9";
 	}
 	else
@@ -509,10 +557,10 @@ function main() {
 		rectArray[i].update();
 		rectArray[i].render();
 	}
-	for (var i = 0; i < playerArray.length; i++) {
-		playerArray[i].update();
-		playerArray[i].render();
-	}
+	
+	player.update();
+	player.render();
+		
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
 		enemyArray[i].render();
@@ -560,7 +608,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	bulletArray = [];
 	enemyMobileArray = [];
 
-	if(n > MAX_LEVEL){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
+	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
 		n = 0;
 	}
 
@@ -570,6 +618,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 
 	var newEnemies = levelData[n]["enemies"];	//gets the enemies from the nth level of levelData
 	var newBorders = levelData[n]["barriers"]; //gets the barriers/borders from the nth level of levelData
+	var newPlayer = levelData[n]["player"];
 
 	for(var i = 0; i < newEnemies.length; i++){	//searches through the enemies array of levelData
 		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
@@ -578,6 +627,8 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	for(var i = 0; i < newBorders.length; i++){
 		borderArray.push(new Border(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
 	}
+	
+	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height);
 }
 
 function keydown(e) {
