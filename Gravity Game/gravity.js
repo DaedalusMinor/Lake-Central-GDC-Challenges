@@ -250,6 +250,7 @@ class Player extends Rectangle {
 			}
 		}
 
+		/*
 		for (var i = 0; i < rectArray.length; i++) {
 			if(!isOpenX(this, rectArray[i])){
 				this.x = prevx;
@@ -258,7 +259,7 @@ class Player extends Rectangle {
 				this.y = prevy;
 			}
 		}
-
+		*/
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
