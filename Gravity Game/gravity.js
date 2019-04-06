@@ -52,7 +52,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}, 
 		
-		barriers : [ //all the barrier objects contained within this level
+		barriers : [ //all the barrier objects contained within this level, except for the other barriers
 			{	//the attributes of each barrier object in this level
 				x : 150,
 				y : 140,
@@ -155,7 +155,6 @@ class Rectangle { //the base rectangle
 		this.y = y;
 		this.width = w;
 		this.height = h;
-		this.color = "#FFFFFF";
 
 		this.left = false;
 		this.right = false;
@@ -163,7 +162,18 @@ class Rectangle { //the base rectangle
 		this.down = false;
 	}
 	update(){
+		this.render();
+	}
+	render() {
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
 
+class RectColored extends Rectangle { //rectangles that you can modify the color of
+	constructor(x, y, w, h, color) {
+		super(x, y, w, h);
+		this.color = color;
 	}
 	render() {
 		ctx.fillStyle = this.color;
@@ -171,36 +181,9 @@ class Rectangle { //the base rectangle
 	}
 }
 
-class RectColored { //rectangles that you can modify the color of
-	constructor(x, y, w, h, color) {
-		this.x = x;
-		this.y = y;
-		this.width = w;
-		this.height = h;
-		this.color = color;
-
-		this.left = false;
-		this.right = false;
-		this.up = false;
-		this.down = false;
-	}
-	update(){
-
-	}
-	render() {
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x, this.y, this.width, this.height, this.color);
-	}
-}
-
-class RectMobile { //base moving rectangle
-	constructor(x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.color = "#FFFFFF";
-
+class RectMobile extends Rectangle { //base moving rectangle
+	constructor(x, y, lBound, rBound, uBound, dBound, w, h, xMove, yMove) {
+		super(x, y, width, height);
 		this.lBound = lBound;
 		this.rBound = rBound;
 		this.uBound = uBound;
@@ -238,17 +221,17 @@ class RectMobile { //base moving rectangle
 	}
 
 	render() {
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = "#FFFFFF";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
 class Player extends Rectangle {
-	constructor(x, y, width, height) {
+	constructor(x, y, width, height, lv) {
 		super(x, y, width, height);
 		this.condense = false;
 		this.gravityPoints = 150;
-		this.level = 0;
+		this.level = lv;
 	}
 
 	update() {
@@ -268,47 +251,24 @@ class Player extends Rectangle {
 			this.y += 5;
 		}
 
+		//collision handling
 		for (var i = 0; i < enemyArray.length; i++) {
-				if(!isOpenX(this, enemyArray[i])){
-					this.x = prevx;
-				}
-				if(!isOpenY(this, enemyArray[i])){
-					this.y = prevy;
-				}
+			if(checkCollision(this, enemyArray[i])){
+				eject(this, enemyArray[i]);
+			}
 		}
-
-		var playerRight = this.x + this.width;
-		var playerDown = this.y + this.height;
-		for (var i = 0; i < borderArray.length; i++) {
-			if(checkCollision(this, borderArray[i])){
-				if((playerRight <= borderArray[i].x + 5 && playerRight >= borderArray[i].x - 5) || (this.x >= borderArray[i].x + borderArray[i].width - 5 && this.x <= borderArray[i].x + borderArray[i].width + 5)){
-					this.x = prevx;
-				}
-				if((playerDown >= borderArray[i].y - 5 && playerDown <= borderArray[i].y + 5) || (this.y <= borderArray[i].y + borderArray[i].height + 5 && this.y >= borderArray[i].y + borderArray[i].height - 5)){
-					this.y = prevy;
-				}
+		for (var i = 0; i < barrierArray.length; i++) {
+			if(checkCollision(this, barrierArray[i])){
+				eject(this, barrierArray[i]);
 			}
 		}
 
 		for (var i = 0; i < enemyMobileArray.length; i++) {
-			if(!isOpenX(this, enemyMobileArray[i])){
-				this.x = prevx;
-			}
-			if(!isOpenY(this, enemyMobileArray[i])){
-				this.y = prevy;
-			}
+			if(checkCollision(this, enemyMobileArray[i])){
+				eject(this, enemyMobileArray[i]);
+			}			
 		}
-
-		/*
-		for (var i = 0; i < rectArray.length; i++) {
-			if(!isOpenX(this, rectArray[i])){
-				this.x = prevx;
-			}
-			if(!isOpenY(this, rectArray[i])){
-				this.y = prevy;
-			}
-		}
-*/
+		
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				location.reload();
@@ -355,11 +315,11 @@ class Player extends Rectangle {
 		}
 	
 		gravityBar.width = this.gravityPoints;
+		this.render();
 	}
 	render() {
-		if (this.condense == false) {
+		if (this.condense == false) 
 			ctx.fillStyle = "#FFFFFF";
-		}
 		else
 			ctx.fillStyle = "#00FFFF";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -379,18 +339,21 @@ class Enemy extends Rectangle {
 				bulletArray.splice(i, 1);
 			}
 		}
+		if(shootTimer % FIRE_INTERVAL == 0){
+			shootTimer = 0;
+			this.shoot();
+		}
+		this.render();
 	}
-
-	render() {
-		ctx.fillStyle="#B22222";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-
 	shoot(){
 		var theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), player.x + player.width/2 - (this.x + this.width/2));	//finds the angle to aim bullet
 		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(theta);
 		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(theta);	//makes sure the bullet doesn't immediately shoot the enemy it came from
 		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(theta), 4*Math.sin(theta)));
+	}
+	render() {
+		ctx.fillStyle="#B22222";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
@@ -400,12 +363,16 @@ class EnemyMobile extends RectMobile { //moving enemies
 		this.buffer = 40;
 	}
 
-	kill() {
+	update() {
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
 				bulletArray.splice(i, 1);
 			}
+		}
+		if(shootTimer % FIRE_INTERVAL == 0){
+			shootTimer = 0;
+			this.shoot();
 		}
 	}
 	render() {
@@ -433,18 +400,19 @@ class Bullet extends Rectangle {
 		this.x += this.dx;
 		var bulletDown = this.y + this.height;
 		var bulletRight = this.x + this.width;
-		for (var i = 0; i < borderArray.length; i++) {
-			if(checkCollision(this, borderArray[i])){
-				if((bulletRight <= borderArray[i].x + this.dx && bulletRight >= borderArray[i].x - this.dx) || (this.x <= borderArray[i].x + borderArray[i].width - this.dx && this.x >= borderArray[i].x + borderArray[i].width + this.dx)){
+		for (var i = 0; i < barrierArray.length; i++) {
+			if(checkCollision(this, barrierArray[i])){
+				if((bulletRight <= barrierArray[i].x + this.dx && bulletRight >= barrierArray[i].x - this.dx) || (this.x <= barrierArray[i].x + barrierArray[i].width - this.dx && this.x >= barrierArray[i].x + barrierArray[i].width + this.dx)){
 					/*Checks if the bullet hits from the left or right. The approach I took was a "margin-of-error" one, seeing the bullet
 					was just in the range of the left or right of the walls.  This prevents any bullets "jumping over" the boundaries of the barriers*/
 					this.dx *= -1;
 				}
-				if((bulletDown >= borderArray[i].y - this.dy && bulletDown <= borderArray[i].y + this.dy) || (this.y >= borderArray[i].y + borderArray[i].height + this.dy && this.y <= borderArray[i].y + borderArray[i].height - this.dy)){
+				if((bulletDown >= barrierArray[i].y - this.dy && bulletDown <= barrierArray[i].y + this.dy) || (this.y >= barrierArray[i].y + barrierArray[i].height + this.dy && this.y <= barrierArray[i].y + barrierArray[i].height - this.dy)){
 					this.dy *= -1;
 				}
 			}
 		}
+		this.render();
 	}
 
 	render() {
@@ -453,25 +421,15 @@ class Bullet extends Rectangle {
 	}
 }
 
-class Border extends Rectangle{ //the outside walls
+class Wall extends Rectangle{ //the walls
 	constructor(x,y,width, height){
 		super(x,y,width,height);
 	}
-
-	render(){
-		ctx.fillStyle="#FFFFFF";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
 }
 
-class Energy extends Rectangle{ //gravityPoint refill pickup
-		constructor(x,y,width, height){
-		super(x,y,width,height);
-	}
-
-	render(){
-		ctx.fillStyle="#7FFF00";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
+class Energy extends RectColored { //gravityPoint refill pickup
+		constructor(x,y,width,height){
+		super(x,y,width,height,"#7FFF00");
 	}
 }
 
@@ -499,22 +457,18 @@ var forceStop = false;
 var rectArray = [];
 var playerArray = [];
 var enemyArray = [];
-var borderArray = [];
+var barrierArray = [];
 var bulletArray = [];
 var enemyMobileArray = [];
 var energyArray = [];
 var invulnArray = [];
 
-var player = new Player(475, 400, 30, 30);
+var player = new Player(475, 400, 30, 30, 0);
 var timer = 0;
 
 createLevel(0);
 //push arrays
 playerArray.push(player);
-borderArray.push(new Border(0, -5 , window.innerWidth, 5));	//upper border
-borderArray.push(new Border(-5, 0, 5, window.innerHeight));	//left border
-borderArray.push(new Border(window.innerWidth, 0, 5, window.innerHeight));	//right border
-borderArray.push(new Border(0, window.innerHeight, window.innerWidth, 5));	//lower border
 
 rectArray.push(gravityBarBack);
 rectArray.push(gravityBar);
@@ -527,7 +481,6 @@ window.onload = function() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	ctx = canvas.getContext("2d");
-	//setInterval(enemyShoots2,3250);
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
 	//refresh rate / fps
@@ -553,48 +506,31 @@ function main() {
 	else
 		gravityBar.color = "#00FFFF"
 
-	//update and render
+	//The update() function calls render() and shoot()
 	for (var i = 0; i < rectArray.length; i++) {
 		rectArray[i].update();
-		rectArray[i].render();
-	}
-	
-	player.update();
-	player.render();
-		
+	}	
+	player.update();	
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
-		enemyArray[i].render();
-		if(shootTimer % FIRE_INTERVAL == 0){
-			shootTimer = 0;
-			enemyArray[i].shoot();
-		}
 	}
-	for (var i = 0; i < borderArray.length; i++){
-		borderArray[i].update();
-		borderArray[i].render();
+	for (var i = 0; i < barrierArray.length; i++){
+		barrierArray[i].update();
 	}
 	for (var i = 0; i < bulletArray.length; i++){
 		bulletArray[i].update();
-		bulletArray[i].render();
 	}
 	for (var i = 0; i < energyArray.length; i++){
 		energyArray[i].update();
-		energyArray[i].render();
 	}
 	for (var i = 0; i < enemyMobileArray.length; i++){
 		enemyMobileArray[i].update();
-		enemyMobileArray[i].render();
-		enemyMobileArray[i].kill();
-		if(shootTimer % FIRE_INTERVAL == 0){
-			shootTimer = 0;
-			enemyMobileArray[i].shoot();
-		}
 	}
+	
 	//text
-	ctx.fillStyle = "#F33";
+	ctx.fillStyle = "#FF3333";
 	ctx.font = "24px Arial";
-	ctx.fillText("Level: " + player.level, window.innerWidth - 100, 35);
+	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
 	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
 		player.level++;
@@ -605,7 +541,7 @@ function main() {
 function createLevel(n) {	//this function is going to use levelData to create the nth level
 	rectArray = [];
 	enemyArray = [];
-	borderArray = [];
+	barrierArray = [];
 	bulletArray = [];
 	enemyMobileArray = [];
 
@@ -613,23 +549,27 @@ function createLevel(n) {	//this function is going to use levelData to create th
 		n = 0;
 	}
 
-	n = "" + n;
+	nStr = "" + n;
 	timer = 0;
 	shootTimer = 0;
 
-	var newEnemies = levelData[n]["enemies"];	//gets the enemies from the nth level of levelData
-	var newBorders = levelData[n]["barriers"]; //gets the barriers/borders from the nth level of levelData
-	var newPlayer = levelData[n]["player"];
+	var newEnemies = levelData[nStr]["enemies"];	//gets the enemies from the nth level of levelData
+	var newBorders = levelData[nStr]["barriers"]; //gets the barriers/borders from the nth level of levelData
+	var newPlayer = levelData[nStr]["player"];
 
 	for(var i = 0; i < newEnemies.length; i++){	//searches through the enemies array of levelData
 		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
 	}
-
+	//generates the outside walls, since they will be in every level
+	barrierArray.push(new Wall(0, 0, window.innerWidth, 0));	//upper border
+	barrierArray.push(new Wall(0, 0, 0, window.innerHeight));	//left border
+	barrierArray.push(new Wall(window.innerWidth, 0, 0, window.innerHeight));	//right border
+	barrierArray.push(new Wall(0, window.innerHeight, window.innerWidth, 0));	//lower border
 	for(var i = 0; i < newBorders.length; i++){
-		borderArray.push(new Border(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
+		barrierArray.push(new Wall(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
 	}
 	
-	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height);
+	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height, n);
 }
 
 function keydown(e) {
@@ -675,26 +615,65 @@ function keyup(e) {
 }
 
 function checkCollision(rect1, rect2) {
-	return  (rect1.x < rect2.x + rect2.width &&
-			rect1.x + rect1.width > rect2.x &&
-			rect1.y < rect2.y + rect2.height &&
-			rect1.height + rect1.y > rect2.y);
+	return  (checkCollisionX(rect1, rect2) && checkCollisionY(rect1, rect2));
 }
-
 function checkCollisionX(rect1, rect2) {	//takes the x-component of checkCollision
 	return  (rect1.x < rect2.x + rect2.width &&
 			rect1.x + rect1.width > rect2.x);
 }
-
 function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollision
 	return (rect1.y < rect2.y + rect2.height &&
 			rect1.height + rect1.y > rect2.y);
+}
+
+function eject(pushed, pusher) {
+	/** A function to handle collision between two objects. 
+	*	If object1 (pushed) is inside of object2 (pusher), object1 is pushed a small amount in each cardinal
+	*	direction to see if there is anywhere object1 is no longer touching object2.
+	*	If it doesn't find any direction which removes it, it increases the push radius and tries again.
+	*	Upon finding the correct direction(s), object1 is moved to where it was discovered to no longer
+	*	be touching object2.			- Wight_
+	*/
+	var delta = 0.01;
+	var flags = [false, false, false, false];
+	do
+	{
+		pushed.x += delta;
+		if (!checkCollision(pushed, pusher)){
+			flags[0] = true;
+		}
+		pushed.x -= 2*delta;
+		if (!checkCollision(pushed, pusher)){
+			flags[1] = true;
+		}
+		pushed.x += delta;
+		pushed.y += delta;
+		if (!checkCollision(pushed, pusher)){
+			flags[2] = true;
+		}
+		pushed.y -= 2*delta;
+		if (!checkCollision(pushed, pusher)){
+			flags[3] = true;
+		}
+		pushed.y += delta;
+		delta += 0.01;
+	} while (!flags[0] && !flags[1] && !flags[2] && !flags[3]);
+	if (flags[0]) {
+		pushed.x += delta;
+	} else if (flags[1]) {
+		pushed.x -= delta;
+	}
+	if (flags[2]) {
+		pushed.y += delta;
+	} else if (flags[3]) {
+		pushed.y -= delta;
+	}
 }
 
 function isOpenX(rect1, rect2) {	//checks whether the x components of two rectangles are touching
 	return  !((rect1.x + rect1.width == rect2.x || rect1.x == rect2.x + rect2.width) && checkCollisionY(rect1, rect2));
 }
 
-function isOpenY(rect1, rect2) {	//checks whether the y componenets of two rectangles are touching
+function isOpenY(rect1, rect2) {	//checks whether the y components of two rectangles are touching
 	return  !((rect1.y + rect1.height == rect2.y || rect1.y == rect2.y + rect2.height) && checkCollisionX(rect1, rect2));
 }
