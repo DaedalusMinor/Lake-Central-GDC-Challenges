@@ -470,8 +470,6 @@ createLevel(0);
 //push arrays
 playerArray.push(player);
 
-rectArray.push(gravityBarBack);
-rectArray.push(gravityBar);
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
 
@@ -568,6 +566,9 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	for(var i = 0; i < newBorders.length; i++){
 		barrierArray.push(new Wall(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
 	}
+	// Having these here updates the gravity bar on every level
+	rectArray.push(gravityBarBack);
+	rectArray.push(gravityBar);
 	
 	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height, n);
 }
