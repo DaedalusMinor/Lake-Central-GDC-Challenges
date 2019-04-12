@@ -170,9 +170,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			}
 		], 
 		barriers: [
-		{
-			
-		}
+
 		], 
 		mobileEnemies: [
 		{
@@ -208,27 +206,27 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}, 
 		invisWalls: [
-		{
+			{
+				x: 250, 
+				y: 0, 
+				width: 5, 
+				height: 90, 
+				color: "#00ff99"
+			}, 
+			{
+				x: 1680, 
+				y: 200, 
+				width: 5, 
+				height: 200, 
+				color: "#00ff99"
+			}, 
+			{
 			x: 250, 
-			y: 0, 
+			y: 800, 
 			width: 5, 
-			height: 90, 
+			height: 180, 
 			color: "#00ff99"
-		}, 
-		{
-			x: 1680, 
-			y: 200, 
-			width: 5, 
-			height: 200, 
-			color: "#00ff99"
-		}, 
-		{
-		x: 250, 
-		y: 800, 
-		width: 5, 
-		height: 180, 
-		color: "#00ff99"
-		}
+			}
 		], 
 		enemies: [
 			{
@@ -275,9 +273,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			}
 		], 
 		mobileEnemies: [
-		{
-			
-		}
+
 		]
 	}, 
 	"3" : {
@@ -340,12 +336,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		}
 		],
 		barriers: [
-		{
-		}
 		], 
 		mobileEnemies: [
-		{
-		}
 		
 		]
 	}, 
@@ -395,14 +387,10 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		}
 		], 
 		invisWalls: [
-		{
-			
-		}
+
 		], 
 		mobileEnemies: [
-		{
-			
-		}
+
 		]
 		
 	}
@@ -592,17 +580,17 @@ class Player extends Rectangle {
 		if (this.condense == false) 
 			ctx.fillStyle = "#00cc00";
 		else {
-		ctx.fillStyle = "#00FFFF";
+			ctx.fillStyle = "#00FFFF";
 		}
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
 class Enemy extends Rectangle {
-		constructor(x, y, width, height) {
-			super(x, y, width, height);
-			this.buffer = this.width + 15;
-		}
+	constructor(x, y, width, height) {
+		super(x, y, width, height);
+		this.buffer = this.width + 15;
+	}
 
 	update(){
 		for (var i = 0; i < bulletArray.length; i++) {
@@ -695,8 +683,6 @@ class Bullet extends Rectangle {
 		
 			ctx.fillStyle = "#808000";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
-		
-		
 	}
 }
 
@@ -850,6 +836,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 
 	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
 		n = 0;
+		player.level = 0;
 	}
 
 	nStr = "" + n;
@@ -876,6 +863,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	for(var i = 0; i < newEnemies.length; i++){	//searches through the enemies array of levelData
 		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
 	}
+	console.log(enemyMobileArray.length);
 	//generates the outside walls, since they will be in every level
 	barrierArray.push(new Wall(0, 0, window.innerWidth, 0));	//upper border
 	barrierArray.push(new Wall(0, 0, 0, window.innerHeight));	//left border
