@@ -2,7 +2,7 @@
 //var gravityBar = document.getElementById("gravityBar");
 //<progress id = "gravityBar" value = "150" max = "150" style = "position:absolute; top: 20px; left: 20px;"></progress>
 
-var MAX_LEVEL = 2;
+var MAX_LEVEL = 4;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -17,7 +17,6 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 	just like a regular var.  Also notice that the pattern is nested in levelData below, meaning we have multiple
 	JSON objects in our JSON object. <INCEPTION JOKE TAKEN OUT>.  I also stored some arrays in there.
 	The basic format of levelData is:
-
 	"level number" : {
 		class(enemies, walls, etc.) : [
 			{
@@ -25,13 +24,10 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y: <value>
 				other parameters for constructor method using the same pattern
 			},
-
 			{
 				...
 			},
-
 			...
-
 			{
 				...
 			}
@@ -42,7 +38,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		...
 	}
 	*/
-
+		// The Screen size is 1930 by 980
 	"0" : { // level number
 		
 		player: {
@@ -52,15 +48,25 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}, 
 		
+		invisWalls: [
+			{
+				x: 150,
+				y: 140,
+				width: 20,
+				height: 140,
+				color: "#00ff99"
+			}, 
+			{
+				x: 800, 
+				y: 320, 
+				width: 200, 
+				height: 20, 
+				color: "#00ff99"
+			}
+		],
+		
 		barriers : [ //all the barrier objects contained within this level, except for the other barriers
 			{	//the attributes of each barrier object in this level
-				x : 150,
-				y : 140,
-				width : 20,
-				height : 140
-			},
-
-			{
 				x : window.innerWidth,
 				y : 405,
 				width : 140,
@@ -72,27 +78,82 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y : 140,
 				width : 120,
 				height : 10
+			}, 
+			{
+				x: 600, 
+				y: 740, 
+				width: 30, 
+				height: 100
 			}
 		],
 
 		enemies : [
 			{
-				x : 0,
-				y : 0,
+				x : 300,
+				y : 60,
 				width : 20,
 				height : 20
+			}, 
+			{
+				x: 50, 
+				y: 700, 
+				width: 30,
+				height: 30
 			}
+		], 
+		mobileEnemies: [
+		{
+			x: 1300, 
+			y: 400, 
+			lBound: 1200, 
+			rBound: 1600, 
+			uBound: 400, 
+			dBound: 400, 
+			width: 50,
+			height: 50, 
+			xMove: 4, 
+			yMove: 0
+			
+			/* x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove
+			 EXPLANATION:
+				xMove is a variable that holds the horizontal speed (set to 0 if you want to move straight vertically)
+				yMove is a variable that holds the vertical speed (set to 0 if you want to move straight horizontally)
+				lBound is the left most x coordinate that determines when move will turn around
+				rBound is the right most x coordinate that determines when move will turn around
+				uBound is the upper most y coordinate that determines when move will start going down
+				dBound is the lower most y coordinate that determines when move will start going up
+			*/
+		}
 		]
-
+		
 	},
 
 	"1" : {
 		player: {
+			
 			x: 500,
 			y: 500,
 			width: 30,
 			height: 30
+			
 		}, 
+		
+		invisWalls: [
+		{
+			x: 500,
+			y: 400,
+			width: window.innerWidth,
+			height: 10,
+			color: "#00ff99"
+		}, 
+		{
+			x: 200, 
+			y: 700, 
+			width: 10, 
+			height: window.innerHeight, 
+			color: "#00ff99"
+		}
+		],
 		
 		enemies: [
 			{
@@ -100,30 +161,78 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y: 400,
 				width: 20,
 				height: 20
-			}
-		],
-
-		barriers: [
+			}, 
 			{
-				x: 400,
-				y: 400,
-				width: window.innerWidth,
-				height: 10
+				x: 100,
+				y: 100, 
+				width: 20, 
+				height: 20
 			}
+		], 
+		barriers: [
+		{
+			
+		}
+		], 
+		mobileEnemies: [
+		{
+			x: 800, 
+			y: 100, 
+			lBound: 800, 
+			rBound: 800, 
+			uBound: 300, 
+			dBound: 100, 
+			width: 30, 
+			height: 30, 
+			xMove: 0, 
+			yMove: 10
+			/* x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove
+			 EXPLANATION:
+				xMove is a variable that holds the horizontal speed (set to 0 if you want to move straight vertically)
+				yMove is a variable that holds the vertical speed (set to 0 if you want to move straight horizontally)
+				lBound is the left most x coordinate that determines when move will turn around
+				rBound is the right most x coordinate that determines when move will turn around
+				uBound is the upper most y coordinate that determines when move will start going down
+				dBound is the lower most y coordinate that determines when move will start going up
+			*/
+		}
+		
 		]
 	},
 	
 	"2" : {
 		player: {
-			x: 400,
-			y: 400,
+			x: 965, 
+			y: 490,
 			width: 30,
 			height: 30
-		},
-		
+		}, 
+		invisWalls: [
+		{
+			x: 250, 
+			y: 0, 
+			width: 5, 
+			height: 90, 
+			color: "#00ff99"
+		}, 
+		{
+			x: 1680, 
+			y: 200, 
+			width: 5, 
+			height: 200, 
+			color: "#00ff99"
+		}, 
+		{
+		x: 250, 
+		y: 800, 
+		width: 5, 
+		height: 180, 
+		color: "#00ff99"
+		}
+		], 
 		enemies: [
 			{
-				x: 400,
+				x: 900,
 				y: 100,
 				width: 20,
 				height: 20
@@ -134,17 +243,168 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y: 200,
 				width: 20,
 				height: 20
+			},
+			
+			{
+				x: 1830, 
+				y: 200, 
+				width: 20, 
+				height: 20
 			}
+			
 		],
 		
 		barriers: [
 			{
 				x: 250,
-				y: 0,
+				y: 91,
 				width: 5,
-				height: window.innerHeight
+				height: 709, 
+			}, 
+			{
+				x: 1680, 
+				y: 0, 
+				width: 5, 
+				height: 200
+			},
+			{
+				x: 1680, 
+				y: 400, 
+				width: 5, 
+				height: 580 //400 + what = 980
 			}
+		], 
+		mobileEnemies: [
+		{
+			
+		}
 		]
+	}, 
+	"3" : {
+		player: {
+			x: 970, 
+			y: 500, 
+			width: 20, 
+			height: 20
+		},
+		invisWalls: [
+		{// left wall
+			x: 925, 
+			y: 460, 
+			width: 10, 
+			height: 100,
+			color: "#00ff99" 
+		},
+		{//the bottom wall
+			x: 935, 
+			y: 550, 
+			width: 90, 
+			height: 10, 
+			color: "#00ff99"
+		}, 
+		
+		{// right wall
+			x: 1025, 
+			y: 460, 
+			width: 10, 
+			height: 100,
+			color: "#00ff99" 
+		},
+		
+		{//the top wall
+			x: 935,  
+			y: 460, 
+			width: 90, 
+			height: 10,
+			color: "#00ff99"
+		}
+		],
+		enemies: [
+		{
+			x: 200, 
+			y: 100,
+			width: 60, 
+			height: 60
+		}, 
+		{
+			x: 900, 
+			y: 100,
+			width: 60, 
+			height: 60
+		}, 
+		{
+			x: 1300, 
+			y: 700,
+			width: 60, 
+			height: 60
+		}
+		],
+		barriers: [
+		{
+		}
+		], 
+		mobileEnemies: [
+		{
+		}
+		
+		]
+	}, 
+	"4" : {
+		player: {
+			x: 400, 
+			y: 400, 
+			width: 75, 
+			height: 75
+		}, 
+		enemies: [
+		{
+			x: 350,
+			y: 70, 
+			width: 30, 
+			height: 30
+		},
+		
+		{
+			x: 70,
+			y: 900, 
+			width: 30, 
+			height: 30
+		}, 
+		
+		{
+			x: 1730, 
+			y: 70, 
+			width: 30, 
+			height: 30
+		}
+		], 
+		barriers: [
+		{
+			x: 250, 
+			y: 80, 
+			width: 20, 
+			height: 200
+			
+		}, 
+		
+		{
+			x: 800, 
+			y: 400, 
+			width : 300, 
+			height: 20
+		}
+		], 
+		invisWalls: [
+		{
+			
+		}
+		], 
+		mobileEnemies: [
+		{
+			
+		}
+		]
+		
 	}
 }
 
@@ -181,15 +441,20 @@ class RectColored extends Rectangle { //rectangles that you can modify the color
 	}
 }
 
-class RectMobile extends Rectangle { //base moving rectangle
+class RectMobile{ //base moving rectangle
 	constructor(x, y, lBound, rBound, uBound, dBound, w, h, xMove, yMove) {
-		super(x, y, width, height);
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
 		this.lBound = lBound;
 		this.rBound = rBound;
 		this.uBound = uBound;
 		this.dBound = dBound;
 		this.xMove = xMove;
 		this.yMove = yMove;
+		
+		
 	}
 
 	/* EXPLANATION:
@@ -218,6 +483,7 @@ class RectMobile extends Rectangle { //base moving rectangle
 			this.yMove *= -1;
 			this.y += this.yMove;
 		}
+		
 	}
 
 	render() {
@@ -262,7 +528,11 @@ class Player extends Rectangle {
 				eject(this, barrierArray[i]);
 			}
 		}
-
+		for (var i = 0; i < invisArray.length; i++) {
+			if(checkCollision(this, invisArray[i])){
+				eject(this, invisArray[i]);
+			}
+		}
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			if(checkCollision(this, enemyMobileArray[i])){
 				eject(this, enemyMobileArray[i]);
@@ -271,8 +541,9 @@ class Player extends Rectangle {
 		
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
-				location.reload();
+				createLevel(player.level); //location.reload(); or createLevel(player.level) ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				this.gravityPoints = 150;
+				shootTimer = 1;
 			}
 			if(this.condense && this.gravityPoints > 0){
 				var xDist = this.x + this.width/2 - bulletArray[i].x;
@@ -319,9 +590,10 @@ class Player extends Rectangle {
 	}
 	render() {
 		if (this.condense == false) 
-			ctx.fillStyle = "#FFFFFF";
-		else
-			ctx.fillStyle = "#00FFFF";
+			ctx.fillStyle = "#00cc00";
+		else {
+		ctx.fillStyle = "#00FFFF";
+		}
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
@@ -358,22 +630,24 @@ class Enemy extends Rectangle {
 }
 
 class EnemyMobile extends RectMobile { //moving enemies
-	constructor(x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove) {
-		super (x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove);
+	constructor(x, y, lBound, rBound, uBound, dBound, w, height, xMove, yMove) {
+		super (x, y, lBound, rBound, uBound, dBound, w, height, xMove, yMove);
 		this.buffer = 40;
 	}
 
 	update() {
+		super.update();
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
 				bulletArray.splice(i, 1);
 			}
 		}
-		if(shootTimer % FIRE_INTERVAL == 0){
+		if(shootTimer % FIRE_INTERVAL == 0){ 
 			shootTimer = 0;
 			this.shoot();
 		}
+		this.render();
 	}
 	render() {
 		ctx.fillStyle="#800000";
@@ -412,12 +686,17 @@ class Bullet extends Rectangle {
 				}
 			}
 		}
+		
+		
 		this.render();
 	}
 
 	render() {
-		ctx.fillStyle="#808000";
+		
+			ctx.fillStyle = "#808000";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
+		
+		
 	}
 }
 
@@ -432,7 +711,21 @@ class Energy extends RectColored { //gravityPoint refill pickup
 		super(x,y,width,height,"#7FFF00");
 	}
 }
-
+class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
+	constructor(x,y,width,height, color){
+		super(x,y,width,height,"#00ff99");
+		this.color = color;
+	}
+	update()
+	{
+	this.render();
+	}
+	render()
+	{
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
 /* arr.slice (1;0) The slice() method returns a shallow copy of a portion of an array
 object selected from begin to end (end not included). The original array will not be modified.*/
 
@@ -447,28 +740,34 @@ var energyPickup1 = new Energy(200, 200, 20, 20);
 //x, y, lbound, rbound, ubound, dbound, length, width, xMove, yMove
 var mobileEnemy1 = new EnemyMobile(200, 800, 100, 800, 800, 800, 50, 50, 4, 0);
 var mobileEnemy2 = new EnemyMobile(800, 100, 200, 850, 50, 600, 50, 50, -2, 2); */
-var gravityBarBack = new RectColored (20, 20, 150, 15, "#FFFFFF")
-var gravityBar = new RectColored (20, 20, 150, 15, "#00FFFF")
+var gravityBarBack = new RectColored (20, 20, 150, 15, "#FFFFFF");
+var gravityBar = new RectColored (20, 20, 150, 15, "#00FFFF");
 var fps = 0;
 var timer = 0;
 var forceStop = false;
+
+var testthis = new RectMobile(1000, 1000, 900, 1500, 1000, 1000, 50, 50, 2, 0);
 
 //arrays
 var rectArray = [];
 var playerArray = [];
 var enemyArray = [];
 var barrierArray = [];
+var invisArray = [];
 var bulletArray = [];
 var enemyMobileArray = [];
 var energyArray = [];
 var invulnArray = [];
 
+enemyMobileArray.push(testthis);
+
 var player = new Player(475, 400, 30, 30, 0);
 var timer = 0;
 
-createLevel(0);
+createLevel(0); 
 //push arrays
 playerArray.push(player);
+
 
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
@@ -515,6 +814,9 @@ function main() {
 	for (var i = 0; i < barrierArray.length; i++){
 		barrierArray[i].update();
 	}
+	for (var i = 0; i < invisArray.length; i++){
+		invisArray[i].update();
+	}
 	for (var i = 0; i < bulletArray.length; i++){
 		bulletArray[i].update();
 	}
@@ -523,6 +825,7 @@ function main() {
 	}
 	for (var i = 0; i < enemyMobileArray.length; i++){
 		enemyMobileArray[i].update();
+		enemyMobileArray[i].render();
 	}
 	
 	//text
@@ -540,6 +843,8 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	rectArray = [];
 	enemyArray = [];
 	barrierArray = [];
+	invisArray = [];
+	energyArray = [];
 	bulletArray = [];
 	enemyMobileArray = [];
 
@@ -554,7 +859,20 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	var newEnemies = levelData[nStr]["enemies"];	//gets the enemies from the nth level of levelData
 	var newBorders = levelData[nStr]["barriers"]; //gets the barriers/borders from the nth level of levelData
 	var newPlayer = levelData[nStr]["player"];
-
+	var newInvisWall = levelData[nStr]["invisWalls"];
+	var newMobileEnemies = levelData[nStr]["mobileEnemies"];
+		
+		
+	
+	for(var i = 0; i < newInvisWall.length; i++){
+		invisArray.push(new InvisWall(newInvisWall[i].x, newInvisWall[i].y, newInvisWall[i].width, newInvisWall[i].height, newInvisWall[i].color));
+	}
+	
+	// x, y, lBound, rBound, uBound, dBound, width, height, xMove, yMove
+	for(var i = 0; i < newMobileEnemies.length; i++){
+		enemyMobileArray.push(new EnemyMobile(newMobileEnemies[i].x, newMobileEnemies[i].y, newMobileEnemies[i].lBound, newMobileEnemies[i].rBound, newMobileEnemies[i].uBound, newMobileEnemies[i].dBound, newMobileEnemies[i].width, newMobileEnemies[i].height, newMobileEnemies[i].xMove, newMobileEnemies[i].yMove));
+	}
+	
 	for(var i = 0; i < newEnemies.length; i++){	//searches through the enemies array of levelData
 		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
 	}
@@ -563,12 +881,13 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	barrierArray.push(new Wall(0, 0, 0, window.innerHeight));	//left border
 	barrierArray.push(new Wall(window.innerWidth, 0, 0, window.innerHeight));	//right border
 	barrierArray.push(new Wall(0, window.innerHeight, window.innerWidth, 0));	//lower border
+	// generates the energy bar on every level
+	
+	rectArray.push(gravityBarBack);
+	rectArray.push(gravityBar);
 	for(var i = 0; i < newBorders.length; i++){
 		barrierArray.push(new Wall(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
 	}
-	// Having these here updates the gravity bar on every level
-	rectArray.push(gravityBarBack);
-	rectArray.push(gravityBar);
 	
 	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height, n);
 }
