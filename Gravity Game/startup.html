@@ -26,13 +26,47 @@
 <body style = "margin: 0">
 		
 	<canvas id = "canvas" width = "0" height="0"></canvas>
-
-	<script src = "gravity.js"></script>
+	<!-- Hey! This is an HTML Comment!
+	I was a total rebel and threw the JavaScript code straight into HTML!-->
+	<script>
+	startScreenX = 0;
+	startScreenY = 0;
+	function tiles(){
+		ctx.fillStyle = "#110422";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = "#8844cc";
+		startScreenX += window.innerWidth / (44*50);
+		startScreenY += window.innerHeight / (44*50);
+		if (startScreenX >= window.innerWidth / 44){
+			startScreenX = 0;
+		}
+		if (startScreenY >= window.innerHeight / 44){
+			startScreenY = 0;
+		}
+		for (x = startScreenX; x <= window.innerWidth; x += window.innerWidth / 44){
+			ctx.fillRect(x, 0, 2, window.innerHeight * 2);
+		}
+		for (x = startScreenY; x <= window.innerHeight; x += window.innerHeight / 44){
+			ctx.fillRect(0, x, window.innerWidth * 2, 2);
+		}
+		ctx.textAlign = "center";
+		ctx.font = "100px Arial";
+		ctx.strokeStyle = "#ffffff";
+		ctx.strokeText("Gravitron", canvas.width/2, canvas.height/2);
+	}
+	window.onload = function() {
+		canvas = document.getElementById("canvas");
+		ctx = canvas.getContext("2d");
+		canvas.width = window.innerWidth - 4;
+		canvas.height = window.innerHeight - 4;
+		ctx.imageSmoothingEnabled = false;
+		setInterval(tiles, 100 / 6);
+	}
+	</script>
 	<div style="position:fixed; top:0px; left:0px; background-color: #110422A0; width: 100%; height: 100% "></div>
-	<div style = "width: 100%; position: absolute; top: 200px;"><p style = "width: 50%; margin-left: 25%; margin-right: 25%;"><font size: 25% style = "color: #FFFFFF; letter-spacing: 4px;">Gravitron</font></p></div>
 	<form>
-	<button formaction="S:\GDC\index.html"id = "start" class = "btn" ><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Play</font></button>
-	<button id = "help" class = "btn" ><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Help</font></button>
+	<button type = "submit" formaction = "gravity.html" id = "start" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Play</font></button>
+	<button type = "submit" formaction = "helpmenu.html" id = "help" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Help</font></button>
 	</form>
 </body>
 </html>
