@@ -3,7 +3,7 @@
 <style>
 	.gravityBarBack{
 		top: 50px;
-		position: fixed;
+		position: absolute;
 		margin-left: 10%;
 		height: 20px;
 		width: 100px;
@@ -11,22 +11,14 @@
 	}
 	.gravityBarFront{
 		top: 50px;
-		position: fixed;
+		position: absolute;
 		margin-left: 10%;
 		height: 20px;
 		width: 75px;
 		background-color: #00FFFF;
 	}
-	.you{
-		top: 170px;
-		position: absolute;
-		margin-left: 10%;
-		height: 25px;
-		width: 25px;
-		background-color: #00cc00;
-	}
 	.bullet{
-		top: 260px;
+		top: 220px;
 		position: absolute;
 		margin-left: 10%;
 		height: 25px;
@@ -34,7 +26,7 @@
 		background-color: #808000;
 	}
 	.permeableWall{
-		top: 340px;
+		top: 300px;
 		position: absolute;
 		margin-left: 10%;
 		height: 40px;
@@ -42,7 +34,7 @@
 		background-color: #00ff99;
 	}
 	.wall{
-		top: 430px;
+		top: 380px;
 		position: absolute;
 		margin-left: 10%;
 		height: 40px;
@@ -50,30 +42,67 @@
 		background-color: #FFFFFF;
 	}
 	.enemy{
-		top: 535px;
+		top: 460px;
 		position: absolute;
 		margin-left: 10%;
 		height: 25px;
 		width: 25px;
 		background-color: #B22222;
 	}
-	
-	
 </style>
-	<div style="position:fixed; top:0px; left:0px; background-color: #110422; width: 100%; height: 100% "></div>
+<body style = "margin: 0">
+<canvas id = "canvas" width = "0" height="0"></canvas>
+	<script>
+	startScreenX = 0;
+	startScreenY = 0;
+	function tiles(){
+		ctx.fillStyle = "#110422";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = "#7744aa";
+		startScreenX += window.innerWidth / (44*50);
+		startScreenY += window.innerHeight / (44*50);
+		if (startScreenX >= window.innerWidth / 44){
+			startScreenX = 0;
+		}
+		if (startScreenY >= window.innerHeight / 44){
+			startScreenY = 0;
+		}
+		for (x = startScreenX; x <= window.innerWidth; x += window.innerWidth / 44){
+			ctx.fillRect(x, 0, 2, window.innerHeight * 2);
+		}
+		for (x = startScreenY; x <= window.innerHeight; x += window.innerHeight / 44){
+			ctx.fillRect(0, x, window.innerWidth * 2, 2);
+		}
+		//draws the player
+		ctx.fillStyle = "#00cc00";
+		ctx.beginPath();
+		ctx.arc(canvas.width/10 + 15, 150, 15, 0, 2*Math.PI);
+		ctx.closePath();
+		ctx.fill();
+	}
+	window.onload = function() {
+		canvas = document.getElementById("canvas");
+		ctx = canvas.getContext("2d");
+		canvas.width = window.innerWidth - 4;
+		canvas.height = window.innerHeight - 4;
+		ctx.imageSmoothingEnabled = false;
+		setInterval(tiles, 100 / 6);
+	}
+	</script>
+</body>
 	<div class="gravityBarBack"></div>
 	<div class="gravityBarFront"></div>
-	<div style="top: 40px; color: white; letter-spacing: 4px; font-size: 20px; margin-left: 20%; position: relative;"><p>This bar displays the amount of time you can use your gravity, it slowly recharges but, be careful if it becomes empty you'll have to wait for it charge  back up. Use the gravity to send the bullets back at the enemies!</p></div>
-	<div class="you"></div>
-	<div style="top: 80px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>This is you. (Aren't you fabulous)</p></div>
+	<div style="top: 30px; color: white; letter-spacing: 4px; font-size: 20px; margin-left: 20%; position: absolute;"><p>This bar displays the amount of time you can use your gravity. It slowly recharges, but
+		be careful! If it becomes empty, you'll have to wait for it to charge back up. Use the gravity to send the bullets back at the enemies!</p></div>
+	<div style="top: 120px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>This is you. (Aren't you fabulous?)</p></div>
 	<div class="bullet"></div>
-	<div style="top: 120px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>This is a bullet, if it hits you, you die.</p></div>
+	<div style="top: 200px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>This is a bullet. If it hits you, you die.</p></div>
 	<div class="permeableWall"></div>
-	<div style="top: 160px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>This is a wall that bullets can pass through but, you can't.</p></div>
+	<div style="top: 280px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>This is a wall that bullets can pass through but you can't.</p></div>
 	<div class="wall"></div>
-	<div style="top: 200px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>This is a basic wall that nothing can pass through.</p></div>
+	<div style="top: 360px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>This is a wall that nothing can pass through.</p></div>
 	<div class="enemy"></div>
-	<div style="top: 240px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>This is an enemy. Some can move.</p></div>
-	<div style="top: 300px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: relative;"><p>Use the W, A, S, D keys to move, and SpaceBar to change the gravity around you.</p></div>
+	<div style="top: 440px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>This is an enemy. Some can move.</p></div>
+	<div style="top: 500px; color: white; letter-spacing: 4px; font-size: 25px; margin-left: 20%; position: absolute;"><p>Use the W, A, S, D keys to move, and the SpaceBar to change the gravity around you.</p></div>
 	
 </html>
