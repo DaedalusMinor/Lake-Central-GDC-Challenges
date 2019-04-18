@@ -1,313 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
 
-var MAX_LEVEL = 4;
-var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
-	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
-	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
-	and even other JSON objects! Wack. The components of a JSON object are the key value names, that come
-	before the ":" and the resulting value, after the ":". Creating a JSON object must be started and ended
-	by a "{" and "}", respectively.  And then the attributes of the object are listed so
-	var jsnObject = {
-		"key name1" : <value>,
-		key2 : <value>
-	};
-	Notice the commas.  Also note that the only semicolon is at the end of the json object instantiation,
-	just like a regular var.  Also notice that the pattern is nested in levelData below, meaning we have multiple
-	JSON objects in our JSON object. <INCEPTION JOKE TAKEN OUT>.  I also stored some arrays in there.
-	The basic format of levelData is:
-	"level number" : {
-		class(enemies, walls, etc.) : [
-			{
-				x: <value>,
-				y: <value>
-				other parameters for constructor method using the same pattern
-			},
-			{
-				...
-			},
-			...
-			{
-				...
-			}
-		],
-		other class(same as before) : [
-			...
-		],
-		...
-	}
-	*/
-		// The Screen size is 1930 by 980
-	"0" : { // level number	
-		player: {
-			x: 500,
-			y: 500,
-			width: 30,
-			height: 30
-		}, 
-		invisWalls: [
-		],
-		barriers : [ //all the barrier objects contained within this level, except for the other barriers
-			{	//the attributes of each barrier object in this level
-				x : 160,
-				y : 210,
-				width : 20,
-				height : 140
-			},
-			{
-				x : 60,
-				y : 145,
-				width : 120,
-				height : 10
-			}
-		],
-
-		enemies : [
-			{
-				x : 10,
-				y : 10,
-				width : 20,
-				height : 20
-			}
-		],
-		mobileEnemies: [
-		]
-	},
-
-	"1" : {
-		player: {			
-			x: 500,
-			y: 500,
-			width: 30,
-			height: 30		
-		}, 
-		
-		invisWalls: [
-		{
-			x: 500 + window.innerWidth/2,
-			y: 405,
-			width: window.innerWidth,
-			height: 10,
-		}, 
-		{
-			x: 205, 
-			y: 700 + window.innerHeight/2, 
-			width: 10, 
-			height: window.innerHeight, 
-		}
-		],
-		
-		enemies: [
-			{
-				x: 310,
-				y: 410,
-				width: 20,
-				height: 20
-			}
-		], 
-		barriers: [
-
-		], 
-		mobileEnemies: [
-			{
-				x: 200,
-				y: 400,
-				width: 20,
-				height: 20,
-				varArray: [150, 250, 350, 450, 0.5, 0.5],
-				funct: railMovement		//<-- notice here: NO PARENTHESIS!
-			}		
-		]
-	},
-	
-	"2" : {
-		player: {
-			x: 980, 
-			y: 505,
-			width: 30,
-			height: 30
-		}, 
-		invisWalls: [
-			{
-				x: 250, 
-				y: 45, 
-				width: 5, 
-				height: 90 
-			}, 
-			{
-				x: 1680, 
-				y: 300, 
-				width: 5, 
-				height: 200 
-			}, 
-			{
-				x: 250, 
-				y: 890, 
-				width: 5, 
-				height: 180
-			}
-		], 
-		enemies: [
-			{
-				x: 910,
-				y: 110,
-				width: 20,
-				height: 20
-			},
-			
-			{
-				x: 110,
-				y: 210,
-				width: 20,
-				height: 20
-			},
-			
-			{
-				x: 1840, 
-				y: 210, 
-				width: 20, 
-				height: 20
-			}
-			
-		],
-		
-		barriers: [
-			{
-				x: 250,
-				y: 445,
-				width: 5,
-				height: 710, 
-			}, 
-			{
-				x: 1680, 
-				y: 100, 
-				width: 5, 
-				height: 200
-			},
-			{
-				x: 1680, 
-				y: 690, 
-				width: 5, 
-				height: 580
-			}
-		], 
-		mobileEnemies: [
-
-		]
-	}, 
-	"3" : {
-		player: {
-			x: 980, 
-			y: 510, 
-			width: 20, 
-			height: 20
-		},
-		invisWalls: [
-		{// left wall
-			x: 930, 
-			y: 510, 
-			width: 10, 
-			height: 100 
-		},
-		{//the bottom wall
-			x: 980, 
-			y: 555, 
-			width: 90, 
-			height: 10
-		}, 
-		
-		{// right wall
-			x: 1030, 
-			y: 510, 
-			width: 10, 
-			height: 100
-		},
-		
-		{//the top wall
-			x: 980,  
-			y: 465, 
-			width: 90, 
-			height: 10
-		}
-		],
-		enemies: [
-		{
-			x: 230, 
-			y: 130,
-			width: 60, 
-			height: 60
-		}, 
-		{
-			x: 930, 
-			y: 130,
-			width: 60, 
-			height: 60
-		}, 
-		{
-			x: 1330, 
-			y: 730,
-			width: 60, 
-			height: 60
-		}
-		],
-		barriers: [
-		], 
-		mobileEnemies: [
-		
-		]
-	}, 
-	"4" : {
-		player: {
-			x: 430, 
-			y: 430, 
-			width: 75, 
-			height: 75
-		}, 
-		enemies: [
-		{
-			x: 365,
-			y: 85, 
-			width: 30, 
-			height: 30
-		},
-		
-		{
-			x: 85,
-			y: 915, 
-			width: 30, 
-			height: 30
-		}, 
-		
-		{
-			x: 1745, 
-			y: 85, 
-			width: 30, 
-			height: 30
-		}
-		], 
-		barriers: [
-		{
-			x: 260, 
-			y: 180, 
-			width: 20, 
-			height: 200		
-		}, 		
-		{
-			x: 950, 
-			y: 410, 
-			width : 300, 
-			height: 20
-		}
-		], 
-		invisWalls: [
-
-		], 
-		mobileEnemies: [
-
-		]
-		
-	}
-}
-
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -362,8 +54,9 @@ function railMovement() {
 	/* @precondition: this.varArray = [xMin, xMax, yMin, yMax, dx, dy];
 	xMin is the lowest x value, xMax is the highest; same for yMin and yMax
 	dx is its speed along the x-axis, dy does the same thing but for y */
-	var xMin = this.varArray[0]; var xMax = this.varArray[1]; var yMin = this.varArray[2];
-	var yMax = this.varArray[3]; var dx = this.varArray[4]; var dy = this.varArray[5];
+	var xMin = makeStandardWidth(this.varArray[0]); var xMax = makeStandardWidth(this.varArray[1]);
+	var yMin = makeStandardHeight(this.varArray[2]); var yMax = makeStandardHeight(this.varArray[3]);
+	var dx = makeStandardWidth(this.varArray[4]); var dy = makeStandardHeight(this.varArray[5]);
 	
 	if (this.x >= xMin && this.x <= xMax) { //horizontal movement
 		this.x += dx;
@@ -575,7 +268,7 @@ class EnemyMobile extends RectMobile { //moving enemies
 
 class Bullet extends RectColored {
 	constructor(x, y, dx, dy, c) {
-		super (x, y, 10, 10, "#808000");
+		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
 	}
@@ -652,8 +345,6 @@ var barrierArray = [];
 var invisArray = [];
 var bulletArray = [];
 
-createLevel(0);
-
 window.onload = function() {
 	canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth;
@@ -661,11 +352,15 @@ window.onload = function() {
 	ctx = canvas.getContext("2d");
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
+	mouse = new Mouse();
+	createLevel(0);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
 
 function main() {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 	//clear screen
 	ctx.fillStyle = "#110422";
 	ctx.fillRect(0,0, window.innerWidth, window.innerHeight);
@@ -699,10 +394,16 @@ function main() {
 	}
 	
 	//text
+	ctx.textAlign = "left";
 	ctx.fillStyle = "#FF3333";
 	ctx.font = "24px Arial";
 	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
+	ctx.textAlign = "center";
+	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
+	//it will also help with designing levels since you can know where to place something
+	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
+	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 40);
 	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
 		player.level++;
 		createLevel(player.level);
@@ -735,14 +436,17 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	
 	//searches through each array of levelData to create the new objects
 	for (var i = 0; i < newEnemies.length; i++){	
-		enemyArray.push(new Enemy(newEnemies[i].x, newEnemies[i].y, newEnemies[i].width, newEnemies[i].height));
+		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y), 
+			makeStandardWidth(newEnemies[i].width), makeStandardHeight(newEnemies[i].height)));
 	}
 	for (var i = 0; i < newMobileEnemies.length; i++){
-		enemyMobileArray.push(new EnemyMobile(newMobileEnemies[i].x, newMobileEnemies[i].y, newMobileEnemies[i].width,
-			newMobileEnemies[i].height, newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
+		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y), 
+			makeStandardWidth(newMobileEnemies[i].width), makeStandardHeight(newMobileEnemies[i].height),
+			newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
 	}
 	for (var i = 0; i < newBorders.length; i++){
-		barrierArray.push(new Wall(newBorders[i].x, newBorders[i].y, newBorders[i].width, newBorders[i].height));
+		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y), 
+			makeStandardWidth(newBorders[i].width), makeStandardHeight(newBorders[i].height)));
 	}
 	//generates the outside walls, since they will be in every level
 	barrierArray.push(new Wall(window.innerWidth/2, -20, window.innerWidth, 40));	//upper border
@@ -750,16 +454,32 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	barrierArray.push(new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight));	//right border
 	barrierArray.push(new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40));	//lower border
 	for (var i = 0; i < newInvisWall.length; i++){
-		invisArray.push(new InvisWall(newInvisWall[i].x, newInvisWall[i].y, newInvisWall[i].width,
-			newInvisWall[i].height, newInvisWall[i].color));
+		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
+			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
 	}
-	
-	player = new Player(newPlayer.x, newPlayer.y, newPlayer.width, newPlayer.height, n);
+	player = new Player(makeStandardWidth(newPlayer.x), makeStandardWidth(newPlayer.y),
+		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
 	// generates the energy bar on every level	
 	rectArray.push(gravityBarBack);
 	rectArray.push(gravityBar);
 }
 
+//INPUT MEHTODS//
+Mouse = function(){
+	var mouse = {};
+	mouse.x = 0;
+	mouse.y = 0;	
+	function move(e){
+		mouse.x = e.clientX;
+		mouse.y = e.clientY;
+	}
+	function click(e){
+		//add stuff here when we know what we want clicking to do
+	}
+	canvas.addEventListener('mousemove', move);
+	canvas.addEventListener('click', click);
+	return mouse;
+}
 function keydown(e) {
 	switch(e.keyCode) {
 		case 65://move left
@@ -781,7 +501,6 @@ function keydown(e) {
 			break;
 	}
 }
-
 function keyup(e) {
 	switch(e.keyCode) {
 		case 65:
@@ -813,6 +532,10 @@ function checkCollisionX(rect1, rect2) {	//takes the x-component of checkCollisi
 function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollision
 	return (rect1.y - rect1.height/2 < rect2.y + rect2.height/2 &&
 			rect1.y + rect1.height/2 > rect2.y - rect2.height/2);
+}
+function mouseRectCollision(m, rect) {
+	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 && 
+		m.y > rect.y - rect.height/2 && m.y < rect.y + rect.height/2;
 }
 function eject(pushed, pusher) {
 	/** A function to handle collision between two objects. 
@@ -858,7 +581,22 @@ function eject(pushed, pusher) {
 	}
 	return flags;
 }
+
 //COMMON MATH EQUATIONS//
 function distance(x, y) {
 	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+}
+function makeStandardWidth(width) {
+	//width is the width of the object on your screen.
+	return width * (canvas.width / 1920);
+}
+function makeStandardHeight(height) {
+	//height is the height of the object on your screen.
+	return height * (canvas.height / 969);
+}
+function inverseStandardWidth(width) {
+	return width * (1920 / canvas.width);
+}
+function inverseStandardHeight(height) {
+	return height * (969 / canvas.height);
 }
