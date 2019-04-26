@@ -1,6 +1,18 @@
 <html>
 <title>Gravitron | Help Menu</title>
 <style>
+	.btn{
+		position: absolute;
+		width: 8%;
+		margin-right: 50%;
+		margin-left: 1%;
+		height: 40px;
+		background-color: #000000;
+		border: none;
+	}
+	.btn:hover{
+		background-color: #FF0000;
+	}
 	.gravityBarBack{
 		top: 50px;
 		position: absolute;
@@ -49,12 +61,16 @@
 		width: 25px;
 		background-color: #B22222;
 	}
+	#back {
+		top: 30px;
+	}
 </style>
 <body style = "margin: 0">
 <canvas id = "canvas" width = "0" height="0"></canvas>
 	<script>
 	startScreenX = 0;
 	startScreenY = 0;
+	/* this is the tiles in case we still want them
 	function tiles(){
 		ctx.fillStyle = "#110422";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -80,15 +96,31 @@
 		ctx.closePath();
 		ctx.fill();
 	}
+	*/
+	function main() {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		ctx.fillStyle = "#292044";
+		ctx.fillRect(0,0, window.innerWidth, window.innerHeight);
+		//draws the player
+		ctx.fillStyle = "#00cc00";
+		ctx.beginPath();
+		ctx.arc(canvas.width/10 + 15, 150, 15, 0, 2*Math.PI);
+		ctx.closePath();
+		ctx.fill();
+	}
 	window.onload = function() {
 		canvas = document.getElementById("canvas");
 		ctx = canvas.getContext("2d");
 		canvas.width = window.innerWidth - 4;
 		canvas.height = window.innerHeight - 4;
-		ctx.imageSmoothingEnabled = false;
-		setInterval(tiles, 100 / 6);
+		ctx.imageSmoothingEnabled = true;
+		setInterval(main, 100 / 6);
 	}
 	</script>
+	<form>
+		<button type = "submit" formaction = "startup.html" id = "back" class = "btn"><font face = "arial" size = "6" color = "white" letter-spacing: 4px;> Back </font></button>
+	</form>
 </body>
 	<div class="gravityBarBack"></div>
 	<div class="gravityBarFront"></div>
