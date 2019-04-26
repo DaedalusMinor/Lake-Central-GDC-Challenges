@@ -200,8 +200,7 @@ class Enemy extends Rectangle {
 			}
 		}
 		//finds the angle to point at
-		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), 
-			player.x + player.width/2 - (this.x + this.width/2));	
+		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
 		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			this.shoot();
@@ -235,8 +234,7 @@ class EnemyMobile extends RectMobile { //moving enemies
 	update() {
 		super.update(); //all of the RectMobile stuff
 		//all of the enemy stuff that was not supered
-		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2), 
-			player.x + player.width/2 - (this.x + this.width/2));	
+		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
 		for (var i = 0; i < bulletArray.length; i++) {
 			if(checkCollision(this, bulletArray[i])){
 				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
