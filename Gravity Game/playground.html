@@ -1,0 +1,53 @@
+<html>
+<title>Gravitron | Level Developer</title>
+<style>
+	.typebtn{
+		position: absolute;
+		right: 10px;
+		background-color: #B22222;
+		border-radius: 3px;
+		border: none;
+		width: 100px;
+		height: 30px;
+		font-family = "Arial";
+	}
+
+	.typebtn:disabled{
+		opacity:0.2;
+	}
+
+	#enemy{
+		top:20px;
+	}
+
+	#invwall{
+		top: 60px;
+	}
+
+	#wall{
+		top:100px;
+	}
+
+	#player{
+		top:140px;
+	}
+
+	#print{
+		top:180px;
+	}
+
+</style>
+<body style = "margin: 0">
+	<canvas id = "canvas" width = "640" height="480"></canvas>
+	<button class = "typebtn" id = "enemy">Enemy</button>
+	<button class = "typebtn" id = "invwall">Invis Wall</button>
+	<button class = "typebtn" id = "wall">Wall</button>
+	<button class = "typebtn" id = "player">Player</button>
+	<button class = "typebtn" id = "print">Print JSON</button>
+	<div id = "enemyfield"></div>
+	<div id = "wallfield"></div>
+	<div id = "invfield"></div>
+	<div id = "playerstart"></div>
+	<script src = "leveldeveloper.js"></script>
+	<script src = "exampleData.js"></script>
+</body>
