@@ -477,7 +477,7 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 		"n" : {	//This "n" is a substitute for whatever level you're creating.  Once you get your JSON
 						//REMEMBER TO EDIT THIS LEVEL NUMBER
 			player: {
-
+				
 			},
 
 			invisWalls: [
@@ -568,8 +568,9 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			height: height
 		});
 	}
-
-	console.log(level);
+	console.log(level)
+	
+	console.log(JSON.stringify(level));
 }
 
 var fps = 0;
