@@ -477,7 +477,7 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 		"n" : {	//This "n" is a substitute for whatever level you're creating.  Once you get your JSON
 						//REMEMBER TO EDIT THIS LEVEL NUMBER
 			player: {
-				
+
 			},
 
 			invisWalls: [
@@ -500,12 +500,12 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 	let player = document.getElementById("playerstart");	//gets specified div
 	if(player.hasAttribute("style")){//checks if the player was given a style, and thus given a position
 		let x = player.style.left;	//I can get the data from a div, but the dimensions are returned as strings
-																//with a "px" for pixels attatched
-		x = parseInt(x.substr(0, x.length - 2), 10);	//this gets rid of the "px" and turns it into an integer
+																//with a "px" for pixels attatched at the end
 		let y = player.style.top;
-		y = parseInt(y.substr(0, y.length - 2), 10);
 		let sideLength = player.style.width;
 		sideLength = parseInt(sideLength.substr(0, sideLength.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + sideLength/2;	//this gets rid of the "px" and turns it into an integer
+		y = parseInt(y.substr(0, y.length - 2), 10) + sideLength/2;
 		level["n"].player = {	//here we create the JSON object and commit it to the level
 			x: x,
 			y: y,
@@ -520,11 +520,12 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 	//think of it as inheritance of a sort
 	for(var i = 0; i < enemies.length; i++){
 		let x = enemies[i].style.left;
-		x = parseInt(x.substr(0, x.length - 2), 10);
 		let y = enemies[i].style.top;
-		y = parseInt(y.substr(0, y.length - 2), 10);
 		let sideLength = enemies[i].style.width;
 		sideLength = parseInt(sideLength.substr(0, sideLength.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + sideLength/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + sideLength/2;
+
 		level["n"].enemies.push({
 			x: x,
 			y: y,
@@ -536,13 +537,13 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 	let walls = document.getElementById("wallfield").childNodes;
 	for(var i = 0; i < walls.length; i++){
 		let x = walls[i].style.left;
-		x = parseInt(x.substr(0, x.length - 2), 10);
 		let y = walls[i].style.top;
-		y = parseInt(y.substr(0, y.length - 2), 10);
 		let width = walls[i].style.width;
-		width = parseInt(width.substr(0, width.length - 2), 10);
 		let height = walls[i].style.height;
-		height = parseInt(height.substr(0, height.length - 2), 10)
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
 		level["n"].barriers.push({
 			x: x,
 			y: y,
@@ -554,13 +555,14 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 	let invwalls = document.getElementById("invfield").childNodes;
 	for(var i = 0; i < invwalls.length; i++){
 		let x = invwalls[i].style.left;
-		x = parseInt(x.substr(0, x.length - 2), 10);
 		let y = invwalls[i].style.top;
-		y = parseInt(y.substr(0, y.length - 2), 10);
 		let width = invwalls[i].style.width;
-		width = parseInt(width.substr(0, width.length - 2), 10);
 		let height = invwalls[i].style.height;
-		height = parseInt(height.substr(0, height.length - 2), 10)
+
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
 		level["n"].invisWalls.push({
 			x: x,
 			y: y,
@@ -568,8 +570,7 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			height: height
 		});
 	}
-	console.log(level)
-	
+
 	console.log(JSON.stringify(level));
 }
 
