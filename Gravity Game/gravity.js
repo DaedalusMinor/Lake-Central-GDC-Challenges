@@ -86,16 +86,16 @@ class Player extends Rectangle {
 
 	update() {
 		if (this.left) {
-			this.x -= 5;
+			this.x -= 3;
 		}
 		if (this.right) {
-			this.x += 5;
+			this.x += 3;
 		}
 		if (this.up) {
-			this.y -= 5;
+			this.y -= 3;
 		}
 		if (this.down) {
-			this.y += 5;
+			this.y += 3;
 		}
 
 		//collision handling
