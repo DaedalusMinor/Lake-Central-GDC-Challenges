@@ -269,6 +269,7 @@ class Bullet extends RectColored {
 		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
+		this.collisionCounter
 	}
 	update() {
 		this.y += this.dy;
@@ -285,6 +286,10 @@ class Bullet extends RectColored {
 				}
 				if (direct[2] || direct[3]){ //vertical
 					this.dy *= -1;
+				}
+				this.collisionCounter++;
+				if(this.collisionCounter >= 5){
+					bulletArray.splice(bulletArray.indexOf(this), 1);
 				}
 			}
 		}	
