@@ -455,7 +455,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
 			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
 	}
-	player = new Player(makeStandardWidth(newPlayer.x), makeStandardWidth(newPlayer.y),
+	player = new Player(makeStandardWidth(newPlayer.x), makeStandardHeight(newPlayer.y),
 		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
 	// generates the energy bar on every level	
 	rectArray.push(gravityBarBack);
