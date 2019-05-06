@@ -40,39 +40,55 @@ class RectMobile extends RectColored { //base moving rectangle
 	}
 }
 /** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
-*	motion functions for each object, and then call them every time update() is called. This allows use
+*	motion functions for each object, and then call them every time update() is called. This allows
 *	us to define a range of objects that move in different ways without creating a new class for each
 *	individual object. But how are we going to pass all of the different necessary parameters to the
 *	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
 *	size in JavaScript, which is defined when the object is instantiated, and the function takes those
 *	array values, and understands what to do with them. I note what should be given to the array at the
 *	beginning of each function, so that it is clear what each variable in the array does for the entire 
-*	program.							- Wight_
+*	function.							- Wight_
 */
 function railMovement() {
-	///Description: Moves the object along a linear segment between (xMin, yMin) and (xMax, yMax)
-	/* @precondition: this.varArray = [xMin, xMax, yMin, yMax, dx, dy];
-	xMin is the lowest x value, xMax is the highest; same for yMin and yMax
-	dx is its speed along the x-axis, dy does the same thing but for y */
-	var xMin = makeStandardWidth(this.varArray[0]); var xMax = makeStandardWidth(this.varArray[1]);
-	var yMin = makeStandardHeight(this.varArray[2]); var yMax = makeStandardHeight(this.varArray[3]);
-	var dx = makeStandardWidth(this.varArray[4]); var dy = makeStandardHeight(this.varArray[5]);
+	///Description: Moves object along a linear segment between (x1, y1) and (x2, y2) at speed d
+	/* @preconditions: this.varArray = [x1, x2, y1, y2, d];
+	(this.x, this.y) MUST be a solution to: (y2 - y) = (y2-y1)/(x2-x1) * (x2 - x),
+	therefore (this.x, this.y) is a point on the line connecting (x1, y1) and (x2, y2).
+	x1 is the x-coordinate of the first point, x2 for the second point,
+	same for y1 and y2 but for the y-coordinate, d is its speed */
+	var x1 = makeStandardWidth(this.varArray[0]); var x2 = makeStandardWidth(this.varArray[1]);
+	var y1 = makeStandardHeight(this.varArray[2]); var y2 = makeStandardHeight(this.varArray[3]);
+	var d = makeStandardWidth(this.varArray[4]);
+	if (this.direction === undefined)	//determine the direction to be traveling
+		this.direction = (d > 0)?1:-1;	//Ignore the syntax. It works. Trust me. :P
+	if (this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2))//determines whether to switch direction
+		this.direction *= -1;
+	d *= this.direction;
 	
-	if (this.x >= xMin && this.x <= xMax) { //horizontal movement
-		this.x += dx;
-	}
-	else {
-		dx *= -1;
-		this.varArray[4] *= -1;
-		this.x += dx;
-	}
-	if (this.y >= yMin && this.y <= yMax) { //vertical movement
-		this.y += dy;
-	}
-	else {
-		dy *= -1;
-		this.varArray[5] *= -1;
-		this.y += dy;
+	this.x += d * Math.cos(Math.atan2(y2-y1,x2-x1));
+	this.y += d * Math.sin(Math.atan2(y2-y1,x2-x1));
+}
+function ellipticalMovement() {
+	///Description: Moves object along an ellipse with axes of lengths axX and axY at center (x, y),
+	///Making a revolution in d frames, therefore the object covers 2*PI/d radians per frame
+	/* @preconditions: this.varArray = [x, y, axX, axY, d];
+	(this.x, this.y) MUST be a solution to the ellipse OR null, in which case it will be set to a valid point.
+	cenX is the x co-ordinate of the circle's center, cenY is the y co-ordinate,
+	axX is the distance between the center and a point on the ellipse with the same x-coordinate,
+	axY is the same for y, d is the number of frames the object needs to make one complete rotation 
+	(cenX + axX cost, cenY + axY sint) */
+	var cenX = makeStandardWidth(this.varArray[0]); var cenY = makeStandardHeight(this.varArray[1]);
+	var axX = makeStandardWidth(this.varArray[2]); var axY = makeStandardWidth(this.varArray[3]);
+	var d = this.varArray[4];
+	
+	if (this.x == null || this.y == null) {
+		this.x = cenX + axX;
+		this.y = cenY;
+	} else {
+		var thta = Math.atan2(this.y-cenY,this.x-cenX);
+		thta += 2*Math.PI/d;
+		this.x = cenX + axX * Math.cos(thta);
+		this.y = cenY + axY * Math.sin(thta);
 	}
 }
 
@@ -85,51 +101,33 @@ class Player extends Rectangle {
 	}
 
 	update() {
-		if (this.left) {
-			this.x -= 3;
-		}
-		if (this.right) {
-			this.x += 3;
-		}
-		if (this.up) {
-			this.y -= 3;
-		}
-		if (this.down) {
-			this.y += 3;
-		}
-
-		//collision handling
+		if (this.left)
+			this.x -= makeStandardWidth(3);
+		if (this.right)
+			this.x += makeStandardWidth(3);	
+		if (this.up)
+			this.y -= makeStandardHeight(3);
+		if (this.down)
+			this.y += makeStandardHeight(3);
+		
 		for (var i = 0; i < enemyArray.length; i++) {
-			if(checkCollision(this, enemyArray[i])){
-				eject(this, enemyArray[i]);
-			}
+			eject(this, enemyArray[i]);
 		}
 		for (var i = 0; i < barrierArray.length; i++) {
-			if(checkCollision(this, barrierArray[i])){
-				eject(this, barrierArray[i]);
-			}
+			eject(this, barrierArray[i]);
 		}
 		for (var i = 0; i < invisArray.length; i++) {
-			if(checkCollision(this, invisArray[i])){
-				eject(this, invisArray[i]);
-			}
+			eject(this, invisArray[i]);
 		}
 		for (var i = 0; i < enemyMobileArray.length; i++) {
-			if(checkCollision(this, enemyMobileArray[i])){
-				eject(this, enemyMobileArray[i]);
-			}			
+			eject(this, enemyMobileArray[i]);
 		}
 		
 		for (var i = 0; i < bulletArray.length; i++) {
-			if (checkCollision(this, bulletArray[i])){
-				createLevel(player.level);
-				this.gravityPoints = 150;
-				shootTimer = 1;
-			}
 			if (this.condense && this.gravityPoints > 0){
 				//calculate distance
-				var xDist = this.x + this.width/2 - bulletArray[i].x;
-				var yDist = this.y + this.height/2 - bulletArray[i].y;
+				var xDist = this.x - bulletArray[i].x;
+				var yDist = this.y - bulletArray[i].y;
 				var dist = distance(xDist, yDist);
 				//calculate power of gravity
 				var pull = 20/dist;
@@ -161,8 +159,8 @@ class Player extends Rectangle {
 			forceStop = true;
 			player.condense = false;
 		}
-		if(forceStop == true) {
-			this.condense == false;
+		if(forceStop) {
+			this.condense = false;
 			if (this.gravityPoints >= 100) {
 				forceStop = false;
 			}
@@ -172,7 +170,7 @@ class Player extends Rectangle {
 		this.render();
 	}
 	render() {
-		if (this.condense == false) 
+		if (!this.condense) 
 			ctx.fillStyle = "#00cc00";
 		else {
 			ctx.fillStyle = "#00FFFF";
@@ -191,14 +189,7 @@ class Enemy extends Rectangle {
 		this.buffer = this.width + 5;
 		this.theta = 0;
 	}
-
 	update(){
-		for (var i = 0; i < bulletArray.length; i++) {
-			if(checkCollision(this, bulletArray[i])){
-				enemyArray.splice(enemyArray.indexOf(this), 1);
-				bulletArray.splice(i, 1);
-			}
-		}
 		//finds the angle to point at
 		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
 		if(shootTimer % FIRE_INTERVAL == 0){
@@ -234,13 +225,7 @@ class EnemyMobile extends RectMobile { //moving enemies
 	update() {
 		super.update(); //all of the RectMobile stuff
 		//all of the enemy stuff that was not supered
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
-		for (var i = 0; i < bulletArray.length; i++) {
-			if(checkCollision(this, bulletArray[i])){
-				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
-				bulletArray.splice(i, 1);
-			}
-		}
+		this.theta = Math.atan2(player.y - this.y, player.x - this.x);
 		if(shootTimer % FIRE_INTERVAL == 0){ 
 			shootTimer = 0;
 			this.shoot();
@@ -248,8 +233,8 @@ class EnemyMobile extends RectMobile { //moving enemies
 		this.render();
 	}
 	shoot(){
-		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(this.theta);
+		var yBuffer = this.y + this.buffer * Math.sin(this.theta);
+		var xBuffer = this.x + this.buffer * Math.cos(this.theta);
 		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
 	}
 	render() {
@@ -269,13 +254,11 @@ class Bullet extends RectColored {
 		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
-		this.collisionCounter
+		this.collisionCounter;
 	}
 	update() {
 		this.y += this.dy;
 		this.x += this.dx;
-		var bulletDown = this.y + this.height;
-		var bulletRight = this.x + this.width;
 		for (var i = 0; i < barrierArray.length; i++) {
 			if (checkCollision(this, barrierArray[i])){	
 				var direct = eject(this, barrierArray[i]);
@@ -292,7 +275,25 @@ class Bullet extends RectColored {
 					bulletArray.splice(bulletArray.indexOf(this), 1);
 				}
 			}
-		}	
+		}
+		//handles everything the bullet can kill
+		for (var i = 0; i < enemyArray.length; i++) {
+			if(checkCollision(this, enemyArray[i])){
+				enemyArray.splice(i, 1);
+				bulletArray.splice(bulletArray.indexOf(this), 1);
+			}
+		}
+		for (var i = 0; i < enemyMobileArray.length; i++) {
+			if(checkCollision(this, enemyMobileArray[i])){
+				enemyMobileArray.splice(i, 1);
+				bulletArray.splice(enemyMobileArray.indexOf(this), 1);
+			}
+		}
+		if (checkCollision(this, player)){
+			createLevel(player.level);
+			player.gravityPoints = 150;
+			shootTimer = 1;
+		}
 		super.update();
 	}
 }
@@ -317,7 +318,7 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 		//places the center of the bar at the midpoint of the edges 
 		this.x = (this.xLeft + this.width)/2;
 		//changes color of bar
-		if (forceStop == true)
+		if (forceStop)
 			this.color = "#A9A9A9";
 		else
 			this.color = "#00FFFF";
@@ -498,7 +499,7 @@ function keydown(e) {
 			player.down = true;
 			break;
 		case 32://activate gravity
-		if (forceStop == false) {
+		if (!forceStop) {
 			player.condense = true;
 		}
 			break;
@@ -548,10 +549,15 @@ function eject(pushed, pusher) {
 	*	Upon finding the correct direction(s), object1 is moved to where it was discovered to no longer
 	*	be touching object2.			- Wight_
 	*/
-	var delta = 0.01;
+	const DELTA_CHANGE = 0.01
+	var delta = 0;
 	var flags = [false, false, false, false];
-	do
-	{
+	const PREV_X = pushed.x;
+	const PREV_Y = pushed.y;
+	if (!checkCollision(pushed, pusher)) { return flags; }
+	
+	do {
+		delta += DELTA_CHANGE;
 		pushed.x += delta;
 		if (!checkCollision(pushed, pusher)){
 			flags[0] = true;
@@ -560,7 +566,7 @@ function eject(pushed, pusher) {
 		if (!checkCollision(pushed, pusher)){
 			flags[1] = true;
 		}
-		pushed.x += delta;
+		pushed.x = PREV_X;
 		pushed.y += delta;
 		if (!checkCollision(pushed, pusher)){
 			flags[2] = true;
@@ -569,18 +575,18 @@ function eject(pushed, pusher) {
 		if (!checkCollision(pushed, pusher)){
 			flags[3] = true;
 		}
-		pushed.y += delta;
-		delta += 0.01;
+		pushed.y = PREV_Y;
 	} while (!flags[0] && !flags[1] && !flags[2] && !flags[3]);
+	
 	if (flags[0]) {
-		pushed.x += delta;
+		pushed.x += (delta + DELTA_CHANGE);
 	} else if (flags[1]) {
-		pushed.x -= delta;
+		pushed.x -= (delta + DELTA_CHANGE);
 	}
 	if (flags[2]) {
-		pushed.y += delta;
+		pushed.y += (delta + DELTA_CHANGE);
 	} else if (flags[3]) {
-		pushed.y -= delta;
+		pushed.y -= (delta + DELTA_CHANGE);
 	}
 	return flags;
 }
