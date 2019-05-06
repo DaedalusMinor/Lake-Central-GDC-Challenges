@@ -47,7 +47,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		}, 
 		invisWalls: [
 		],
-		barriers : [ //all the barrier objects contained within this level, except for the other barriers
+		barriers : [ //all the barrier objects contained within this level, except for the outer barriers
 			{	//the attributes of each barrier object in this level
 				x : 160,
 				y : 210,
@@ -112,8 +112,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			y: 100,
 			width: 45,
 			height: 45,
-			//        x/left, x/right, y/bottom, y/top, moveSpeedX, moveSpeedY
-			varArray: [300, 1660, 0, 0, 1.3, 0],
+			//        x/left, x/right, y/bottom, y/top, moveSpeed
+			varArray: [300, 1660, 0, 0, 1.3],
 			funct: railMovement
 		}
 		]
@@ -150,8 +150,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			y: 100,
 			width: 45,
 			height: 45,
-			//        x/left, x/right, y/bottom, y/top, moveSpeedX, moveSpeedY
-			varArray: [300, 1660, 0, 0, 1.3, 0],
+			//        x/left, x/right, y/bottom, y/top, moveSpeed
+			varArray: [300, 1660, 0, 0, 1.3],
 			funct: railMovement
 		}, 
 		{
@@ -159,8 +159,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			y: 869,
 			width: 45,
 			height: 45,
-			//        x/left, x/right, y/bottom, y/top, moveSpeedX, moveSpeedY
-			varArray: [300, 1660, 0, 0, 1.3, 0],
+			//        x/left, x/right, y/bottom, y/top, moveSpeed
+			varArray: [300, 1660, 0, 0, 1.3],
 			funct: railMovement
 		}
 		]
@@ -205,7 +205,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				y: 400,
 				width: 20,
 				height: 20,
-				varArray: [150, 250, 350, 450, 0.5, 0.5],
+				varArray: [150, 250, 350, 450, 0.5],
 				funct: railMovement	//<-- notice here: NO PARENTHESIS!
 			}		
 		]
@@ -361,8 +361,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}
 		],
-		barriers : [ //all the barrier objects contained within this level, except for the other barriers
-			{	//the attributes of each barrier object in this level
+		barriers : [ 
 				x: 600, 
 				y: 300, 
 				width: 30, 
@@ -402,8 +401,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			y: 969/2,
 			width: 20,
 			height: 20,
-			//        x/left, x/right, y/bottom, y/top, moveSpeedX, moveSpeedY
-			varArray: [0, 0, 234.5, 734.5, 0.0, 1.3],
+			//        x/left, x/right, y/bottom, y/top, moveSpeed
+			varArray: [0, 0, 234.5, 734.5, 1.3],
 			funct: railMovement
 		}
 		]
@@ -597,7 +596,14 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		barriers: [
 		], 
 		mobileEnemies: [
-		
+			{
+				x: null,
+				y: null,
+				width: 60,
+				height: 60,
+				varArray: [980, 510, 400, 400, 1000],
+				funct: ellipticalMovement
+			}
 		]
 	},
 	"9": {
@@ -639,8 +645,3 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		"13":{
 			"player":{"x":58,"y":612,"width":49,"height":49},"invisWalls":[{"x":563,"y":252,"width":20,"height":70},{"x":779,"y":401,"width":350,"height":17},{"x":779,"y":418,"width":28,"height":44},{"x":1104,"y":416,"width":26,"height":36}],"barriers":[{"x":915,"y":223,"width":33,"height":63},{"x":515,"y":93,"width":146,"height":8},{"x":1200,"y":104,"width":139,"height":14},{"x":1340,"y":112,"width":13,"height":28},{"x":499,"y":96,"width":15,"height":33}],"enemies":[{"x":552,"y":149,"width":70,"height":70},{"x":1239,"y":159,"width":74,"height":74}],"mobileEnemies":[]}
 }
-
-
-
-
-
