@@ -292,6 +292,7 @@ class Bullet extends RectColored {
 		if (checkCollision(this, player)){
 			createLevel(player.level);
 			player.gravityPoints = 150;
+			deathCounter += 1;
 			shootTimer = 1;
 		}
 		super.update();
@@ -337,6 +338,7 @@ var gravityBarBack = new RectColored (95, 30, 150, 15, "#FFFFFF");
 var gravityBar = new EnergyBar (95, 30, 150, 15, null);
 var fps = 0;
 var timer = 0;
+var deathCounter = 0;
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
 var forceStop = false;
@@ -403,6 +405,7 @@ function main() {
 	ctx.font = "24px Arial";
 	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
+	ctx.fillText("Deaths: " + (deathCounter), 325, 35);
 	ctx.textAlign = "center";
 	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
 	//it will also help with designing levels since you can know where to place something
