@@ -11,32 +11,33 @@
 		height: 30px;
 		font-family = "Arial";
 	}
-
 	.typebtn:disabled{
 		opacity:0.2;
 	}
-
+	.typebtn:hover{
+		background-color: #FF0000;
+	}
 	#enemy{
 		top:20px;
 	}
-
 	#invwall{
 		top: 60px;
 	}
-
 	#wall{
 		top:100px;
 	}
-
 	#player{
 		top:140px;
 	}
-
 	#print{
 		top:180px;
 	}
-
+	#delete {
+		top:220px;
+	}
 </style>
+<script>
+</script>
 <body style = "margin: 0">
 	<canvas id = "canvas" width = "640" height="480"></canvas>
 	<button class = "typebtn" id = "enemy">Enemy</button>
@@ -44,6 +45,7 @@
 	<button class = "typebtn" id = "wall">Wall</button>
 	<button class = "typebtn" id = "player">Player</button>
 	<button class = "typebtn" id = "print">Print JSON</button>
+	<button class = "typebtn" id = "delete">Clear</button>
 	<div id = "enemyfield"></div>
 	<div id = "wallfield"></div>
 	<div id = "invfield"></div>
