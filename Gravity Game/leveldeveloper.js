@@ -626,6 +626,15 @@ playerBtn.onclick = () => {
 var printBtn = document.getElementById("print");
 printBtn.onclick = printJSON;	//We're not gonna use an anonymous function here, but a function defined as a variable.
 
+var deleteBtn = document.getElementById("delete");
+deleteBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawPlayer = false;
+	pen.drawWall = false;
+	location.reload();
+}
+
 window.onload = function() {
 	canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth;
