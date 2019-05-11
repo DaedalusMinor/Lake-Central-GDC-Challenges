@@ -926,7 +926,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				x: 500,
 				y: 484.5,
 				width: 30,
-				heigth: 30,
+				height: 30,
 				varArray: [495, 505, 300, 700, 0.9],//[x1, x2, y1, y2, d]
 				funct: railMovement
 			}
