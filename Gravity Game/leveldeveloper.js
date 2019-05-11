@@ -1,4 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
+GRID_SIZE = 8;
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -215,7 +216,7 @@ class Pen {
 	sketchEnemy(){ //each of these functions sketch the objects onto the screen, and commit them to the JSON variable
 		this.standardizeCoords();
 		let width = this.x2 - this.x1;
-		if(width > 4){	//minimum size requirement
+		if(width >= 4){	//minimum size requirement
 			let div = document.createElement("div");
 			/*so just like how you can edit HTML elements in JS, you can also create them with the createElement() function
 				In this case, I created a div element and give it all the style attributes it needs to look like
@@ -302,14 +303,19 @@ class Pen {
 
 	standardizeCoords(){	//this function always makes variables with subscript 1 smaller than the variables
 		//with subscript 2
+		//It also standardizes them to a grid, making connections easier.
 		let tx1 = Math.min(this.x1, this.x2);
 		let tx2 = Math.max(this.x1, this.x2);
 		let ty1 = Math.min(this.y1, this.y2);
 		let ty2 = Math.max(this.y1, this.y2);
 		this.x1 = tx1;
+		this.x1 = this.x1 - (this.x1 % GRID_SIZE);
 		this.x2 = tx2;
+		this.x2 = this.x2 - (this.x2 % GRID_SIZE);
 		this.y1 = ty1;
+		this.y1 = this.y1 - (this.y1 % GRID_SIZE);
 		this.y2 = ty2;
+		this.y2 = this.y2 - (this.y2 % GRID_SIZE);
 	}
 
 	renderAddition(){//creates a phantom rectangle while holding the mouse button down and dragging out dimensions
@@ -623,17 +629,14 @@ playerBtn.onclick = () => {
 	pen.drawWall = false;
 };
 
+let toggleGrid = false;
+var gridBtn = document.getElementById("grid");
+gridBtn.onclick = () => {
+	toggleGrid = !toggleGrid;
+}
+
 var printBtn = document.getElementById("print");
 printBtn.onclick = printJSON;	//We're not gonna use an anonymous function here, but a function defined as a variable.
-
-var deleteBtn = document.getElementById("delete");
-deleteBtn.onclick = () => {
-	pen.drawEnemy = false;
-	pen.drawInvWall = false;
-	pen.drawPlayer = false;
-	pen.drawWall = false;
-	location.reload();
-}
 
 window.onload = function() {
 	canvas = document.getElementById("canvas");
@@ -658,6 +661,22 @@ function main() {//notice how we don't have to render or update anything in JS, 
 	ctx.textAlign = "center";
 	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
 	//it will also help with designing levels since you can know where to place something
+	if(toggleGrid){
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "#000000";
+		for(var x = 0; x <= window.innerWidth; x += GRID_SIZE){
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, window.innerHeight);
+			ctx.stroke();
+		}
+		for(var y = 0; y <= window.innerWidth; y += GRID_SIZE){
+			ctx.beginPath();
+			ctx.moveTo(0, y);
+			ctx.lineTo(window.innerWidth, y);
+			ctx.stroke();
+		}
+	}
 	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
 	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 40);
 }
