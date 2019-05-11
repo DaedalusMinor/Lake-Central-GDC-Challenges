@@ -401,16 +401,16 @@ function main() {
 	
 	//text
 	ctx.textAlign = "left";
-	ctx.fillStyle = "#FF3333";
-	ctx.font = "24px Arial";
-	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
+	ctx.fillStyle = "#ffffff";
+	ctx.font = "small-caps lighter 30px Montserrat";
+	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 200, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
-	ctx.fillText("Deaths: " + (deathCounter), 325, 35);
+	ctx.fillText("Deaths: " + (deathCounter), 345, 35);
 	ctx.textAlign = "center";
 	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
 	//it will also help with designing levels since you can know where to place something
 	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
-	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 40);
+	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 50);
 	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
 		player.level++;
 		createLevel(player.level);
