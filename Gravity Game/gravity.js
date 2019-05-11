@@ -61,7 +61,8 @@ function railMovement() {
 	var d = makeStandardWidth(this.varArray[4]);
 	if (this.direction === undefined)	//determine the direction to be traveling
 		this.direction = (d > 0)?1:-1;	//Ignore the syntax. It works. Trust me. :P
-	if (this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2))//determines whether to switch direction
+	if ((this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2)) &&
+		(this.y < Math.min(y1, y2) || this.y > Math.max(y1, y2)))	//determines whether to switch direction
 		this.direction *= -1;
 	d *= this.direction;
 	
@@ -286,7 +287,7 @@ class Bullet extends RectColored {
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			if(checkCollision(this, enemyMobileArray[i])){
 				enemyMobileArray.splice(i, 1);
-				bulletArray.splice(enemyMobileArray.indexOf(this), 1);
+				bulletArray.splice(bulletArray.indexOf(this), 1);
 			}
 		}
 		if (checkCollision(this, player)){
