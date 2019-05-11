@@ -1,6 +1,6 @@
 //COMMENT YOUR STUFF PLEASE
 
-var MAX_LEVEL = 13;
+var MAX_LEVEL = 18;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -403,7 +403,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			width: 20,
 			height: 20,
 			//        x/left, x/right, y/bottom, y/top, moveSpeed
-			varArray: [0, 0, 234.5, 734.5, 1.3],
+			varArray: [1745, 1755, 234.5, 734.5, 1.3],
 			funct: railMovement
 		}
 		]
@@ -726,25 +726,224 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		],
 		"mobileEnemies":[]
 		},
-		"13":{
-			"player":{"x":58,"y":612,"width":49,"height":49},
-			"invisWalls":[
-				{"x":563,"y":252,"width":20,"height":70},
-				{"x":779,"y":401,"width":350,"height":17},
-				{"x":779,"y":418,"width":28,"height":44},
-				{"x":1104,"y":416,"width":26,"height":36}
+		"13":{"player":{"x": 200,"y":775,"width":30,"height":30},"invisWalls":[{"x":856.5,"y":407,"width":43,"height":34},{"x":1040.5,"y":205.5,"width":91,"height":23},{"x":716.5,"y":215.5,"width":99,"height":29},{"x":638.5,"y":373.5,"width":17,"height":93}],"barriers":[{"x":844,"y":533,"width":370,"height":12},{"x":1016,"y":559.5,"width":22,"height":35},{"x":669.5,"y":558,"width":23,"height":32}],"enemies":[{"x":1083.5,"y":278.5,"width":55,"height":55},{"x":662.5,"y":284.5,"width":57,"height":57}],"mobileEnemies":[]},
+		"14":{"player":{"x":1132,"y":372,"width":16,"height":16},"invisWalls":[{"x":883,"y":200,"width":1018,"height":26},{"x":390,"y":433.5,"width":34,"height":441},{"x":897,"y":637,"width":980,"height":34},{"x":1369,"y":419.5,"width":36,"height":401},{"x":488,"y":430.5,"width":30,"height":237},{"x":882,"y":531,"width":758,"height":36},{"x":1249.5,"y":414.5,"width":23,"height":197},{"x":845.5,"y":322.5,"width":681,"height":21},{"x":1170.5,"y":391,"width":25,"height":114},{"x":853.5,"y":432.5,"width":609,"height":31},{"x":1098,"y":391,"width":24,"height":40},{"x":1024.5,"y":353,"width":21,"height":34},{"x":968,"y":395.5,"width":24,"height":25},{"x":900.5,"y":357.5,"width":17,"height":31},{"x":830.5,"y":395.5,"width":33,"height":27},{"x":745.5,"y":355.5,"width":27,"height":41},{"x":672.5,"y":391,"width":17,"height":48},{"x":594,"y":349.5,"width":20,"height":29},{"x":549.5,"y":395,"width":15,"height":36}],"barriers":[],"enemies":[{"x":1640,"y":135,"width":54,"height":54},{"x":1682,"y":466,"width":54,"height":54},{"x":1645,"y":744,"width":76,"height":76},{"x":1247.5,"y":819.5,"width":57,"height":57},{"x":493.5,"y":834.5,"width":65,"height":65},{"x":825.5,"y":859.5,"width":47,"height":47},{"x":143,"y":780,"width":36,"height":36},{"x":85.5,"y":513.5,"width":29,"height":29},{"x":105.5,"y":146.5,"width":65,"height":65},{"x":1298,"y":87,"width":58,"height":58},{"x":543.5,"y":77.5,"width":29,"height":29},{"x":843.5,"y":107.5,"width":65,"height":65}],"mobileEnemies":[]},
+		"15":{"player":{"x":66,"y":884,"width":44,"height":44},"invisWalls":[{"x":212.5,"y":806,"width":425,"height":12},{"x":442,"y":539.5,"width":34,"height":545},{"x":1190,"y":272,"width":1458,"height":14},{"x":677,"y":583,"width":32,"height":270},{"x":899.5,"y":456,"width":411,"height":20},{"x":1085.5,"y":823.5,"width":31,"height":285},{"x":1754,"y":468.5,"width":330,"height":29},{"x":1605,"y":549,"width":32,"height":132},{"x":1480,"y":809.5,"width":28,"height":315}],"barriers":[{"x":693,"y":245,"width":230,"height":26},{"x":681.5,"y":842,"width":23,"height":244},{"x":1086.5,"y":573,"width":31,"height":212},{"x":1796.5,"y":366.5,"width":29,"height":167},{"x":1544.5,"y":636,"width":153,"height":34}],"enemies":[{"x":851,"y":548,"width":66,"height":66},{"x":93,"y":437,"width":62,"height":62},{"x":476.5,"y":85.5,"width":53,"height":53},{"x":1584,"y":85,"width":60,"height":60},{"x":1760.5,"y":798.5,"width":37,"height":37},{"x":1693.5,"y":534.5,"width":35,"height":35},{"x":1267,"y":906,"width":38,"height":38}],"mobileEnemies":[]},
+		"16":{
+			"player":{
+				x: 200, 
+				y: 700, 
+				width: 40,
+				height: 40
+			},
+			"invisWalls":
+			[
+			{
+				x: 960,
+				y: 484.5,
+				width: 30,
+				height: 1920
+			}
 			],
+			"barriers":[ //1920, 969
+			{
+				x: 300, 
+				y: 484.5,
+				width: 30,
+				height: 75
+			},
+			{
+				x: 500,
+				y: 684.5, 
+				width: 30, 
+				height: 75
+			},
+			{
+				x: 500, 
+				y: 284.5,
+				width: 30, 
+				height: 75
+			}
+			],
+			"enemies": [
+			],
+			"mobileEnemies":[
+			{
+				x: 1420,
+				y: 480,
+				width: 30,
+				height: 30,
+				varArray: [1415, 1425, 350, 550, 1.3],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			},
+			{
+				x: 1620,
+				y: 200,
+				width: 30,
+				height: 30,
+				varArray: [1615, 1625, 200, 400, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			},
+			{
+				x: 1620,
+				y: 769,
+				width: 30,
+				height: 30,
+				varArray: [1615, 1625, 600, 800, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
+			]
+		},
+		"17":{
+			"player":{
+				x: 960,
+				y: 484.5,
+				width: 20, 
+				height: 20
+			},
+			"enemies":[],
+			"invisWalls":[
+				{// left wall
+			x: 930, 
+			y: 510, 
+			width: 10, 
+			height: 100 
+			},
+			{//the bottom wall
+				x: 980, 
+				y: 555, 
+				width: 90, 
+				height: 10
+			}, 
+		
+			{// right wall
+				x: 1030, 
+				y: 510, 
+				width: 10, 
+				height: 100
+			},
+		
+			{//the top wall
+				x: 980,  
+				y: 465, 
+				width: 90, 
+				height: 10
+			}
+		],
 			"barriers":[
-				{"x":915,"y":223,"width":33,"height":63},
-				{"x":515,"y":93,"width":146,"height":8},
-				{"x":1200,"y":104,"width":139,"height":14},
-				{"x":1340,"y":112,"width":13,"height":28},
-				{"x":499,"y":96,"width":15,"height":33}
+			{
+				x: 1650, 
+				y: 484.5,
+				width: 60, 
+				height: 60
+			},
+			{
+				x: 270,
+				y: 484.5,
+				width: 60,
+				height: 60
+			}
+			],
+			"mobileEnemies":[
+			{
+				x: null,
+				y: null,
+				width: 30,
+				height: 30,
+				varArray: [1650, 484.5, 200, 200, 500],
+				funct: ellipticalMovement
+			},
+			{
+				x: null,
+				y: null,
+				width: 30,
+				height: 30,
+				varArray: [270, 484.5, 200, 200, 500],
+				funct: ellipticalMovement
+			},
+			{
+				x: 960,
+				y: 100, 
+				width: 30,
+				height: 30,
+				varArray: [300, 1620, 0, 0, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			},
+			{
+				x: 960,
+				y: 869, 
+				width: 30,
+				height: 30,
+				varArray: [300, 1620, 0, 0, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
+			]
+			
+		},
+		"18":{
+			"player":{
+				x: 1620,
+				y: 200, 
+				width: 30,
+				height: 30
+			},
+			"invisWalls":[
+			{
+				x: 1520,
+				y: 225,
+				width: 30,
+				height: 300
+			},
+			{
+				x: 1420,
+				y: 600,
+				width: 300,
+				height: 30
+			}
 			],
 			"enemies":[
-				{"x":552,"y":149,"width":70,"height":70},
-				{"x":1239,"y":159,"width":74,"height":74}
+			{
+				x: 300,
+				y: 100,
+				width: 30,
+				height: 30
+			},
+			{
+				x: 200, 
+				y: 869,
+				width: 30,
+				height: 30
+			},
+			{
+				x: 1820,
+				y: 869,
+				width: 30,
+				height: 30
+			}
+			], 
+			"mobileEnemies":[
+			{
+				x: 500,
+				y: 484.5,
+				width: 30,
+				heigth: 30,
+				varArray: [495, 505, 300, 700, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
 			],
-			"mobileEnemies":[]
+			"barriers": [
+			{
+				x: 400, 
+				y: 484.5,
+				width: 30, 
+				height: 400
+			},
+			{
+				x: 1820,
+				y: 225,
+				width: 30,
+				height: 200 
+			}
+			]
 		}
 }
