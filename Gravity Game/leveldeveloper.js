@@ -1,5 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
-GRID_SIZE = 8;
+const GRID_SIZE = 8;
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
