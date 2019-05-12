@@ -123,6 +123,9 @@ class Player extends Rectangle {
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			eject(this, enemyMobileArray[i]);
 		}
+		for (var i = 0; i < absorbArray.length; i++) {
+			eject(this, absorbArray[i]);
+		}
 		
 		for (var i = 0; i < bulletArray.length; i++) {
 			if (this.condense && this.gravityPoints > 0){
@@ -296,6 +299,11 @@ class Bullet extends RectColored {
 			deathCounter += 1;
 			shootTimer = 1;
 		}
+		for (var i = 0; i < absorbArray.length; i++) {
+			if(checkCollision(this, absorbArray[i])){
+				bulletArray.splice(bulletArray.indexOf(this), 1);
+			}
+		}
 		super.update();
 	}
 }
@@ -308,6 +316,11 @@ class Wall extends Rectangle { //the walls
 class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
 	constructor(x,y,width,height, color){
 		super(x,y,width,height,"#00ff99");
+	}
+}
+class AbsorbentWall extends RectColored{
+	constructor(x,y,width,height,color){
+		super(x,y,width,height,"#006600");
 	}
 }
 
@@ -350,6 +363,7 @@ var enemyArray = [];
 var enemyMobileArray = [];
 var barrierArray = [];
 var invisArray = [];
+var absorbArray = [];
 var bulletArray = [];
 
 window.onload = function() {
@@ -393,6 +407,9 @@ function main() {
 	for (var i = 0; i < invisArray.length; i++){
 		invisArray[i].update();
 	}
+	for (var i = 0; i < absorbArray.length; i++){
+		absorbArray[i].update();
+	}
 	for (var i = 0; i < bulletArray.length; i++){
 		bulletArray[i].update();
 	}
@@ -424,6 +441,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	enemyMobileArray = [];
 	barrierArray = [];
 	invisArray = [];
+	absorbArray = [];
 	bulletArray = [];
 
 	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
@@ -440,6 +458,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	var newMobileEnemies = levelData[nStr]["mobileEnemies"];
 	var newBorders = levelData[nStr]["barriers"];
 	var newInvisWall = levelData[nStr]["invisWalls"];
+	var newAbsorbWall = levelData[nStr]["absorbWalls"];
 	var newPlayer = levelData[nStr]["player"];
 	
 	//searches through each array of levelData to create the new objects
@@ -464,6 +483,10 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	for (var i = 0; i < newInvisWall.length; i++){
 		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
 			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
+	}
+	for (var i = 0; i < newAbsorbWall.length; i++){
+		absorbArray.push(new AbsorbentWall(makeStandardWidth(newAbsorbWall[i].x), makeStandardHeight(newAbsorbWall[i].y), 
+			makeStandardWidth(newAbsorbWall[i].width), makeStandardHeight(newAbsorbWall[i].height), newAbsorbWall[i].color));
 	}
 	player = new Player(makeStandardWidth(newPlayer.x), makeStandardHeight(newPlayer.y),
 		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
