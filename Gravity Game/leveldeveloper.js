@@ -98,7 +98,7 @@ class Player extends Rectangle {
 			this.y += 5;
 		}
 
-		if(this.drawEnemy || this.drawWall || this.drawInvWall){
+		if(this.drawEnemy || this.drawWall || this.drawInvWall || this.drawAbsWall){
 			this.pen.x2 = this.x;
 			this.pen.y2 = this.y;
 			if(this.drawEnemy){
@@ -109,6 +109,9 @@ class Player extends Rectangle {
 			}
 			if(this.drawInvWall){
 				this.pen.renderAddition("#00ff99");
+			}
+			if(this.drawAbsWall){
+				this.pen.renderAddition("#006600");
 			}
 		}
 		// //collision handling
@@ -209,6 +212,7 @@ class Pen {
 		this.drawing = false;  //this boolean shows whether the pen is in the process of drawing
 		this.drawEnemy = false;	//the rest of these are analogous to an artist's palette: select your paints with the buttons!
 		this.drawInvWall = false;
+		this.drawAbsWall = false;
 		this.drawWall = false;
 		this.drawPlayer = false;
 	}
@@ -260,6 +264,26 @@ class Pen {
 				div.remove();
 			});
 			document.getElementById("invfield").appendChild(div);
+		}
+	}
+	sketchAbsWall(){
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		let height = this.y2 - this.y1;
+		if(height > 2 && width > 2){
+			ctx.fillStyle = "#006600";
+			let div = document.createElement("div");
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + height + "px;"
+									+ "background: #006600;";
+			div.setAttribute("style", style);
+			div.addEventListener("click", (e) => {
+				div.remove();
+			});
+			document.getElementById("absfield").appendChild(div);
 		}
 	}
 
@@ -325,7 +349,11 @@ class Pen {
 		}
 		else if(this.drawInvWall){
 			ctx.fillStyle = "#0000FF";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);		
+		}
+		else if(this.drawAbsWall){
+			ctx.fillStyle = "#0000FF";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);		
 		}
 		else if(this.drawWall){
 			ctx.fillStyle = "#00FF00";
@@ -451,6 +479,11 @@ class InvisWall extends RectColored{ //I know this is a terrible name for these 
 		super(x,y,width,height,"#00ff99");
 	}
 }
+class AbsorbentWall extends RectColored{
+	constructor(x,y,width,height,color){
+		super(x,y,width,height,"#006600");
+	}
+}
 
 class EnergyBar extends RectColored { //gravityPoint refill pickup
 		constructor(x,y,width,height){
@@ -499,6 +532,9 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			],
 			mobileEnemies: [
 
+			],
+			absorbWalls: [
+			
 			]
 		}
 	};
@@ -576,6 +612,24 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			height: height
 		});
 	}
+	let abswalls = document.getElementById("absfield").childNodes;
+	for(var i = 0; i < abswalls.length; i++){
+		let x = abswalls[i].style.left;
+		let y = abswalls[i].style.top;
+		let width = abswalls[i].style.width;
+		let height = abswalls[i].style.height;
+
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
+		level["n"].absorbWalls.push({
+			x: x,
+			y: y,
+			width: width,
+			height: height
+		});
+	}
 
 	console.log(JSON.stringify(level));
 }
@@ -592,6 +646,7 @@ var enemyArray = [];
 var enemyMobileArray = [];
 var barrierArray = [];
 var invisArray = [];
+var absorbArray = [];
 var bulletArray = [];
 
 pen = new Pen(0, 0);
@@ -601,6 +656,7 @@ enemyBtn.onclick = () => {	//This fat arrow (=>) is just another way of creating
 														//but it's the same as saying function(){...} instead of () => {...}
 	pen.drawEnemy = true;
 	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
 	pen.drawPlayer = false;
 	pen.drawWall = false;
 };
@@ -609,6 +665,7 @@ var invwallBtn = document.getElementById("invwall");
 invwallBtn.onclick = () => {
 	pen.drawEnemy = false;
 	pen.drawInvWall = true;
+	pen.drawAbsWall = false;
 	pen.drawPlayer = false;
 	pen.drawWall = false;
 };
@@ -617,6 +674,7 @@ var wallBtn = document.getElementById("wall");
 wallBtn.onclick = () => {
 	pen.drawEnemy = false;
 	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
 	pen.drawPlayer = false;
 	pen.drawWall = true;
 };
@@ -625,7 +683,17 @@ var playerBtn = document.getElementById("player");
 playerBtn.onclick = () => {
 	pen.drawEnemy = false;
 	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
 	pen.drawPlayer = true;
+	pen.drawWall = false;
+};
+
+var abswallBtn = document.getElementById("abswall");
+abswallBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = true;
+	pen.drawPlayer = false;
 	pen.drawWall = false;
 };
 
@@ -642,6 +710,7 @@ var deleteBtn = document.getElementById("delete");
 deleteBtn.onclick = () => {
 	pen.drawEnemy = false;
 	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
 	pen.drawPlayer = false;
 	pen.drawWall = false;
 	location.reload();
@@ -720,6 +789,7 @@ Mouse = function(){
 		//disabling paint buttons
 		enemyBtn.disabled = true;
 		invwallBtn.disabled = true;
+		abswallBtn.disabled = true;
 		wallBtn.disabled = true;
 		playerBtn.disabled = true;
 		printBtn.disabled = true;
@@ -738,6 +808,9 @@ Mouse = function(){
 		if(pen.drawInvWall){
 			pen.sketchInvWall();
 		}
+		if(pen.drawAbsWall){
+			pen.sketchAbsWall();
+		}
 		if(pen.drawPlayer){
 			pen.sketchPlayer();
 		}
@@ -745,6 +818,7 @@ Mouse = function(){
 		pen.drawing = false;
 		enemyBtn.disabled = false;
 		invwallBtn.disabled = false;
+		abswallBtn.disabled = false;
 		wallBtn.disabled = false;
 		playerBtn.disabled = false;
 		printBtn.disabled = false;
