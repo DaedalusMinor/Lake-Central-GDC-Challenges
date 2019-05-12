@@ -47,6 +47,14 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		}, 
 		invisWalls: [
 		],
+		absorbWalls: [
+		{
+			x: 900,
+			y: 200,
+			width: 30,
+			height: 150
+		}
+		],
 		barriers : [ //all the barrier objects contained within this level, except for the outer barriers
 			{	//the attributes of each barrier object in this level
 				x : 160,
@@ -85,6 +93,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		],
 		enemies: [
 		
+		],
+		absorbWalls:[
 		],
 		barriers: [
 		{
@@ -135,6 +145,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		],
 		enemies: [
 		
+		],
+		absorbWalls:[
 		],
 		barriers: [
 		{
@@ -199,6 +211,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		barriers: [
 
 		], 
+		absorbWalls:[
+		],
 		mobileEnemies: [
 			{
 				x: 200,
@@ -238,6 +252,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				height: 180
 			}
 		], 
+		absorbWalls:[
+		],
 		enemies: [
 			{
 				x: 910,
@@ -294,6 +310,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			width: 75, 
 			height: 75
 		}, 
+		absorbWalls:[
+		],
 		enemies: [
 		{
 			x: 365,
@@ -361,6 +379,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}
 		],
+		absorbWalls:[
+		],
 		barriers : [ 
 			{
 				x: 600, 
@@ -425,6 +445,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		], 
 		barriers: [
 		], 
+		absorbWalls:[
+		],
 		enemies: [
 		{
 			x: 100,
@@ -546,6 +568,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			width: 20, 
 			height: 20
 		},
+		absorbWalls:[
+		],
 		invisWalls: [
 		{// left wall
 			x: 930, 
@@ -621,6 +645,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			{"x":775,"y":375,"width":25,"height":10}
 		],
 		"barriers":[],
+		"absorbWalls":[],
 		"enemies":[
 			{"x":1706,"y":142,"width":24,"height":24},
 			{"x":1508,"y":360,"width":85,"height":85},
@@ -643,6 +668,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			{"x":1322,"y":88,"width":142,"height":23},
 			{"x":204,"y":512,"width":35,"height":98}
 		],
+		"absorbWalls":[],
 		"barriers":[
 			{"x":668,"y":424,"width":99,"height":21},
 			{"x":1324,"y":296,"width":15,"height":187},
@@ -662,6 +688,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		},
 	"11":{
 		"player":{"x":819,"y":694,"width":32,"height":32},
+		"absorbWalls":[],
 		"invisWalls":[
 			{"x":960,"y":145,"width":1920,"height":30},
 			{"x":92,"y":476,"width":140,"height":17},
@@ -683,6 +710,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		},	
 	"12":{
 		"player":{"x":856,"y":299,"width":23,"height":23},
+		"absorbWalls":[],
 		"invisWalls":[
 			{// left wall
 				x: 780, 
@@ -726,9 +754,9 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 		],
 		"mobileEnemies":[]
 		},
-		"13":{"player":{"x": 200,"y":775,"width":30,"height":30},"invisWalls":[{"x":856.5,"y":407,"width":43,"height":34},{"x":1040.5,"y":205.5,"width":91,"height":23},{"x":716.5,"y":215.5,"width":99,"height":29},{"x":638.5,"y":373.5,"width":17,"height":93}],"barriers":[{"x":844,"y":533,"width":370,"height":12},{"x":1016,"y":559.5,"width":22,"height":35},{"x":669.5,"y":558,"width":23,"height":32}],"enemies":[{"x":1083.5,"y":278.5,"width":55,"height":55},{"x":662.5,"y":284.5,"width":57,"height":57}],"mobileEnemies":[]},
-		"14":{"player":{"x":1132,"y":372,"width":16,"height":16},"invisWalls":[{"x":883,"y":200,"width":1018,"height":26},{"x":390,"y":433.5,"width":34,"height":441},{"x":897,"y":637,"width":980,"height":34},{"x":1369,"y":419.5,"width":36,"height":401},{"x":488,"y":430.5,"width":30,"height":237},{"x":882,"y":531,"width":758,"height":36},{"x":1249.5,"y":414.5,"width":23,"height":197},{"x":845.5,"y":322.5,"width":681,"height":21},{"x":1170.5,"y":391,"width":25,"height":114},{"x":853.5,"y":432.5,"width":609,"height":31},{"x":1098,"y":391,"width":24,"height":40},{"x":1024.5,"y":353,"width":21,"height":34},{"x":968,"y":395.5,"width":24,"height":25},{"x":900.5,"y":357.5,"width":17,"height":31},{"x":830.5,"y":395.5,"width":33,"height":27},{"x":745.5,"y":355.5,"width":27,"height":41},{"x":672.5,"y":391,"width":17,"height":48},{"x":594,"y":349.5,"width":20,"height":29},{"x":549.5,"y":395,"width":15,"height":36}],"barriers":[],"enemies":[{"x":1640,"y":135,"width":54,"height":54},{"x":1682,"y":466,"width":54,"height":54},{"x":1645,"y":744,"width":76,"height":76},{"x":1247.5,"y":819.5,"width":57,"height":57},{"x":493.5,"y":834.5,"width":65,"height":65},{"x":825.5,"y":859.5,"width":47,"height":47},{"x":143,"y":780,"width":36,"height":36},{"x":85.5,"y":513.5,"width":29,"height":29},{"x":105.5,"y":146.5,"width":65,"height":65},{"x":1298,"y":87,"width":58,"height":58},{"x":543.5,"y":77.5,"width":29,"height":29},{"x":843.5,"y":107.5,"width":65,"height":65}],"mobileEnemies":[]},
-		"15":{"player":{"x":66,"y":884,"width":44,"height":44},"invisWalls":[{"x":212.5,"y":806,"width":425,"height":12},{"x":442,"y":539.5,"width":34,"height":545},{"x":1190,"y":272,"width":1458,"height":14},{"x":677,"y":583,"width":32,"height":270},{"x":899.5,"y":456,"width":411,"height":20},{"x":1085.5,"y":823.5,"width":31,"height":285},{"x":1754,"y":468.5,"width":330,"height":29},{"x":1605,"y":549,"width":32,"height":132},{"x":1480,"y":809.5,"width":28,"height":315}],"barriers":[{"x":693,"y":245,"width":230,"height":26},{"x":681.5,"y":842,"width":23,"height":244},{"x":1086.5,"y":573,"width":31,"height":212},{"x":1796.5,"y":366.5,"width":29,"height":167},{"x":1544.5,"y":636,"width":153,"height":34}],"enemies":[{"x":851,"y":548,"width":66,"height":66},{"x":93,"y":437,"width":62,"height":62},{"x":476.5,"y":85.5,"width":53,"height":53},{"x":1584,"y":85,"width":60,"height":60},{"x":1760.5,"y":798.5,"width":37,"height":37},{"x":1693.5,"y":534.5,"width":35,"height":35},{"x":1267,"y":906,"width":38,"height":38}],"mobileEnemies":[]},
+		"13":{"player":{"x": 200,"y":775,"width":30,"height":30},"absorbWalls":[],"invisWalls":[{"x":856.5,"y":407,"width":43,"height":34},{"x":1040.5,"y":205.5,"width":91,"height":23},{"x":716.5,"y":215.5,"width":99,"height":29},{"x":638.5,"y":373.5,"width":17,"height":93}],"barriers":[{"x":844,"y":533,"width":370,"height":12},{"x":1016,"y":559.5,"width":22,"height":35},{"x":669.5,"y":558,"width":23,"height":32}],"enemies":[{"x":1083.5,"y":278.5,"width":55,"height":55},{"x":662.5,"y":284.5,"width":57,"height":57}],"mobileEnemies":[]},
+		"14":{"player":{"x":1132,"y":372,"width":16,"height":16},"absorbWalls":[],"invisWalls":[{"x":883,"y":200,"width":1018,"height":26},{"x":390,"y":433.5,"width":34,"height":441},{"x":897,"y":637,"width":980,"height":34},{"x":1369,"y":419.5,"width":36,"height":401},{"x":488,"y":430.5,"width":30,"height":237},{"x":882,"y":531,"width":758,"height":36},{"x":1249.5,"y":414.5,"width":23,"height":197},{"x":845.5,"y":322.5,"width":681,"height":21},{"x":1170.5,"y":391,"width":25,"height":114},{"x":853.5,"y":432.5,"width":609,"height":31},{"x":1098,"y":391,"width":24,"height":40},{"x":1024.5,"y":353,"width":21,"height":34},{"x":968,"y":395.5,"width":24,"height":25},{"x":900.5,"y":357.5,"width":17,"height":31},{"x":830.5,"y":395.5,"width":33,"height":27},{"x":745.5,"y":355.5,"width":27,"height":41},{"x":672.5,"y":391,"width":17,"height":48},{"x":594,"y":349.5,"width":20,"height":29},{"x":549.5,"y":395,"width":15,"height":36}],"barriers":[],"enemies":[{"x":1640,"y":135,"width":54,"height":54},{"x":1682,"y":466,"width":54,"height":54},{"x":1645,"y":744,"width":76,"height":76},{"x":1247.5,"y":819.5,"width":57,"height":57},{"x":493.5,"y":834.5,"width":65,"height":65},{"x":825.5,"y":859.5,"width":47,"height":47},{"x":143,"y":780,"width":36,"height":36},{"x":85.5,"y":513.5,"width":29,"height":29},{"x":105.5,"y":146.5,"width":65,"height":65},{"x":1298,"y":87,"width":58,"height":58},{"x":543.5,"y":77.5,"width":29,"height":29},{"x":843.5,"y":107.5,"width":65,"height":65}],"mobileEnemies":[]},
+		"15":{"player":{"x":66,"y":884,"width":44,"height":44},"absorbWalls":[],"invisWalls":[{"x":212.5,"y":806,"width":425,"height":12},{"x":442,"y":539.5,"width":34,"height":545},{"x":1190,"y":272,"width":1458,"height":14},{"x":677,"y":583,"width":32,"height":270},{"x":899.5,"y":456,"width":411,"height":20},{"x":1085.5,"y":823.5,"width":31,"height":285},{"x":1754,"y":468.5,"width":330,"height":29},{"x":1605,"y":549,"width":32,"height":132},{"x":1480,"y":809.5,"width":28,"height":315}],"barriers":[{"x":693,"y":245,"width":230,"height":26},{"x":681.5,"y":842,"width":23,"height":244},{"x":1086.5,"y":573,"width":31,"height":212},{"x":1796.5,"y":366.5,"width":29,"height":167},{"x":1544.5,"y":636,"width":153,"height":34}],"enemies":[{"x":851,"y":548,"width":66,"height":66},{"x":93,"y":437,"width":62,"height":62},{"x":476.5,"y":85.5,"width":53,"height":53},{"x":1584,"y":85,"width":60,"height":60},{"x":1760.5,"y":798.5,"width":37,"height":37},{"x":1693.5,"y":534.5,"width":35,"height":35},{"x":1267,"y":906,"width":38,"height":38}],"mobileEnemies":[]},
 		"16":{
 			"player":{
 				x: 200, 
@@ -736,6 +764,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				width: 40,
 				height: 40
 			},
+			"absorbWalls":[],
 			"invisWalls":
 			[
 			{
@@ -801,6 +830,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				width: 20, 
 				height: 20
 			},
+			"absorbWalls":[],
 			"enemies":[],
 			"invisWalls":[
 				{// left wall
@@ -887,6 +917,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				width: 30,
 				height: 30
 			},
+			"absorbWalls":[],
 			"invisWalls":[
 			{
 				x: 1520,
