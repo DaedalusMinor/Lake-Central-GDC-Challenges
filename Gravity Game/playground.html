@@ -23,20 +23,23 @@
 	#invwall{
 		top: 60px;
 	}
-	#wall{
-		top:100px;
+	#abswall{
+		top: 100px;
 	}
-	#player{
+	#wall{
 		top:140px;
 	}
-	#print{
+	#player{
 		top:180px;
 	}
+	#print{
+		top:220px;
+	}
 	#grid{
-		top: 220px;
+		top: 260px;
 	}
 	#delete {
-		top:260px;
+		top:300px;
 	}
 </style>
 <script>
@@ -44,7 +47,8 @@
 <body style = "margin: 0">
 	<canvas id = "canvas" width = "640" height="480"></canvas>
 	<button class = "typebtn" id = "enemy">Enemy</button>
-	<button class = "typebtn" id = "invwall">Invis Wall</button>
+	<button class = "typebtn" id = "invwall">Permeable Wall</button>
+	<button class = "typebtn" id = "abswall">Absorbent Wall</button>
 	<button class = "typebtn" id = "wall">Wall</button>
 	<button class = "typebtn" id = "player">Player</button>
 	<button class = "typebtn" id = "print">Print JSON</button>
@@ -53,6 +57,7 @@
 	<div id = "enemyfield"></div>
 	<div id = "wallfield"></div>
 	<div id = "invfield"></div>
+	<div id = "absfield"></div>
 	<div id = "playerstart"></div>
 	<script src = "leveldeveloper.js"></script>
 </body>
