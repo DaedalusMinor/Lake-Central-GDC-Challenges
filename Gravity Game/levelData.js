@@ -1,6 +1,6 @@
 //COMMENT YOUR STUFF PLEASE
 
-var MAX_LEVEL = 18;
+var MAX_LEVEL = 22;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -38,49 +38,8 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 	*/
 		/// The Screen Size Standard is 1920 by 969
 		///	Please use these numbers instead of window.innerWidth and window.innerHeight
-	"0" : { // level number	
-		player: {
-			x: 500,
-			y: 500,
-			width: 30,
-			height: 30
-		}, 
-		invisWalls: [
-		],
-		absorbWalls: [
-		{
-			x: 900,
-			y: 200,
-			width: 30,
-			height: 150
-		}
-		],
-		barriers : [ //all the barrier objects contained within this level, except for the outer barriers
-			{	//the attributes of each barrier object in this level
-				x : 160,
-				y : 210,
-				width : 20,
-				height : 140
-			},
-			{
-				x : 60,
-				y : 145,
-				width : 120,
-				height : 10
-			}
-		],
+	"0":{"player":{"x":952,"y":744,"width":30,"height":30},"invisWalls":[{"x":972,"y":624,"width":280,"height":48}],"barriers":[{"x":392,"y":556,"width":112,"height":40}],"enemies":[{"x":416,"y":192,"width":64,"height":64}],"mobileEnemies":[],"absorbWalls":[{"x":1340,"y":328,"width":56,"height":416}]},
 
-		enemies : [
-			{
-				x : 10,
-				y : 10,
-				width : 20,
-				height : 20
-			}
-		],
-		mobileEnemies: [
-		]
-	},
 	"1" : {
 		player: {
 			x: 980, 
@@ -311,6 +270,12 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 75
 		}, 
 		absorbWalls:[
+		{
+			x: 260, 
+			y: 180, 
+			width: 20, 
+			height: 200		
+		}
 		],
 		enemies: [
 		{
@@ -334,13 +299,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			height: 30
 		}
 		], 
-		barriers: [
-		{
-			x: 260, 
-			y: 180, 
-			width: 20, 
-			height: 200		
-		}, 		
+		barriers: [ 		
 		{
 			x: 950, 
 			y: 410, 
@@ -618,9 +577,9 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			{
 				x: null,
 				y: null,
-				width: 60,
-				height: 60,
-				varArray: [980, 510, 300, 300, 1000],
+				width: 50,
+				height: 50,
+				varArray: [980, 510, 300, 300, 800],
 				funct: ellipticalMovement
 			}
 		]
@@ -668,12 +627,10 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			{"x":1322,"y":88,"width":142,"height":23},
 			{"x":204,"y":512,"width":35,"height":98}
 		],
-		"absorbWalls":[],
+		"absorbWalls":[{"x":884,"y":104,"width":83,"height":94},{"x":587,"y":736,"width":259,"height":55}],
 		"barriers":[
 			{"x":668,"y":424,"width":99,"height":21},
 			{"x":1324,"y":296,"width":15,"height":187},
-			{"x":884,"y":104,"width":83,"height":94},
-			{"x":587,"y":736,"width":259,"height":55},
 			{"x":1087,"y":421,"width":37,"height":148},
 			{"x":1650,"y":634,"width":127,"height":74},
 			{"x":1649,"y":197,"width":81,"height":109}
@@ -976,5 +933,268 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				height: 200 
 			}
 			]
+		},
+		"19" : {	
+			player: {
+				x: 960,
+				y: 700,
+				width: 30,
+				height: 30
+			},
+
+			invisWalls: [
+				
+			],
+
+			barriers : [
+
+			],
+
+			enemies : [
+			{
+				x: 1050,
+				y: 100,
+				width: 30,
+				height: 30
+			},
+			{
+				x: 870,
+				y: 100,
+				width: 30,
+				height: 30
+			}
+			],
+			mobileEnemies: [
+
+			],
+			absorbWalls: [
+			{
+				x: 960,
+				y: 100,
+				width: 30,
+				height: 200
+			},
+			{
+				x: 1075,
+				y: 185,
+				width: 200,
+				height: 30
+			},
+			{
+				x: 845,
+				y: 185,
+				width: 200, 
+				height: 30
+			},
+			{
+				x: 207.5,
+				y: 100,
+				width: 415,
+				height: 200
+			},
+			{
+				x: 1712.5,
+				y: 100,
+				width: 415,
+				height: 200
+			}
+			]
+		},
+		"20":{"player":{"x":1484,"y":140,"width":40,"height":40},"invisWalls":[],"barriers":[{"x":48,"y":188,"width":16,"height":168},{"x":1076,"y":768,"width":312,"height":16}],"enemies":[{"x":320,"y":96,"width":64,"height":64},{"x":196,"y":788,"width":40,"height":40}],"mobileEnemies":[{"x":972,"y":492,"width":40,"height":40, varArray: [950, 1420, 0, 0, 0.9],funct: railMovement}],"absorbWalls":[{"x":768,"y":80,"width":32,"height":160},{"x":236,"y":448,"width":232,"height":32},{"x":644,"y":356,"width":40,"height":120},{"x":1508,"y":700,"width":200,"height":40}]},
+		"21" : {	
+			player: {
+				x: 960,
+				y: 484.5,
+				width: 20, 
+				height: 20
+			},
+
+			invisWalls: [
+			{
+				x: 875,
+				y: 484.5,
+				width: 30,
+				height: 969
+			},
+			{
+				x: 1045,
+				y: 484.5,
+				width: 30,
+				height: 969
+			},
+			{
+				x: 960,
+				y: 75,
+				width: 140,
+				height: 30
+			}
+			],
+
+			barriers : [
+
+			],
+
+			enemies : [
+			{
+				x: 960,
+				y: 30,
+				width: 30,
+				height: 30
+			}
+			],
+			mobileEnemies: [
+			{
+				x: 1460,
+				y: 284.5,
+				width: 40,
+				height: 40,
+				x: null,
+				y: null,
+				width: 40,
+				height: 40,
+				varArray: [1460, 484.5, 200, 200, 800],
+				funct: ellipticalMovement
+			},
+			{
+				x: 675,
+				y: 484.5,
+				width: 30,
+				height: 30,
+				varArray: [0, 0, 300, 700, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
+			],
+			absorbWalls: [
+			{
+				x: 960,
+				y: 954,
+				width: 140,
+				height: 30
+			},
+			{
+				x: 1460,
+				y: 484.5,
+				height: 200,
+				width: 20
+			},
+			{
+				x: 200,
+				y: 484.5,
+				width: 30,
+				height: 400,
+			}
+			]
+		},
+		"22" : {	
+			player: {
+				x: 400,
+				y: 200,
+				width: 30,
+				height: 30
+			},
+
+			invisWalls: [
+			{
+				x: 960,
+				y: 484.5,
+				width: 30,
+				height: 100
+			}
+			],
+
+			barriers : [
+			{
+				x: 1160,
+				y: 419.5,
+				width: 400,
+				height: 30
+			},
+			{
+				x: 1160,
+				y: 549.5,
+				width: 400,
+				height: 30
+			}
+			],
+
+			enemies : [
+			{
+				x: 1295,
+				y: 484.5,
+				width: 20,
+				height: 20
+			}
+			],
+			mobileEnemies: [
+			{
+				x: 100,
+				y: 900,
+				width: 30,
+				height: 30,
+				varArray: [100, 600, 0, 0, 0.9],//[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
+			],
+			absorbWalls: [
+			{
+				x: 960,
+				y: 217.25,
+				width: 30,
+				height: 434.5
+			},
+			{
+				x: 960,
+				y: 751.75,
+				width: 30,
+				height: 434.5
+			},
+			{
+				x: 1345,
+				y: 484.5,
+				width: 30,
+				height: 100
+			},
+			{
+				x: 15,
+				y: 484.5,
+				width: 30,
+				height: 200
+			}
+			]
 		}
 }
+/*Template
+
+"n" : {	
+			player: {
+
+			},
+
+			invisWalls: [
+
+			],
+
+			barriers : [
+
+			],
+
+			enemies : [
+
+			],
+			mobileEnemies: [
+
+			],
+			absorbWalls: [
+			
+			]
+		}
+		
+		
+		*/
+		/* These are just the endings to the moving enemies, I put them here because I can't remember them.
+		varArray: [200, 500, 300, 700, 0.9],//[x1, x2, y1, y2, d]
+		funct: railMovement
+		//////////////////////////////////////////////////////////////// distance is how far the enemy orbits from the center, keep both "distance" the same
+		varArray: [1460, 484.5, 200, 200, 800],[x,yCenter, distance, distance, frames it takes to complete the orbit]
+		funct: ellipticalMovement
+		*/
