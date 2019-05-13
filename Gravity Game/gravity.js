@@ -450,7 +450,6 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	}
 
 	nStr = "" + n;
-	timer = 0;
 	shootTimer = 0;
 
 	//gets the objects from the "nStr"th level of levelData
