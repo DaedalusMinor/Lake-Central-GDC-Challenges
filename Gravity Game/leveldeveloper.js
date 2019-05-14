@@ -1,5 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
-const GRID_SIZE = 8;
+const GRID_SIZE = 20;
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -114,77 +114,6 @@ class Player extends Rectangle {
 				this.pen.renderAddition("#006600");
 			}
 		}
-		// //collision handling
-		// for (var i = 0; i < enemyArray.length; i++) {
-		// 	if(checkCollision(this, enemyArray[i])){
-		// 		eject(this, enemyArray[i]);
-		// 	}
-		// }
-		// for (var i = 0; i < barrierArray.length; i++) {
-		// 	if(checkCollision(this, barrierArray[i])){
-		// 		eject(this, barrierArray[i]);
-		// 	}
-		// }
-		// for (var i = 0; i < invisArray.length; i++) {
-		// 	if(checkCollision(this, invisArray[i])){
-		// 		eject(this, invisArray[i]);
-		// 	}
-		// }
-		// for (var i = 0; i < enemyMobileArray.length; i++) {
-		// 	if(checkCollision(this, enemyMobileArray[i])){
-		// 		eject(this, enemyMobileArray[i]);
-		// 	}
-		// }
-		//
-		// for (var i = 0; i < bulletArray.length; i++) {
-		// 	if (checkCollision(this, bulletArray[i])){
-		// 		createLevel(player.level);
-		// 		this.gravityPoints = 150;
-		// 		shootTimer = 1;
-		// 	}
-		// 	if (this.condense && this.gravityPoints > 0){
-		// 		//calculate distance
-		// 		var xDist = this.x + this.width/2 - bulletArray[i].x;
-		// 		var yDist = this.y + this.height/2 - bulletArray[i].y;
-		// 		var dist = distance(xDist, yDist);
-		// 		//calculate power of gravity
-		// 		var pull = 20/dist;
-		// 		if(xDist > 0){
-		// 			bulletArray[i].dx += pull;
-		// 		}
-		// 		else{
-		// 			bulletArray[i].dx -= pull;
-		// 		}
-		//
-		// 		if(yDist > 0){
-		// 			bulletArray[i].dy += pull;
-		// 		}
-		// 		else{
-		// 			bulletArray[i].dy -= pull;
-		// 		}
-		// 	}
-		//
-		// }
-		// 	//manage gravityPoints
-		// if(this.condense && this.gravityPoints > 0){
-		// 	this.gravityPoints -= 0.8;
-		// }
-		// else if(!this.condense && this.gravityPoints < 150){
-		// 	this.gravityPoints += 0.3;
-		// }
-		// 	//bar cooldown when gravityPoints hits 0
-		// if(this.gravityPoints <= 0) {
-		// 	forceStop = true;
-		// 	player.condense = false;
-		// }
-		// if(forceStop == true) {
-		// 	this.condense == false;
-		// 	if (this.gravityPoints >= 100) {
-		// 		forceStop = false;
-		// 	}
-		// }
-		//
-		// gravityBar.width = this.gravityPoints;
 		this.render();
 	}
 
@@ -333,15 +262,24 @@ class Pen {
 		let ty1 = Math.min(this.y1, this.y2);
 		let ty2 = Math.max(this.y1, this.y2);
 		this.x1 = tx1;
-		this.x1 = this.x1 - (this.x1 % GRID_SIZE);
+		this.x1 = this.roundToGrid(this.x1);
 		this.x2 = tx2;
-		this.x2 = this.x2 - (this.x2 % GRID_SIZE);
+		this.x2 = this.roundToGrid(this.x2);
 		this.y1 = ty1;
-		this.y1 = this.y1 - (this.y1 % GRID_SIZE);
+		this.y1 = this.roundToGrid(this.y1);
 		this.y2 = ty2;
-		this.y2 = this.y2 - (this.y2 % GRID_SIZE);
+		this.y2 = this.roundToGrid(this.y2);
 	}
 
+	roundToGrid(p){	//takes a dimension and pushes it to the closest grid line
+		let margin = p % GRID_SIZE;
+		if (margin < GRID_SIZE/2){
+			return p - margin;
+		}
+		else{
+			return p + GRID_SIZE - margin;
+		}
+	}
 	renderAddition(){//creates a phantom rectangle while holding the mouse button down and dragging out dimensions
 		if(this.drawEnemy){
 			ctx.fillStyle = "#FF0000";
@@ -349,11 +287,11 @@ class Pen {
 		}
 		else if(this.drawInvWall){
 			ctx.fillStyle = "#0000FF";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);		
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
 		}
 		else if(this.drawAbsWall){
 			ctx.fillStyle = "#0000FF";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);		
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
 		}
 		else if(this.drawWall){
 			ctx.fillStyle = "#00FF00";
@@ -361,7 +299,7 @@ class Pen {
 		}
 		else if(this.drawPlayer){
 			ctx.fillStyle = "#FFFFFF";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.x2 - this.x1);
 		}
 	}
 }
@@ -534,7 +472,7 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 
 			],
 			absorbWalls: [
-			
+
 			]
 		}
 	};
