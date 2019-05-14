@@ -1,5 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
-
+const GRID_SIZE = 20;
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -13,7 +13,7 @@ class Rectangle { //the base rectangle
 	}
 	render() {
 		//drawing rectangles like this puts this.x and this.y at the center of the rectangle
-		ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
@@ -22,7 +22,7 @@ class RectColored extends Rectangle { //rectangles that you can modify the color
 		super(x, y, w, h);
 		this.color = color;
 	}
-	update() { 
+	update() {
 		ctx.fillStyle = this.color;
 		this.render();
 	}
@@ -36,145 +36,89 @@ class RectMobile extends RectColored { //base moving rectangle
 	}
 	update() {
 		this.funct();
-		super.update();	
+		super.update();
 	}
 }
 /** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
-*	motion functions for each object, and then call them every time update() is called. This allows
+*	motion functions for each object, and then call them every time update() is called. This allows use
 *	us to define a range of objects that move in different ways without creating a new class for each
 *	individual object. But how are we going to pass all of the different necessary parameters to the
 *	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
 *	size in JavaScript, which is defined when the object is instantiated, and the function takes those
 *	array values, and understands what to do with them. I note what should be given to the array at the
-*	beginning of each function, so that it is clear what each variable in the array does for the entire 
-*	function.							- Wight_
+*	beginning of each function, so that it is clear what each variable in the array does for the entire
+*	program.							- Wight_
 */
 function railMovement() {
-	///Description: Moves object along a linear segment between (x1, y1) and (x2, y2) at speed d
-	/* @preconditions: this.varArray = [x1, x2, y1, y2, d];
-	(this.x, this.y) MUST be a solution to: (y2 - y) = (y2-y1)/(x2-x1) * (x2 - x),
-	therefore (this.x, this.y) is a point on the line connecting (x1, y1) and (x2, y2).
-	x1 is the x-coordinate of the first point, x2 for the second point,
-	same for y1 and y2 but for the y-coordinate, d is its speed */
-	var x1 = makeStandardWidth(this.varArray[0]); var x2 = makeStandardWidth(this.varArray[1]);
-	var y1 = makeStandardHeight(this.varArray[2]); var y2 = makeStandardHeight(this.varArray[3]);
-	var d = makeStandardWidth(this.varArray[4]);
-	if (this.direction === undefined)	//determine the direction to be traveling
-		this.direction = (d > 0)?1:-1;	//Ignore the syntax. It works. Trust me. :P
-	if ((this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2)) &&
-		(this.y < Math.min(y1, y2) || this.y > Math.max(y1, y2)))	//determines whether to switch direction
-		this.direction *= -1;
-	d *= this.direction;
-	
-	this.x += d * Math.cos(Math.atan2(y2-y1,x2-x1));
-	this.y += d * Math.sin(Math.atan2(y2-y1,x2-x1));
-}
-function ellipticalMovement() {
-	///Description: Moves object along an ellipse with axes of lengths axX and axY at center (x, y),
-	///Making a revolution in d frames, therefore the object covers 2*PI/d radians per frame
-	/* @preconditions: this.varArray = [x, y, axX, axY, d];
-	(this.x, this.y) MUST be a solution to the ellipse OR null, in which case it will be set to a valid point.
-	cenX is the x co-ordinate of the circle's center, cenY is the y co-ordinate,
-	axX is the distance between the center and a point on the ellipse with the same x-coordinate,
-	axY is the same for y, d is the number of frames the object needs to make one complete rotation 
-	(cenX + axX cost, cenY + axY sint) */
-	var cenX = makeStandardWidth(this.varArray[0]); var cenY = makeStandardHeight(this.varArray[1]);
-	var axX = makeStandardWidth(this.varArray[2]); var axY = makeStandardWidth(this.varArray[3]);
-	var d = this.varArray[4];
-	
-	if (this.x == null || this.y == null) {
-		this.x = cenX + axX;
-		this.y = cenY;
-	} else {
-		var thta = Math.atan2(this.y-cenY,this.x-cenX);
-		thta += 2*Math.PI/d;
-		this.x = cenX + axX * Math.cos(thta);
-		this.y = cenY + axY * Math.sin(thta);
+	///Description: Moves the object along a linear segment between (xMin, yMin) and (xMax, yMax)
+	/* @precondition: this.varArray = [xMin, xMax, yMin, yMax, dx, dy];
+	xMin is the lowest x value, xMax is the highest; same for yMin and yMax
+	dx is its speed along the x-axis, dy does the same thing but for y */
+	var xMin = makeStandardWidth(this.varArray[0]); var xMax = makeStandardWidth(this.varArray[1]);
+	var yMin = makeStandardHeight(this.varArray[2]); var yMax = makeStandardHeight(this.varArray[3]);
+	var dx = makeStandardWidth(this.varArray[4]); var dy = makeStandardHeight(this.varArray[5]);
+
+	if (this.x >= xMin && this.x <= xMax) { //horizontal movement
+		this.x += dx;
+	}
+	else {
+		dx *= -1;
+		this.varArray[4] *= -1;
+		this.x += dx;
+	}
+	if (this.y >= yMin && this.y <= yMax) { //vertical movement
+		this.y += dy;
+	}
+	else {
+		dy *= -1;
+		this.varArray[5] *= -1;
+		this.y += dy;
 	}
 }
 
 class Player extends Rectangle {
-	constructor(x, y, width, height, lv) {
-		super(x, y, width, height);
+	constructor(x, y, height, width) {
+		super(x, y, makeStandardWidth(width), makeStandardHeight(height));
 		this.condense = false;
 		this.gravityPoints = 150;
-		this.level = lv;
+		this.pen = new Pen(x,y);
 	}
 
 	update() {
-		if (this.left)
-			this.x -= makeStandardWidth(3);
-		if (this.right)
-			this.x += makeStandardWidth(3);	
-		if (this.up)
-			this.y -= makeStandardHeight(3);
-		if (this.down)
-			this.y += makeStandardHeight(3);
-		
-		for (var i = 0; i < enemyArray.length; i++) {
-			eject(this, enemyArray[i]);
+		if (this.left) {
+			this.x -= 5;
 		}
-		for (var i = 0; i < barrierArray.length; i++) {
-			eject(this, barrierArray[i]);
+		if (this.right) {
+			this.x += 5;
 		}
-		for (var i = 0; i < invisArray.length; i++) {
-			eject(this, invisArray[i]);
+		if (this.up) {
+			this.y -= 5;
 		}
-		for (var i = 0; i < enemyMobileArray.length; i++) {
-			eject(this, enemyMobileArray[i]);
+		if (this.down) {
+			this.y += 5;
 		}
-		for (var i = 0; i < absorbArray.length; i++) {
-			eject(this, absorbArray[i]);
-		}
-		
-		for (var i = 0; i < bulletArray.length; i++) {
-			if (this.condense && this.gravityPoints > 0){
-				//calculate distance
-				var xDist = this.x - bulletArray[i].x;
-				var yDist = this.y - bulletArray[i].y;
-				var dist = distance(xDist, yDist);
-				//calculate power of gravity
-				var pull = 20/dist;
-				if(xDist > 0){
-					bulletArray[i].dx += pull;
-				}
-				else{
-					bulletArray[i].dx -= pull;
-				}
 
-				if(yDist > 0){
-					bulletArray[i].dy += pull;
-				}
-				else{
-					bulletArray[i].dy -= pull;
-				}
+		if(this.drawEnemy || this.drawWall || this.drawInvWall || this.drawAbsWall){
+			this.pen.x2 = this.x;
+			this.pen.y2 = this.y;
+			if(this.drawEnemy){
+				this.pen.renderAddition("FF0000");
 			}
-
-		}
-			//manage gravityPoints
-		if(this.condense && this.gravityPoints > 0){
-			this.gravityPoints -= 0.8;
-		}
-		else if(!this.condense && this.gravityPoints < 150){
-			this.gravityPoints += 0.3;
-		}
-			//bar cooldown when gravityPoints hits 0
-		if(this.gravityPoints <= 0) {
-			forceStop = true;
-			player.condense = false;
-		}
-		if(forceStop) {
-			this.condense = false;
-			if (this.gravityPoints >= 100) {
-				forceStop = false;
+			if(this.drawWall){
+				this.pen.renderAddition("FFFFFF");
+			}
+			if(this.drawInvWall){
+				this.pen.renderAddition("#00ff99");
+			}
+			if(this.drawAbsWall){
+				this.pen.renderAddition("#006600");
 			}
 		}
-	
-		gravityBar.width = this.gravityPoints;
 		this.render();
 	}
+
 	render() {
-		if (!this.condense) 
+		if (this.condense == false)
 			ctx.fillStyle = "#00cc00";
 		else {
 			ctx.fillStyle = "#00FFFF";
@@ -187,15 +131,196 @@ class Player extends Rectangle {
 	}
 }
 
+//This class is unique to this file, and is completely dedicated to drawing out a level and committing them to a JSON variable
+class Pen {
+	constructor(x, y){
+		this.x1 = x;	//variables with a subscript of 1 show a starting point
+		this.y1 = y;
+		this.x2 = x;	//variables with a subscript of 2 show an end point
+		this.y2 = y;
+		this.drawing = false;  //this boolean shows whether the pen is in the process of drawing
+		this.drawEnemy = false;	//the rest of these are analogous to an artist's palette: select your paints with the buttons!
+		this.drawInvWall = false;
+		this.drawAbsWall = false;
+		this.drawWall = false;
+		this.drawPlayer = false;
+	}
+
+	sketchEnemy(){ //each of these functions sketch the objects onto the screen, and commit them to the JSON variable
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		if(width > 4){	//minimum size requirement
+			let div = document.createElement("div");
+			/*so just like how you can edit HTML elements in JS, you can also create them with the createElement() function
+				In this case, I created a div element and give it all the style attributes it needs to look like
+				the enemies and walls we've been rendering in JS all along.  The reason I did this is because we can
+				add eventListeners to these bad boys, like clicking.
+			*/
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + width + "px;"
+									+ "background: #B22222;";
+			div.setAttribute("style", style);	//this is how edit attributes of said elements.  I did the styling in a funky way, but you can probs tell it's just CSS code in string form
+			div.addEventListener("click", (e) => {
+				div.remove();
+			});
+			/*Above this is the creation of an eventListener. In HTML, there are a bunch of built in eventListeners like
+				"onclick" or "mousemove", that you can look up online.  These listen for certain actions on an HTML doc
+				and if that thing happens then it calls the function it's been specified to call.  So the first parameter
+				is the action to listen for, and the second is what to do if that thing happens.
+			*/
+			document.getElementById("enemyfield").appendChild(div);	//this is just a div containing all other enemy divs.  Makes it easier to put different objects into their respective JSON arrays
+		}
+	}
+
+	sketchInvWall(){
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		let height = this.y2 - this.y1;
+		if(height > 2 && width > 2){
+			ctx.fillStyle = "#00ff99";
+			let div = document.createElement("div");
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + height + "px;"
+									+ "background: #00ff99;";
+			div.setAttribute("style", style);
+			div.addEventListener("click", (e) => {
+				div.remove();
+			});
+			document.getElementById("invfield").appendChild(div);
+		}
+	}
+	sketchAbsWall(){
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		let height = this.y2 - this.y1;
+		if(height > 2 && width > 2){
+			ctx.fillStyle = "#006600";
+			let div = document.createElement("div");
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + height + "px;"
+									+ "background: #006600;";
+			div.setAttribute("style", style);
+			div.addEventListener("click", (e) => {
+				div.remove();
+			});
+			document.getElementById("absfield").appendChild(div);
+		}
+	}
+
+	sketchWall(){
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		let height = this.y2 - this.y1;
+		if(width > 2 && height > 2){
+			ctx.fillStyle = "#FFFFFF";
+			let div = document.createElement("div");
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + height + "px;"
+									+ "background: #FFFFFF;";
+			div.setAttribute("style", style);
+			div.addEventListener("click", (e) => {
+				div.remove();
+			});
+			document.getElementById("wallfield").appendChild(div);
+		}
+	}
+
+	sketchPlayer(){
+		this.standardizeCoords();
+		let width = this.x2 - this.x1;
+		if(width > 4){
+			ctx.fillStyle = "#FFFFFF";
+			let div = document.getElementById("playerstart");
+			//I'm only going to edit a pre-existing div because there should only be one player in a level
+			let style =   "position: absolute;"
+									+ "left: " + this.x1 + "px;"
+									+ "top: " + this.y1 + "px;"
+									+ "width: " + width + "px;"
+									+ "height: " + width + "px;"
+									+ "background: #FFFF00;";
+			div.setAttribute("style", style);
+		}
+	}
+
+	standardizeCoords(){	//this function always makes variables with subscript 1 smaller than the variables
+		//with subscript 2
+		//It also standardizes them to a grid, making connections easier.
+		let tx1 = Math.min(this.x1, this.x2);
+		let tx2 = Math.max(this.x1, this.x2);
+		let ty1 = Math.min(this.y1, this.y2);
+		let ty2 = Math.max(this.y1, this.y2);
+		this.x1 = tx1;
+		this.x1 = this.roundToGrid(this.x1);
+		this.x2 = tx2;
+		this.x2 = this.roundToGrid(this.x2);
+		this.y1 = ty1;
+		this.y1 = this.roundToGrid(this.y1);
+		this.y2 = ty2;
+		this.y2 = this.roundToGrid(this.y2);
+	}
+
+	roundToGrid(p){	//takes a dimension and pushes it to the closest grid line
+		let margin = p % GRID_SIZE;
+		if (margin < GRID_SIZE/2){
+			return p - margin;
+		}
+		else{
+			return p + GRID_SIZE - margin;
+		}
+	}
+	renderAddition(){//creates a phantom rectangle while holding the mouse button down and dragging out dimensions
+		if(this.drawEnemy){
+			ctx.fillStyle = "#FF0000";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.x2 - this.x1);
+		}
+		else if(this.drawInvWall){
+			ctx.fillStyle = "#0000FF";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+		}
+		else if(this.drawAbsWall){
+			ctx.fillStyle = "#0000FF";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+		}
+		else if(this.drawWall){
+			ctx.fillStyle = "#00FF00";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.y2 - this.y1);
+		}
+		else if(this.drawPlayer){
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.x2 - this.x1);
+		}
+	}
+}
+
 class Enemy extends Rectangle {
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
 		this.buffer = this.width + 5;
 		this.theta = 0;
 	}
+
 	update(){
+		for (var i = 0; i < bulletArray.length; i++) {
+			if(checkCollision(this, bulletArray[i])){
+				enemyArray.splice(enemyArray.indexOf(this), 1);
+				bulletArray.splice(i, 1);
+			}
+		}
 		//finds the angle to point at
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
+		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2),
+			player.x + player.width/2 - (this.x + this.width/2));
 		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			this.shoot();
@@ -210,14 +335,7 @@ class Enemy extends Rectangle {
 	}
 	render() {
 		ctx.fillStyle="#B22222";
-		//A way to draw tilted squares! A corner of the square always points at the player, which is where the enemy fires from (in theory)
-		var r = this.width * Math.sqrt(2) / 2;
-		ctx.moveTo(this.x + r * Math.sin(-this.theta), this.y + r * Math.cos(-this.theta));
-		ctx.beginPath();
-		for (var c = 1; c <= 4; c++) {
-			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
-		ctx.fill();
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
@@ -229,16 +347,23 @@ class EnemyMobile extends RectMobile { //moving enemies
 	update() {
 		super.update(); //all of the RectMobile stuff
 		//all of the enemy stuff that was not supered
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);
-		if(shootTimer % FIRE_INTERVAL == 0){ 
+		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2),
+			player.x + player.width/2 - (this.x + this.width/2));
+		for (var i = 0; i < bulletArray.length; i++) {
+			if(checkCollision(this, bulletArray[i])){
+				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
+				bulletArray.splice(i, 1);
+			}
+		}
+		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			this.shoot();
 		}
 		this.render();
 	}
 	shoot(){
-		var yBuffer = this.y + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.buffer * Math.cos(this.theta);
+		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(this.theta);
+		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(this.theta);
 		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
 	}
 	render() {
@@ -248,8 +373,8 @@ class EnemyMobile extends RectMobile { //moving enemies
 		ctx.beginPath();
 		for (var c = 1; c <= 4; c++) {
 			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
-		ctx.fill();	
+		}
+		ctx.fill();
 	}
 }
 
@@ -258,13 +383,14 @@ class Bullet extends RectColored {
 		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
-		this.collisionCounter;
 	}
 	update() {
 		this.y += this.dy;
 		this.x += this.dx;
+		var bulletDown = this.y + this.height;
+		var bulletRight = this.x + this.width;
 		for (var i = 0; i < barrierArray.length; i++) {
-			if (checkCollision(this, barrierArray[i])){	
+			if (checkCollision(this, barrierArray[i])){
 				var direct = eject(this, barrierArray[i]);
 				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
 				its orientation appropriately*/
@@ -274,34 +400,6 @@ class Bullet extends RectColored {
 				if (direct[2] || direct[3]){ //vertical
 					this.dy *= -1;
 				}
-				this.collisionCounter++;
-				if(this.collisionCounter >= 5){
-					bulletArray.splice(bulletArray.indexOf(this), 1);
-				}
-			}
-		}
-		//handles everything the bullet can kill
-		for (var i = 0; i < enemyArray.length; i++) {
-			if(checkCollision(this, enemyArray[i])){
-				enemyArray.splice(i, 1);
-				bulletArray.splice(bulletArray.indexOf(this), 1);
-			}
-		}
-		for (var i = 0; i < enemyMobileArray.length; i++) {
-			if(checkCollision(this, enemyMobileArray[i])){
-				enemyMobileArray.splice(i, 1);
-				bulletArray.splice(bulletArray.indexOf(this), 1);
-			}
-		}
-		if (checkCollision(this, player)){
-			createLevel(player.level);
-			player.gravityPoints = 150;
-			deathCounter += 1;
-			shootTimer = 1;
-		}
-		for (var i = 0; i < absorbArray.length; i++) {
-			if(checkCollision(this, absorbArray[i])){
-				bulletArray.splice(bulletArray.indexOf(this), 1);
 			}
 		}
 		super.update();
@@ -313,8 +411,9 @@ class Wall extends Rectangle { //the walls
 		super(x,y,width,height);
 	}
 }
+
 class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
-	constructor(x,y,width,height, color){
+	constructor(x,y,width,height){
 		super(x,y,width,height,"#00ff99");
 	}
 }
@@ -330,10 +429,10 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 		this.xLeft = this.x - this.width/2;
 	}
 	update() {
-		//places the center of the bar at the midpoint of the edges 
+		//places the center of the bar at the midpoint of the edges
 		this.x = (this.xLeft + this.width)/2;
 		//changes color of bar
-		if (forceStop)
+		if (forceStop == true)
 			this.color = "#A9A9A9";
 		else
 			this.color = "#00FFFF";
@@ -345,14 +444,136 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 	}
 }
 
+
 /* arr.slice (1;0) The slice() method returns a shallow copy of a portion of an array
 object selected from begin to end (end not included). The original array will not be modified.*/
 ///adding things
-var gravityBarBack = new RectColored (95, 30, 150, 15, "#FFFFFF");
-var gravityBar = new EnergyBar (95, 30, 150, 15, null);
+
+printJSON = function(){	//as you can guess, this prints out the JSON data representing this level
+	let level = {
+		"n" : {	//This "n" is a substitute for whatever level you're creating.  Once you get your JSON
+						//REMEMBER TO EDIT THIS LEVEL NUMBER
+			player: {
+
+			},
+
+			invisWalls: [
+
+			],
+
+			barriers : [
+
+			],
+
+			enemies : [
+
+			],
+			mobileEnemies: [
+
+			],
+			absorbWalls: [
+
+			]
+		}
+	};
+
+	let player = document.getElementById("playerstart");	//gets specified div
+	if(player.hasAttribute("style")){//checks if the player was given a style, and thus given a position
+		let x = player.style.left;	//I can get the data from a div, but the dimensions are returned as strings
+																//with a "px" for pixels attatched at the end
+		let y = player.style.top;
+		let sideLength = player.style.width;
+		sideLength = parseInt(sideLength.substr(0, sideLength.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + sideLength/2;	//this gets rid of the "px" and turns it into an integer
+		y = parseInt(y.substr(0, y.length - 2), 10) + sideLength/2;
+		level["n"].player = {	//here we create the JSON object and commit it to the level
+			x: x,
+			y: y,
+			width: sideLength,
+			height: sideLength
+		};
+	}
+
+	//same thing as above, except there is a field of enemies, so we have to cycle through all of the enemy divs
+	let enemies = document.getElementById("enemyfield").childNodes;	//childNodes returns all of the elements inside of an HTML element
+	//for instance, all the childNodes of the body tag, is all the stuff in between <body> and </body>
+	//think of it as inheritance of a sort
+	for(var i = 0; i < enemies.length; i++){
+		let x = enemies[i].style.left;
+		let y = enemies[i].style.top;
+		let sideLength = enemies[i].style.width;
+		sideLength = parseInt(sideLength.substr(0, sideLength.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + sideLength/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + sideLength/2;
+
+		level["n"].enemies.push({
+			x: x,
+			y: y,
+			width: sideLength,
+			height: sideLength
+		});
+	}
+
+	let walls = document.getElementById("wallfield").childNodes;
+	for(var i = 0; i < walls.length; i++){
+		let x = walls[i].style.left;
+		let y = walls[i].style.top;
+		let width = walls[i].style.width;
+		let height = walls[i].style.height;
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
+		level["n"].barriers.push({
+			x: x,
+			y: y,
+			width: width,
+			height: height
+		});
+	}
+
+	let invwalls = document.getElementById("invfield").childNodes;
+	for(var i = 0; i < invwalls.length; i++){
+		let x = invwalls[i].style.left;
+		let y = invwalls[i].style.top;
+		let width = invwalls[i].style.width;
+		let height = invwalls[i].style.height;
+
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
+		level["n"].invisWalls.push({
+			x: x,
+			y: y,
+			width: width,
+			height: height
+		});
+	}
+	let abswalls = document.getElementById("absfield").childNodes;
+	for(var i = 0; i < abswalls.length; i++){
+		let x = abswalls[i].style.left;
+		let y = abswalls[i].style.top;
+		let width = abswalls[i].style.width;
+		let height = abswalls[i].style.height;
+
+		width = parseInt(width.substr(0, width.length - 2), 10);
+		height = parseInt(height.substr(0, height.length - 2), 10);
+		x = parseInt(x.substr(0, x.length - 2), 10) + width/2;
+		y = parseInt(y.substr(0, y.length - 2), 10) + height/2;
+		level["n"].absorbWalls.push({
+			x: x,
+			y: y,
+			width: width,
+			height: height
+		});
+	}
+
+	console.log(JSON.stringify(level));
+}
+
 var fps = 0;
 var timer = 0;
-var deathCounter = 0;
 var shootTimer = 0;
 var FIRE_INTERVAL = 250;
 var forceStop = false;
@@ -366,189 +587,186 @@ var invisArray = [];
 var absorbArray = [];
 var bulletArray = [];
 
+pen = new Pen(0, 0);
+var enemyBtn = document.getElementById("enemy");	//represents the enemy button.  If clicked, then you're creating an enemy
+																									//this is another way of creating an event listener.  In this case, onclick is the event.
+enemyBtn.onclick = () => {	//This fat arrow (=>) is just another way of creating a function in JS.  It's relatively new, coming from ES6
+														//but it's the same as saying function(){...} instead of () => {...}
+	pen.drawEnemy = true;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
+	pen.drawPlayer = false;
+	pen.drawWall = false;
+};
+
+var invwallBtn = document.getElementById("invwall");
+invwallBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = true;
+	pen.drawAbsWall = false;
+	pen.drawPlayer = false;
+	pen.drawWall = false;
+};
+
+var wallBtn = document.getElementById("wall");
+wallBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
+	pen.drawPlayer = false;
+	pen.drawWall = true;
+};
+
+var playerBtn = document.getElementById("player");
+playerBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
+	pen.drawPlayer = true;
+	pen.drawWall = false;
+};
+
+var abswallBtn = document.getElementById("abswall");
+abswallBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = true;
+	pen.drawPlayer = false;
+	pen.drawWall = false;
+};
+
+let toggleGrid = false;
+var gridBtn = document.getElementById("grid");
+gridBtn.onclick = () => {
+	toggleGrid = !toggleGrid;
+}
+
+var printBtn = document.getElementById("print");
+printBtn.onclick = printJSON;	//We're not gonna use an anonymous function here, but a function defined as a variable.
+
+var deleteBtn = document.getElementById("delete");
+deleteBtn.onclick = () => {
+	pen.drawEnemy = false;
+	pen.drawInvWall = false;
+	pen.drawAbsWall = false;
+	pen.drawPlayer = false;
+	pen.drawWall = false;
+	location.reload();
+}
+
 window.onload = function() {
 	canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	ctx = canvas.getContext("2d");
-	document.addEventListener("keydown", keydown);
-	document.addEventListener("keyup", keyup);
 	mouse = new Mouse();
-	createLevel(0);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
 
-function main() {
+function main() {//notice how we don't have to render or update anything in JS, the HTML does it for us!
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	//clear screen
 	ctx.fillStyle = "#110422";
 	ctx.fillRect(0,0, window.innerWidth, window.innerHeight);
-
-	shootTimer += 1;
-	fps += 1;
-	if (fps == 60) {
-		timer += 1;
-		fps = 0;
-	}
-
-	//The update() function calls render() and shoot()
-	for (var i = 0; i < rectArray.length; i++) {
-		rectArray[i].update();
-	}	
-	player.update();	
-	for (var i = 0; i < enemyArray.length; i++) {
-		enemyArray[i].update();
-	}
-	for (var i = 0; i < barrierArray.length; i++){
-		barrierArray[i].update();
-	}
-	for (var i = 0; i < invisArray.length; i++){
-		invisArray[i].update();
-	}
-	for (var i = 0; i < absorbArray.length; i++){
-		absorbArray[i].update();
-	}
-	for (var i = 0; i < bulletArray.length; i++){
-		bulletArray[i].update();
-	}
-	for (var i = 0; i < enemyMobileArray.length; i++){
-		enemyMobileArray[i].update();
-	}
-	
 	//text
 	ctx.textAlign = "left";
-	ctx.fillStyle = "#ffffff";
-	ctx.font = "small-caps lighter 30px Montserrat";
-	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 200, 35);
-	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
-	ctx.fillText("Deaths: " + (deathCounter), 345, 35);
+	ctx.fillStyle = "#FF3333";
+	ctx.font = "24px Arial";
 	ctx.textAlign = "center";
+	if(toggleGrid){
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "#000000";
+		for(var x = 0; x <= window.innerWidth; x += GRID_SIZE){
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, window.innerHeight);
+			ctx.stroke();
+		}
+		for(var y = 0; y <= window.innerWidth; y += GRID_SIZE){
+			ctx.beginPath();
+			ctx.moveTo(0, y);
+			ctx.lineTo(window.innerWidth, y);
+			ctx.stroke();
+		}
+	}
 	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
 	//it will also help with designing levels since you can know where to place something
 	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
-	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 50);
-	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
-		player.level++;
-		createLevel(player.level);
-	}
-}
-
-function createLevel(n) {	//this function is going to use levelData to create the nth level
-	rectArray = [];
-	enemyArray = [];
-	enemyMobileArray = [];
-	barrierArray = [];
-	invisArray = [];
-	absorbArray = [];
-	bulletArray = [];
-
-	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
-		n = 0;
-		player.level = 0;
-	}
-
-	nStr = "" + n;
-	shootTimer = 0;
-
-	//gets the objects from the "nStr"th level of levelData
-	var newEnemies = levelData[nStr]["enemies"];	
-	var newMobileEnemies = levelData[nStr]["mobileEnemies"];
-	var newBorders = levelData[nStr]["barriers"];
-	var newInvisWall = levelData[nStr]["invisWalls"];
-	var newAbsorbWall = levelData[nStr]["absorbWalls"];
-	var newPlayer = levelData[nStr]["player"];
-	
-	//searches through each array of levelData to create the new objects
-	for (var i = 0; i < newEnemies.length; i++){	
-		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y), 
-			makeStandardWidth(newEnemies[i].width), makeStandardHeight(newEnemies[i].height)));
-	}
-	for (var i = 0; i < newMobileEnemies.length; i++){
-		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y), 
-			makeStandardWidth(newMobileEnemies[i].width), makeStandardHeight(newMobileEnemies[i].height),
-			newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
-	}
-	for (var i = 0; i < newBorders.length; i++){
-		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y), 
-			makeStandardWidth(newBorders[i].width), makeStandardHeight(newBorders[i].height)));
-	}
-	//generates the outside walls, since they will be in every level
-	barrierArray.push(new Wall(window.innerWidth/2, -20, window.innerWidth, 40));	//upper border
-	barrierArray.push(new Wall(-20, window.innerHeight/2, 40, window.innerHeight));	//left border
-	barrierArray.push(new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight));	//right border
-	barrierArray.push(new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40));	//lower border
-	for (var i = 0; i < newInvisWall.length; i++){
-		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
-			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
-	}
-	for (var i = 0; i < newAbsorbWall.length; i++){
-		absorbArray.push(new AbsorbentWall(makeStandardWidth(newAbsorbWall[i].x), makeStandardHeight(newAbsorbWall[i].y), 
-			makeStandardWidth(newAbsorbWall[i].width), makeStandardHeight(newAbsorbWall[i].height), newAbsorbWall[i].color));
-	}
-	player = new Player(makeStandardWidth(newPlayer.x), makeStandardHeight(newPlayer.y),
-		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
-	// generates the energy bar on every level	
-	rectArray.push(gravityBarBack);
-	rectArray.push(gravityBar);
+	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 40);
 }
 
 //INPUT MEHTODS//
 Mouse = function(){
 	var mouse = {};
 	mouse.x = 0;
-	mouse.y = 0;	
-	function move(e){
+	mouse.y = 0;
+	function move(e){	//function if mouse is moving
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
-	}
-	function click(e){
-		//add stuff here when we know what we want clicking to do
-	}
-	canvas.addEventListener('mousemove', move);
-	canvas.addEventListener('click', click);
-	return mouse;
-}
-function keydown(e) {
-	switch(e.keyCode) {
-		case 65://move left
-			player.left = true;
-			break;
-		case 87://move up
-			player.up = true;
-			break;
-		case 68://move right
-			player.right = true;
-			break;
-		case 83:// move down
-			player.down = true;
-			break;
-		case 32://activate gravity
-		if (!forceStop) {
-			player.condense = true;
+		if(!pen.drawing){//the two points should be equal to each other if the user isn't drawing
+			pen.x1 = mouse.x;
+			pen.x2 = pen.x1;
+			pen.y1 = mouse.y;
+			pen.y2 = pen.y1;
 		}
-			break;
+		else{	//if the user is drawing, then make these two points different.
+			pen.x2 = mouse.x;
+			pen.y2 = mouse.y;
+			pen.renderAddition();	//drags out the potential dimensions of whatever object the user is drawing
+		}
 	}
-}
-function keyup(e) {
-	switch(e.keyCode) {
-		case 65:
-			player.left = false;
-			break;
-		case 87:
-			player.up = false;
-			break;
-		case 68:
-			player.right = false;
-			break;
-		case 83:
-			player.down = false;
-			break;
-		case 32:
-			player.condense = false;
-			break;
+
+	function mouseDown(e){	//function if left mouse button is pressed down
+		if(!pen.drawing){ //allows first point to be set
+			pen.drawing = true;
+			pen.x1 = pen.x1;
+			pen.y1 = pen.y1;
+		}
+		//disabling paint buttons
+		enemyBtn.disabled = true;
+		invwallBtn.disabled = true;
+		abswallBtn.disabled = true;
+		wallBtn.disabled = true;
+		playerBtn.disabled = true;
+		printBtn.disabled = true;
 	}
+
+	function mouseUp(e){//function for when mouse button is released
+		//updates the second point to get the final dimensions
+		pen.x2 = mouse.x;
+		pen.y2 = mouse.y;
+		if(pen.drawEnemy){
+			pen.sketchEnemy();
+		}
+		if(pen.drawWall){
+			pen.sketchWall();
+		}
+		if(pen.drawInvWall){
+			pen.sketchInvWall();
+		}
+		if(pen.drawAbsWall){
+			pen.sketchAbsWall();
+		}
+		if(pen.drawPlayer){
+			pen.sketchPlayer();
+		}
+		//reset paints
+		pen.drawing = false;
+		enemyBtn.disabled = false;
+		invwallBtn.disabled = false;
+		abswallBtn.disabled = false;
+		wallBtn.disabled = false;
+		playerBtn.disabled = false;
+		printBtn.disabled = false;
+	}
+
+	//adds all of those functions above to eventListeners below
+	canvas.addEventListener('mousemove', move);
+	canvas.addEventListener('mousedown', mouseDown);
+	canvas.addEventListener('mouseup', mouseUp);
+	return mouse;
 }
 
 //COLLISION MANAGEMENT//
@@ -564,57 +782,8 @@ function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollisi
 			rect1.y + rect1.height/2 > rect2.y - rect2.height/2);
 }
 function mouseRectCollision(m, rect) {
-	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 && 
+	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 &&
 		m.y > rect.y - rect.height/2 && m.y < rect.y + rect.height/2;
-}
-function eject(pushed, pusher) {
-	/** A function to handle collision between two objects. 
-	*	If object1 (pushed) is inside of object2 (pusher), object1 is pushed a small amount in each
-	*	cardinal direction to see if there is anywhere object1 is no longer touching object2.
-	*	If it doesn't find any direction which removes it, it increases the push radius and tries again.
-	*	Upon finding the correct direction(s), object1 is moved to where it was discovered to no longer
-	*	be touching object2.			- Wight_
-	*/
-	const DELTA_CHANGE = 0.01
-	var delta = 0;
-	var flags = [false, false, false, false];
-	const PREV_X = pushed.x;
-	const PREV_Y = pushed.y;
-	if (!checkCollision(pushed, pusher)) { return flags; }
-	
-	do {
-		delta += DELTA_CHANGE;
-		pushed.x += delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[0] = true;
-		}
-		pushed.x -= 2*delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[1] = true;
-		}
-		pushed.x = PREV_X;
-		pushed.y += delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[2] = true;
-		}
-		pushed.y -= 2*delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[3] = true;
-		}
-		pushed.y = PREV_Y;
-	} while (!flags[0] && !flags[1] && !flags[2] && !flags[3]);
-	
-	if (flags[0]) {
-		pushed.x += (delta + DELTA_CHANGE);
-	} else if (flags[1]) {
-		pushed.x -= (delta + DELTA_CHANGE);
-	}
-	if (flags[2]) {
-		pushed.y += (delta + DELTA_CHANGE);
-	} else if (flags[3]) {
-		pushed.y -= (delta + DELTA_CHANGE);
-	}
-	return flags;
 }
 
 //COMMON MATH EQUATIONS//
