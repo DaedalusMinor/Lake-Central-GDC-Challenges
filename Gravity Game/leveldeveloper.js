@@ -1,5 +1,5 @@
 //COMMENT YOUR STUFF PLEASE
-const GRID_SIZE = 20;
+const GRID_SIZE = window.innerHeight/40;	//grid size is no longer determined by dimension, but by how many squares should exist in the y-axis
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
