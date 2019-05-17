@@ -425,6 +425,10 @@ function main() {
 	ctx.fillText("Level: " + (player.level+1), window.innerWidth - 200, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
 	ctx.fillText("Deaths: " + (deathCounter), 345, 35);
+	if(timer > 0 && timer < 21)
+	{
+		ctx.fillText("Use Spacebar to change your gravity and throw the bullets back!", 30, 900);
+	}
 	ctx.textAlign = "center";
 	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
 	//it will also help with designing levels since you can know where to place something
