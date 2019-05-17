@@ -31,7 +31,7 @@ class RectColored extends Rectangle { //rectangles that you can modify the color
 
 class RectMobile extends RectColored { //base moving rectangle
 	constructor(x, y, width, height, color, a, funct) {
-		super(x, y, width, height, "#800000");
+		super(x, y, width, height, color);
 		this.varArray = a;
 		this.funct = funct;
 	}
@@ -123,6 +123,9 @@ class Player extends Rectangle {
 		}
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			eject(this, enemyMobileArray[i]);
+		}
+		for (var i = 0; i < wallMobileArray.length; i++) {
+			eject(this, wallMobileArray[i]);
 		}
 		for (var i = 0; i < absorbArray.length; i++) {
 			eject(this, absorbArray[i]);
@@ -222,6 +225,7 @@ class Enemy extends Rectangle {
 	}
 }
 
+
 class EnemyMobile extends RectMobile { //moving enemies
 	constructor(x, y, width, height, color, a, funct) {
 		super (x, y, width, height, "#B22222", a, funct);
@@ -281,6 +285,24 @@ class Bullet extends RectColored {
 				}
 			}
 		}
+		for (var i = 0; i < wallMobileArray.length; i++) {
+			if (checkCollision(this, wallMobileArray[i])){
+				var direct = eject(this, wallMobileArray[i]);
+				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
+				its orientation appropriately*/
+				if (direct[0] || direct[1]){ //horizontal
+					this.dx *= -1;
+				}
+				if (direct[2] || direct[3]){ //vertical
+					this.dy *= -1;
+				}
+				this.collisionCounter+=1;
+				if(this.collisionCounter >= 4){
+					bulletArray.splice(bulletArray.indexOf(this), 1);
+				}
+			}
+		}
+		
 		//handles everything the bullet can kill
 		for (var i = 0; i < enemyArray.length; i++) {
 			if(checkCollision(this, enemyArray[i])){
@@ -314,7 +336,30 @@ class Wall extends Rectangle { //the walls
 		super(x,y,width,height);
 	}
 }
-class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
+class WallMobile extends RectMobile {
+	constructor(x, y, width, height, color, a, funct) {
+		super (x, y, width, height, "#ffffff", a, funct);
+		this.buffer = this.width + 15;
+	}
+	update() {
+		super.update(); //all of the RectMobile stuff
+		//this.theta = Math.atan2(player.y - this.y, player.x - this.x);
+		this.render();
+		
+	}
+	
+	//render() {
+		//ctx.fillStyle="#ffffff";
+		//var r = this.width * Math.sqrt(2) / 2;
+		//ctx.moveTo(this.x + r * Math.sin(-this.theta), this.y + r * Math.cos(-this.theta));
+		//ctx.beginPath();
+		//for (var c = 1; c <= 4; c++) {
+		//	ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
+		//}
+		//ctx.fill();
+	//}
+}
+class InvisWall extends RectColored{ //Better known as PermeableWalls //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
 	constructor(x,y,width,height, color){
 		super(x,y,width,height,"#00ff99");
 	}
@@ -362,6 +407,7 @@ var forceStop = false;
 var rectArray = [];
 var enemyArray = [];
 var enemyMobileArray = [];
+var wallMobileArray = [];
 var barrierArray = [];
 var invisArray = [];
 var absorbArray = [];
@@ -417,6 +463,9 @@ function main() {
 	for (var i = 0; i < enemyMobileArray.length; i++){
 		enemyMobileArray[i].update();
 	}
+	for (var i = 0; i < wallMobileArray.length; i++){
+		wallMobileArray[i].update();
+	}
 
 	//text
 	ctx.textAlign = "left";
@@ -434,6 +483,7 @@ function main() {
 	//it will also help with designing levels since you can know where to place something
 	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
 	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 50);
+	
 	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
 		player.level++;
 		createLevel(player.level);
@@ -444,6 +494,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	rectArray = [];
 	enemyArray = [];
 	enemyMobileArray = [];
+	wallMobileArray = [];
 	barrierArray = [];
 	invisArray = [];
 	absorbArray = [];
@@ -463,6 +514,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	var newBorders = levelData[nStr]["barriers"];
 	var newInvisWall = levelData[nStr]["invisWalls"];
 	var newAbsorbWall = levelData[nStr]["absorbWalls"];
+	var newMobileWall = levelData[nStr]["mobileWalls"];
 	var newPlayer = levelData[nStr]["player"];
 	var dimensions = levelData[nStr]["dimensions"];
 
@@ -484,6 +536,11 @@ function createLevel(n) {	//this function is going to use levelData to create th
 		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y),
 			makeStandardWidth(newMobileEnemies[i].width), makeStandardHeight(newMobileEnemies[i].height),
 			newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
+	}
+	for (var i = 0; i < newMobileWall.length; i++){
+		wallMobileArray.push(new WallMobile(makeStandardWidth(newMobileWall[i].x), makeStandardHeight(newMobileWall[i].y),
+			makeStandardWidth(newMobileWall[i].width), makeStandardHeight(newMobileWall[i].height),
+			newMobileWall[i].color, newMobileWall[i].varArray, newMobileWall[i].funct));
 	}
 	for (var i = 0; i < newBorders.length; i++){
 		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y),
