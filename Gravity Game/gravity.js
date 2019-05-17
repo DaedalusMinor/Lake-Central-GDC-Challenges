@@ -1,3 +1,6 @@
+//COMMENT YOUR STUFF PLEASE
+var HEIGHT = 1920;
+var WIDTH  = 969;
 class Rectangle { //the base rectangle
 	constructor(x, y, w, h) {
 		this.x = x;
@@ -20,7 +23,7 @@ class RectColored extends Rectangle { //rectangles that you can modify the color
 		super(x, y, w, h);
 		this.color = color;
 	}
-	update() { 
+	update() {
 		ctx.fillStyle = this.color;
 		this.render();
 	}
@@ -34,7 +37,7 @@ class RectMobile extends RectColored { //base moving rectangle
 	}
 	update() {
 		this.funct();
-		super.update();	
+		super.update();
 	}
 }
 /** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
@@ -44,7 +47,7 @@ class RectMobile extends RectColored { //base moving rectangle
 *	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
 *	size in JavaScript, which is defined when the object is instantiated, and the function takes those
 *	array values, and understands what to do with them. I note what should be given to the array at the
-*	beginning of each function, so that it is clear what each variable in the array does for the entire 
+*	beginning of each function, so that it is clear what each variable in the array does for the entire
 *	function.							- Wight_
 */
 function railMovement() {
@@ -63,7 +66,7 @@ function railMovement() {
 		(this.y < Math.min(y1, y2) || this.y > Math.max(y1, y2)))	//determines whether to switch direction
 		this.direction *= -1;
 	d *= this.direction;
-	
+
 	this.x += d * Math.cos(Math.atan2(y2-y1,x2-x1));
 	this.y += d * Math.sin(Math.atan2(y2-y1,x2-x1));
 }
@@ -74,12 +77,12 @@ function ellipticalMovement() {
 	(this.x, this.y) MUST be a solution to the ellipse OR null, in which case it will be set to a valid point.
 	cenX is the x co-ordinate of the circle's center, cenY is the y co-ordinate,
 	axX is the distance between the center and a point on the ellipse with the same x-coordinate,
-	axY is the same for y, d is the number of frames the object needs to make one complete rotation 
+	axY is the same for y, d is the number of frames the object needs to make one complete rotation
 	(cenX + axX cost, cenY + axY sint) */
 	var cenX = makeStandardWidth(this.varArray[0]); var cenY = makeStandardHeight(this.varArray[1]);
 	var axX = makeStandardWidth(this.varArray[2]); var axY = makeStandardWidth(this.varArray[3]);
 	var d = this.varArray[4];
-	
+
 	if (this.x == null || this.y == null) {
 		this.x = cenX + axX;
 		this.y = cenY;
@@ -103,12 +106,12 @@ class Player extends Rectangle {
 		if (this.left)
 			this.x -= makeStandardWidth(3);
 		if (this.right)
-			this.x += makeStandardWidth(3);	
+			this.x += makeStandardWidth(3);
 		if (this.up)
 			this.y -= makeStandardHeight(3);
 		if (this.down)
 			this.y += makeStandardHeight(3);
-		
+
 		for (var i = 0; i < enemyArray.length; i++) {
 			eject(this, enemyArray[i]);
 		}
@@ -124,7 +127,7 @@ class Player extends Rectangle {
 		for (var i = 0; i < absorbArray.length; i++) {
 			eject(this, absorbArray[i]);
 		}
-		
+
 		for (var i = 0; i < bulletArray.length; i++) {
 			if (this.condense && this.gravityPoints > 0){
 				//calculate distance
@@ -167,12 +170,12 @@ class Player extends Rectangle {
 				forceStop = false;
 			}
 		}
-	
+
 		gravityBar.width = this.gravityPoints;
 		this.render();
 	}
 	render() {
-		if (!this.condense) 
+		if (!this.condense)
 			ctx.fillStyle = "#00cc00";
 		else {
 			ctx.fillStyle = "#00FFFF";
@@ -193,7 +196,7 @@ class Enemy extends Rectangle {
 	}
 	update(){
 		//finds the angle to point at
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
+		this.theta = Math.atan2(player.y - this.y, player.x - this.x);
 		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			this.shoot();
@@ -214,7 +217,7 @@ class Enemy extends Rectangle {
 		ctx.beginPath();
 		for (var c = 1; c <= 4; c++) {
 			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
+		}
 		ctx.fill();
 	}
 }
@@ -228,7 +231,7 @@ class EnemyMobile extends RectMobile { //moving enemies
 		super.update(); //all of the RectMobile stuff
 		//all of the enemy stuff that was not supered
 		this.theta = Math.atan2(player.y - this.y, player.x - this.x);
-		if(shootTimer % FIRE_INTERVAL == 0){ 
+		if(shootTimer % FIRE_INTERVAL == 0){
 			shootTimer = 0;
 			this.shoot();
 		}
@@ -246,8 +249,8 @@ class EnemyMobile extends RectMobile { //moving enemies
 		ctx.beginPath();
 		for (var c = 1; c <= 4; c++) {
 			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
-		ctx.fill();	
+		}
+		ctx.fill();
 	}
 }
 
@@ -256,13 +259,13 @@ class Bullet extends RectColored {
 		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
-		this.collisionCounter;
+		this.collisionCounter=0;
 	}
 	update() {
 		this.y += this.dy;
 		this.x += this.dx;
 		for (var i = 0; i < barrierArray.length; i++) {
-			if (checkCollision(this, barrierArray[i])){	
+			if (checkCollision(this, barrierArray[i])){
 				var direct = eject(this, barrierArray[i]);
 				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
 				its orientation appropriately*/
@@ -272,8 +275,8 @@ class Bullet extends RectColored {
 				if (direct[2] || direct[3]){ //vertical
 					this.dy *= -1;
 				}
-				this.collisionCounter++;
-				if(this.collisionCounter >= 5){
+				this.collisionCounter+=1;
+				if(this.collisionCounter >= 4){
 					bulletArray.splice(bulletArray.indexOf(this), 1);
 				}
 			}
@@ -328,7 +331,7 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 		this.xLeft = this.x - this.width/2;
 	}
 	update() {
-		//places the center of the bar at the midpoint of the edges 
+		//places the center of the bar at the midpoint of the edges
 		this.x = (this.xLeft + this.width)/2;
 		//changes color of bar
 		if (forceStop)
@@ -372,7 +375,7 @@ window.onload = function() {
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
 	mouse = new Mouse();
-	createLevel(0);
+	createLevel(28);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
@@ -394,8 +397,8 @@ function main() {
 	//The update() function calls render() and shoot()
 	for (var i = 0; i < rectArray.length; i++) {
 		rectArray[i].update();
-	}	
-	player.update();	
+	}
+	player.update();
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
 	}
@@ -414,7 +417,7 @@ function main() {
 	for (var i = 0; i < enemyMobileArray.length; i++){
 		enemyMobileArray[i].update();
 	}
-	
+
 	//text
 	ctx.textAlign = "left";
 	ctx.fillStyle = "#ffffff";
@@ -451,25 +454,35 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	shootTimer = 0;
 
 	//gets the objects from the "nStr"th level of levelData
-	var newEnemies = levelData[nStr]["enemies"];	
+	var newEnemies = levelData[nStr]["enemies"];
 	var newMobileEnemies = levelData[nStr]["mobileEnemies"];
 	var newBorders = levelData[nStr]["barriers"];
 	var newInvisWall = levelData[nStr]["invisWalls"];
 	var newAbsorbWall = levelData[nStr]["absorbWalls"];
 	var newPlayer = levelData[nStr]["player"];
-	
+	var dimensions = levelData[nStr]["dimensions"];
+
+	if(dimensions){
+		WIDTH = dimensions.width;
+		HEIGHT = dimensions.height;
+	}
+	else{
+		WIDTH = 1920;
+		HEIGHT = 969;
+	}
+
 	//searches through each array of levelData to create the new objects
-	for (var i = 0; i < newEnemies.length; i++){	
-		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y), 
+	for (var i = 0; i < newEnemies.length; i++){
+		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y),
 			makeStandardWidth(newEnemies[i].width), makeStandardHeight(newEnemies[i].height)));
 	}
 	for (var i = 0; i < newMobileEnemies.length; i++){
-		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y), 
+		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y),
 			makeStandardWidth(newMobileEnemies[i].width), makeStandardHeight(newMobileEnemies[i].height),
 			newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
 	}
 	for (var i = 0; i < newBorders.length; i++){
-		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y), 
+		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y),
 			makeStandardWidth(newBorders[i].width), makeStandardHeight(newBorders[i].height)));
 	}
 	//generates the outside walls, since they will be in every level
@@ -478,16 +491,16 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	barrierArray.push(new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight));	//right border
 	barrierArray.push(new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40));	//lower border
 	for (var i = 0; i < newInvisWall.length; i++){
-		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
+		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y),
 			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
 	}
 	for (var i = 0; i < newAbsorbWall.length; i++){
-		absorbArray.push(new AbsorbentWall(makeStandardWidth(newAbsorbWall[i].x), makeStandardHeight(newAbsorbWall[i].y), 
+		absorbArray.push(new AbsorbentWall(makeStandardWidth(newAbsorbWall[i].x), makeStandardHeight(newAbsorbWall[i].y),
 			makeStandardWidth(newAbsorbWall[i].width), makeStandardHeight(newAbsorbWall[i].height), newAbsorbWall[i].color));
 	}
 	player = new Player(makeStandardWidth(newPlayer.x), makeStandardHeight(newPlayer.y),
 		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
-	// generates the energy bar on every level	
+	// generates the energy bar on every level
 	rectArray.push(gravityBarBack);
 	rectArray.push(gravityBar);
 }
@@ -496,7 +509,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 Mouse = function(){
 	var mouse = {};
 	mouse.x = 0;
-	mouse.y = 0;	
+	mouse.y = 0;
 	function move(e){
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
@@ -562,11 +575,11 @@ function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollisi
 			rect1.y + rect1.height/2 > rect2.y - rect2.height/2);
 }
 function mouseRectCollision(m, rect) {
-	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 && 
+	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 &&
 		m.y > rect.y - rect.height/2 && m.y < rect.y + rect.height/2;
 }
 function eject(pushed, pusher) {
-	/** A function to handle collision between two objects. 
+	/** A function to handle collision between two objects.
 	*	If object1 (pushed) is inside of object2 (pusher), object1 is pushed a small amount in each
 	*	cardinal direction to see if there is anywhere object1 is no longer touching object2.
 	*	If it doesn't find any direction which removes it, it increases the push radius and tries again.
@@ -579,7 +592,7 @@ function eject(pushed, pusher) {
 	const PREV_X = pushed.x;
 	const PREV_Y = pushed.y;
 	if (!checkCollision(pushed, pusher)) { return flags; }
-	
+
 	do {
 		delta += DELTA_CHANGE;
 		pushed.x += delta;
@@ -601,7 +614,7 @@ function eject(pushed, pusher) {
 		}
 		pushed.y = PREV_Y;
 	} while (!flags[0] && !flags[1] && !flags[2] && !flags[3]);
-	
+
 	if (flags[0]) {
 		pushed.x += (delta + DELTA_CHANGE);
 	} else if (flags[1]) {
@@ -621,15 +634,15 @@ function distance(x, y) {
 }
 function makeStandardWidth(width) {
 	//width is the width of the object on your screen.
-	return width * (canvas.width / 1920);
+	return width * (canvas.width / WIDTH);
 }
 function makeStandardHeight(height) {
 	//height is the height of the object on your screen.
-	return height * (canvas.height / 969);
+	return height * (canvas.height / HEIGHT);
 }
 function inverseStandardWidth(width) {
-	return width * (1920 / canvas.width);
+	return width * (WIDTH / canvas.width);
 }
 function inverseStandardHeight(height) {
-	return height * (969 / canvas.height);
+	return height * (HEIGHT / canvas.height);
 }
