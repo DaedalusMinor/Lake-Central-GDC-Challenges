@@ -468,12 +468,19 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			enemies : [
 
 			],
+			
 			mobileEnemies: [
 
 			],
+			
+			mobileWalls: [
+			
+			],
+			
 			absorbWalls: [
 
 			],
+			
 			dimensions: {
 
 			}
