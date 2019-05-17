@@ -473,7 +473,10 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			],
 			absorbWalls: [
 
-			]
+			],
+			dimensions: {
+
+			}
 		}
 	};
 
@@ -568,7 +571,8 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 			height: height
 		});
 	}
-
+	level["n"].dimensions.width = window.innerWidth;
+	level["n"].dimensions.height = window.innerHeight;
 	console.log(JSON.stringify(level));
 }
 
