@@ -375,7 +375,7 @@ window.onload = function() {
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
 	mouse = new Mouse();
-	createLevel(28);
+	createLevel(0);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
