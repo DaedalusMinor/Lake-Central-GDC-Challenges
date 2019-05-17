@@ -28,60 +28,15 @@ class RectColored extends Rectangle { //rectangles that you can modify the color
 	}
 }
 
-class RectMobile extends RectColored { //base moving rectangle
-	constructor(x, y, width, height, color, a, funct) {
-		super(x, y, width, height, "#800000");
-		this.varArray = a;
-		this.funct = funct;
-	}
-	update() {
-		this.funct();
-		super.update();	
-	}
-}
-/** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
-*	motion functions for each object, and then call them every time update() is called. This allows use
-*	us to define a range of objects that move in different ways without creating a new class for each
-*	individual object. But how are we going to pass all of the different necessary parameters to the
-*	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
-*	size in JavaScript, which is defined when the object is instantiated, and the function takes those
-*	array values, and understands what to do with them. I note what should be given to the array at the
-*	beginning of each function, so that it is clear what each variable in the array does for the entire 
-*	program.							- Wight_
-*/
-function railMovement() {
-	///Description: Moves the object along a linear segment between (xMin, yMin) and (xMax, yMax)
-	/* @precondition: this.varArray = [xMin, xMax, yMin, yMax, dx, dy];
-	xMin is the lowest x value, xMax is the highest; same for yMin and yMax
-	dx is its speed along the x-axis, dy does the same thing but for y */
-	var xMin = makeStandardWidth(this.varArray[0]); var xMax = makeStandardWidth(this.varArray[1]);
-	var yMin = makeStandardHeight(this.varArray[2]); var yMax = makeStandardHeight(this.varArray[3]);
-	var dx = makeStandardWidth(this.varArray[4]); var dy = makeStandardHeight(this.varArray[5]);
-	
-	if (this.x >= xMin && this.x <= xMax) { //horizontal movement
-		this.x += dx;
-	}
-	else {
-		dx *= -1;
-		this.varArray[4] *= -1;
-		this.x += dx;
-	}
-	if (this.y >= yMin && this.y <= yMax) { //vertical movement
-		this.y += dy;
-	}
-	else {
-		dy *= -1;
-		this.varArray[5] *= -1;
-		this.y += dy;
-	}
-}
+
+
 
 class Player extends Rectangle {
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
 		this.condense = false;
 		this.gravityPoints = 150;
-		//this.level = lv;
+		
 	}
 
 	update() {
@@ -109,16 +64,8 @@ class Player extends Rectangle {
 				eject(this, barrierArray[i]);
 			}
 		}
-		for (var i = 0; i < invisArray.length; i++) {
-			if(checkCollision(this, invisArray[i])){
-				eject(this, invisArray[i]);
-			}
-		}
-		for (var i = 0; i < enemyMobileArray.length; i++) {
-			if(checkCollision(this, enemyMobileArray[i])){
-				eject(this, enemyMobileArray[i]);
-			}			
-		}
+		
+		
 		
 		for (var i = 0; i < bulletArray.length; i++) {
 			if (checkCollision(this, bulletArray[i])){
@@ -226,43 +173,6 @@ class Enemy extends Rectangle {
 	}
 }
 
-class EnemyMobile extends RectMobile { //moving enemies
-	constructor(x, y, width, height, color, a, funct) {
-		super (x, y, width, height, "#B22222", a, funct);
-		this.buffer = this.width + 15;
-	}
-	update() {
-		super.update(); //all of the RectMobile stuff
-		//all of the enemy stuff that was not supered
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
-		for (var i = 0; i < bulletArray.length; i++) {
-			if(checkCollision(this, bulletArray[i])){
-				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
-				bulletArray.splice(i, 1);
-			}
-		}
-		if(shootTimer % FIRE_INTERVAL == 0){ 
-			shootTimer = 0;
-			this.shoot();
-		}
-		this.render();
-	}
-	shoot(){
-		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(this.theta);
-		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
-	}
-	render() {
-		ctx.fillStyle="#B22222";
-		var r = this.width * Math.sqrt(2) / 2;
-		ctx.moveTo(this.x + r * Math.sin(-this.theta), this.y + r * Math.cos(-this.theta));
-		ctx.beginPath();
-		for (var c = 1; c <= 4; c++) {
-			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
-		ctx.fill();	
-	}
-}
 
 class Bullet extends RectColored {
 	constructor(x, y, dx, dy, c) {
@@ -287,10 +197,7 @@ class Bullet extends RectColored {
 				if (direct[2] || direct[3]){ //vertical
 					this.dy *= -1;
 				}
-				//this.collisionCounter++;
-				//if(this.collisionCounter >= 5){
-				//	bulletArray.splice(bulletArray.indexOf(this), 1);
-				//}
+				
 			}
 		}	
 		super.update();
@@ -301,11 +208,6 @@ class Bullet extends RectColored {
 class Wall extends Rectangle { //the walls
 	constructor(x,y,width, height){
 		super(x,y,width,height);
-	}
-}
-class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
-	constructor(x,y,width,height, color){
-		super(x,y,width,height,"#00ff99");
 	}
 }
 
@@ -330,8 +232,7 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 	}
 }
 
-/* arr.slice (1;0) The slice() method returns a shallow copy of a portion of an array
-object selected from begin to end (end not included). The original array will not be modified.*/
+
 ///adding things
 var player = new Player (1920/2, 969/2, 30, 30);
 var gravityBarBack = new RectColored (95, 30, 150, 15, "#FFFFFF");
@@ -349,9 +250,7 @@ var forceStop = false;
 //arrays
 var rectArray = [];
 var enemyArray = [];
-var enemyMobileArray = [];
 var barrierArray = [];
-var invisArray = [];
 var bulletArray = [];
 //playerArray.push(player);
 barrierArray.push(topWall);
@@ -368,7 +267,7 @@ window.onload = function() {
 	ctx = canvas.getContext("2d");
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
-	mouse = new Mouse();
+	//mouse = new Mouse();
 	//createLevel(0);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
@@ -399,90 +298,31 @@ function main() {
 	for (var i = 0; i < barrierArray.length; i++){
 		barrierArray[i].update();
 	}
-	for (var i = 0; i < invisArray.length; i++){
-		invisArray[i].update();
-	}
 	for (var i = 0; i < bulletArray.length; i++){
 		bulletArray[i].update();
 	}
-	for (var i = 0; i < enemyMobileArray.length; i++){
-		enemyMobileArray[i].update();
-	}
+	
 	
 	//text
 	ctx.textAlign = "left";
-	ctx.fillStyle = "#FF3333";
-	ctx.font = "24px Arial";
+	ctx.fillStyle = "#ffffff";
+	ctx.font = "small-caps lighter 30px Montserrat";
 	//ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
 	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
-	ctx.fillText("Stay Alive For As Long As You Can!", 830, 35);
-	ctx.textAlign = "center";
-	//debug text which shows the x and y-coords the mouse would be at on the "Standard Screen"
-	//it will also help with designing levels since you can know where to place something
-	//ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
-	//ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 40);
-	//if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
-	//	player.level++;
-	//	createLevel(player.level);
+	if(timer > 0 && timer < 21)
+	{
+		ctx.fillText("Stay Alive For As Long As You Can!", 830, 35);
 	}
-
-
-/*function createLevel(n) {	//this function is going to use levelData to create the nth level
-	rectArray = [];
-	enemyArray = [];
-	enemyMobileArray = [];
-	barrierArray = [];
-	invisArray = [];
-	bulletArray = [];
-
-	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
-		n = 0;
-		player.level = 0;
-	}
-
-	nStr = "" + n;
-	timer = 0;
-	shootTimer = 0;
-
-	//gets the objects from the "nStr"th level of levelData
-	var newEnemies = levelData[nStr]["enemies"];	
-	var newMobileEnemies = levelData[nStr]["mobileEnemies"];
-	var newBorders = levelData[nStr]["barriers"];
-	var newInvisWall = levelData[nStr]["invisWalls"];
-	var newPlayer = levelData[nStr]["player"];
 	
-	//searches through each array of levelData to create the new objects
-	for (var i = 0; i < newEnemies.length; i++){	
-		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y), 
-			makeStandardWidth(newEnemies[i].width), makeStandardHeight(newEnemies[i].height)));
+	ctx.textAlign = "center";
+	
 	}
-	for (var i = 0; i < newMobileEnemies.length; i++){
-		enemyMobileArray.push(new EnemyMobile(makeStandardWidth(newMobileEnemies[i].x), makeStandardHeight(newMobileEnemies[i].y), 
-			makeStandardWidth(newMobileEnemies[i].width), makeStandardHeight(newMobileEnemies[i].height),
-			newMobileEnemies[i].color, newMobileEnemies[i].varArray, newMobileEnemies[i].funct));
-	}
-	for (var i = 0; i < newBorders.length; i++){
-		barrierArray.push(new Wall(makeStandardWidth(newBorders[i].x), makeStandardHeight(newBorders[i].y), 
-			makeStandardWidth(newBorders[i].width), makeStandardHeight(newBorders[i].height)));
-	}
-	//generates the outside walls, since they will be in every level
-	barrierArray.push(new Wall(window.innerWidth/2, -20, window.innerWidth, 40));	//upper border
-	barrierArray.push(new Wall(-20, window.innerHeight/2, 40, window.innerHeight));	//left border
-	barrierArray.push(new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight));	//right border
-	barrierArray.push(new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40));	//lower border
-	for (var i = 0; i < newInvisWall.length; i++){
-		invisArray.push(new InvisWall(makeStandardWidth(newInvisWall[i].x), makeStandardHeight(newInvisWall[i].y), 
-			makeStandardWidth(newInvisWall[i].width), makeStandardHeight(newInvisWall[i].height), newInvisWall[i].color));
-	}
-	player = new Player(makeStandardWidth(newPlayer.x), makeStandardHeight(newPlayer.y),
-		makeStandardWidth(newPlayer.width), makeStandardHeight(newPlayer.height), n);
-	// generates the energy bar on every level	
-	rectArray.push(gravityBarBack);
-	rectArray.push(gravityBar);
-}*/
+
+
+
 
 //INPUT MEHTODS//
-Mouse = function(){
+/*Mouse = function(){
 	var mouse = {};
 	mouse.x = 0;
 	mouse.y = 0;	
@@ -496,7 +336,7 @@ Mouse = function(){
 	canvas.addEventListener('mousemove', move);
 	canvas.addEventListener('click', click);
 	return mouse;
-}
+}*/
 function keydown(e) {
 	switch(e.keyCode) {
 		case 65://move left
