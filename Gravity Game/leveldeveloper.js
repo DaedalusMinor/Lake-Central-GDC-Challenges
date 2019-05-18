@@ -1,137 +1,8 @@
 //COMMENT YOUR STUFF PLEASE
-const GRID_SIZE = window.innerHeight/40;	//grid size is no longer determined by dimension, but by how many squares should exist in the y-axis
-class Rectangle { //the base rectangle
-	constructor(x, y, w, h) {
-		this.x = x;
-		this.y = y;
-		this.width = w;
-		this.height = h;
-	}
-	update(){
-		ctx.fillStyle = "#FFFFFF";
-		this.render();
-	}
-	render() {
-		//drawing rectangles like this puts this.x and this.y at the center of the rectangle
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-}
+const GRID_SIZE = window.innerHeight/40;	
+//grid size is no longer determined by dimension, but by how many squares should exist in the y-axis
 
-class RectColored extends Rectangle { //rectangles that you can modify the color of
-	constructor(x, y, w, h, color) {
-		super(x, y, w, h);
-		this.color = color;
-	}
-	update() {
-		ctx.fillStyle = this.color;
-		this.render();
-	}
-}
-
-class RectMobile extends RectColored { //base moving rectangle
-	constructor(x, y, width, height, color, a, funct) {
-		super(x, y, width, height, "#800000");
-		this.varArray = a;
-		this.funct = funct;
-	}
-	update() {
-		this.funct();
-		super.update();
-	}
-}
-/** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
-*	motion functions for each object, and then call them every time update() is called. This allows use
-*	us to define a range of objects that move in different ways without creating a new class for each
-*	individual object. But how are we going to pass all of the different necessary parameters to the
-*	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
-*	size in JavaScript, which is defined when the object is instantiated, and the function takes those
-*	array values, and understands what to do with them. I note what should be given to the array at the
-*	beginning of each function, so that it is clear what each variable in the array does for the entire
-*	program.							- Wight_
-*/
-function railMovement() {
-	///Description: Moves the object along a linear segment between (xMin, yMin) and (xMax, yMax)
-	/* @precondition: this.varArray = [xMin, xMax, yMin, yMax, dx, dy];
-	xMin is the lowest x value, xMax is the highest; same for yMin and yMax
-	dx is its speed along the x-axis, dy does the same thing but for y */
-	var xMin = makeStandardWidth(this.varArray[0]); var xMax = makeStandardWidth(this.varArray[1]);
-	var yMin = makeStandardHeight(this.varArray[2]); var yMax = makeStandardHeight(this.varArray[3]);
-	var dx = makeStandardWidth(this.varArray[4]); var dy = makeStandardHeight(this.varArray[5]);
-
-	if (this.x >= xMin && this.x <= xMax) { //horizontal movement
-		this.x += dx;
-	}
-	else {
-		dx *= -1;
-		this.varArray[4] *= -1;
-		this.x += dx;
-	}
-	if (this.y >= yMin && this.y <= yMax) { //vertical movement
-		this.y += dy;
-	}
-	else {
-		dy *= -1;
-		this.varArray[5] *= -1;
-		this.y += dy;
-	}
-}
-
-class Player extends Rectangle {
-	constructor(x, y, height, width) {
-		super(x, y, makeStandardWidth(width), makeStandardHeight(height));
-		this.condense = false;
-		this.gravityPoints = 150;
-		this.pen = new Pen(x,y);
-	}
-
-	update() {
-		if (this.left) {
-			this.x -= 5;
-		}
-		if (this.right) {
-			this.x += 5;
-		}
-		if (this.up) {
-			this.y -= 5;
-		}
-		if (this.down) {
-			this.y += 5;
-		}
-
-		if(this.drawEnemy || this.drawWall || this.drawInvWall || this.drawAbsWall){
-			this.pen.x2 = this.x;
-			this.pen.y2 = this.y;
-			if(this.drawEnemy){
-				this.pen.renderAddition("FF0000");
-			}
-			if(this.drawWall){
-				this.pen.renderAddition("FFFFFF");
-			}
-			if(this.drawInvWall){
-				this.pen.renderAddition("#00ff99");
-			}
-			if(this.drawAbsWall){
-				this.pen.renderAddition("#006600");
-			}
-		}
-		this.render();
-	}
-
-	render() {
-		if (this.condense == false)
-			ctx.fillStyle = "#00cc00";
-		else {
-			ctx.fillStyle = "#00FFFF";
-		}
-		//draws a circle with (this.x, this.y) as the center point
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.width/2, 0, 2*Math.PI);
-		ctx.closePath();
-		ctx.fill();
-	}
-}
-
-//This class is unique to this file, and is completely dedicated to drawing out a level and committing them to a JSON variable
+//This class is completely dedicated to drawing out a level and committing them to a JSON variable
 class Pen {
 	constructor(x, y){
 		this.x1 = x;	//variables with a subscript of 1 show a starting point
@@ -171,6 +42,7 @@ class Pen {
 				and if that thing happens then it calls the function it's been specified to call.  So the first parameter
 				is the action to listen for, and the second is what to do if that thing happens.
 			*/
+			div.addEventListener(deleteBtn, (e) => { div.remove();});
 			document.getElementById("enemyfield").appendChild(div);	//this is just a div containing all other enemy divs.  Makes it easier to put different objects into their respective JSON arrays
 		}
 	}
@@ -251,6 +123,15 @@ class Pen {
 									+ "height: " + width + "px;"
 									+ "background: #FFFF00;";
 			div.setAttribute("style", style);
+			div.addEventListener("click", (e) => {
+				let style =    "position: absolute;"
+									+ "left: " + 0 + "px;"
+									+ "top: " + 0 + "px;"
+									+ "width: " + 0 + "px;"
+									+ "height: " + 0 + "px;"
+									+ "background: #FFFF00;";
+				div.setAttribute("style", style);
+			});
 		}
 	}
 
@@ -283,7 +164,7 @@ class Pen {
 	renderAddition(){//creates a phantom rectangle while holding the mouse button down and dragging out dimensions
 		if(this.drawEnemy){
 			ctx.fillStyle = "#FF0000";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.x2 - this.x1);
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1,  Math.sign(this.y2 - this.y1) * Math.abs(this.x2 - this.x1));
 		}
 		else if(this.drawInvWall){
 			ctx.fillStyle = "#0000FF";
@@ -299,156 +180,13 @@ class Pen {
 		}
 		else if(this.drawPlayer){
 			ctx.fillStyle = "#FFFFFF";
-			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, this.x2 - this.x1);
+			ctx.fillRect(this.x1, this.y1, this.x2 - this.x1, Math.sign(this.y2 - this.y1) * Math.abs(this.x2 - this.x1));
 		}
 	}
 }
 
-class Enemy extends Rectangle {
-	constructor(x, y, width, height) {
-		super(x, y, width, height);
-		this.buffer = this.width + 5;
-		this.theta = 0;
-	}
 
-	update(){
-		for (var i = 0; i < bulletArray.length; i++) {
-			if(checkCollision(this, bulletArray[i])){
-				enemyArray.splice(enemyArray.indexOf(this), 1);
-				bulletArray.splice(i, 1);
-			}
-		}
-		//finds the angle to point at
-		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2),
-			player.x + player.width/2 - (this.x + this.width/2));
-		if(shootTimer % FIRE_INTERVAL == 0){
-			shootTimer = 0;
-			this.shoot();
-		}
-		this.render();
-	}
-	shoot(){
-		//makes sure the bullet doesn't immediately shoot the enemy it came from
-		var yBuffer = this.y + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.buffer * Math.cos(this.theta);
-		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
-	}
-	render() {
-		ctx.fillStyle="#B22222";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-}
-
-class EnemyMobile extends RectMobile { //moving enemies
-	constructor(x, y, width, height, color, a, funct) {
-		super (x, y, width, height, "#B22222", a, funct);
-		this.buffer = this.width + 15;
-	}
-	update() {
-		super.update(); //all of the RectMobile stuff
-		//all of the enemy stuff that was not supered
-		this.theta = Math.atan2(player.y + player.height/2 - (this.y + this.height/2),
-			player.x + player.width/2 - (this.x + this.width/2));
-		for (var i = 0; i < bulletArray.length; i++) {
-			if(checkCollision(this, bulletArray[i])){
-				enemyMobileArray.splice(enemyMobileArray.indexOf(this), 1);
-				bulletArray.splice(i, 1);
-			}
-		}
-		if(shootTimer % FIRE_INTERVAL == 0){
-			shootTimer = 0;
-			this.shoot();
-		}
-		this.render();
-	}
-	shoot(){
-		var yBuffer = this.y + this.height/2 + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.width/2 + this.buffer * Math.cos(this.theta);
-		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
-	}
-	render() {
-		ctx.fillStyle="#B22222";
-		var r = this.width * Math.sqrt(2) / 2;
-		ctx.moveTo(this.x + r * Math.sin(-this.theta), this.y + r * Math.cos(-this.theta));
-		ctx.beginPath();
-		for (var c = 1; c <= 4; c++) {
-			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}
-		ctx.fill();
-	}
-}
-
-class Bullet extends RectColored {
-	constructor(x, y, dx, dy, c) {
-		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
-		this.dx = dx;
-		this.dy = dy;
-	}
-	update() {
-		this.y += this.dy;
-		this.x += this.dx;
-		var bulletDown = this.y + this.height;
-		var bulletRight = this.x + this.width;
-		for (var i = 0; i < barrierArray.length; i++) {
-			if (checkCollision(this, barrierArray[i])){
-				var direct = eject(this, barrierArray[i]);
-				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
-				its orientation appropriately*/
-				if (direct[0] || direct[1]){ //horizontal
-					this.dx *= -1;
-				}
-				if (direct[2] || direct[3]){ //vertical
-					this.dy *= -1;
-				}
-			}
-		}
-		super.update();
-	}
-}
-
-class Wall extends Rectangle { //the walls
-	constructor(x,y,width, height){
-		super(x,y,width,height);
-	}
-}
-
-class InvisWall extends RectColored{ //I know this is a terrible name for these walls, we can change it. *It is a wall that allows bullets through but doesn't allow the player*.
-	constructor(x,y,width,height){
-		super(x,y,width,height,"#00ff99");
-	}
-}
-class AbsorbentWall extends RectColored{
-	constructor(x,y,width,height,color){
-		super(x,y,width,height,"#006600");
-	}
-}
-
-class EnergyBar extends RectColored { //gravityPoint refill pickup
-		constructor(x,y,width,height){
-		super(x,y,width,height,"#7FFF00");
-		this.xLeft = this.x - this.width/2;
-	}
-	update() {
-		//places the center of the bar at the midpoint of the edges
-		this.x = (this.xLeft + this.width)/2;
-		//changes color of bar
-		if (forceStop == true)
-			this.color = "#A9A9A9";
-		else
-			this.color = "#00FFFF";
-		this.render();
-	}
-	render() {
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.xLeft, this.y - this.height/2, this.width, this.height);
-	}
-}
-
-
-/* arr.slice (1;0) The slice() method returns a shallow copy of a portion of an array
-object selected from begin to end (end not included). The original array will not be modified.*/
 ///adding things
-
 printJSON = function(){	//as you can guess, this prints out the JSON data representing this level
 	let level = {
 		"n" : {	//This "n" is a substitute for whatever level you're creating.  Once you get your JSON
@@ -583,21 +321,6 @@ printJSON = function(){	//as you can guess, this prints out the JSON data repres
 	console.log(JSON.stringify(level));
 }
 
-var fps = 0;
-var timer = 0;
-var shootTimer = 0;
-var FIRE_INTERVAL = 250;
-var forceStop = false;
-
-//arrays
-var rectArray = [];
-var enemyArray = [];
-var enemyMobileArray = [];
-var barrierArray = [];
-var invisArray = [];
-var absorbArray = [];
-var bulletArray = [];
-
 pen = new Pen(0, 0);
 var enemyBtn = document.getElementById("enemy");	//represents the enemy button.  If clicked, then you're creating an enemy
 																									//this is another way of creating an event listener.  In this case, onclick is the event.
@@ -662,7 +385,21 @@ deleteBtn.onclick = () => {
 	pen.drawAbsWall = false;
 	pen.drawPlayer = false;
 	pen.drawWall = false;
-	location.reload();
+	var v = document.getElementsByTagName("div");
+	for (var x = v.length - 1; x >= 0; x--) {
+		if (v[x].id == "playerstart") {
+			let style =    "position: absolute;"
+					+ "left: " + 0 + "px;"
+					+ "top: " + 0 + "px;"
+					+ "width: " + 0 + "px;"
+					+ "height: " + 0 + "px;"
+					+ "background: #FFFF00;";
+			v[x].setAttribute("style", style);
+		} else if (v[x].id != "absfield" && v[x].id != "invfield" && v[x].id != "wallfield"
+			&& v[x].id != "enemyfield") {
+			v[x].remove();
+		}
+	}
 }
 
 window.onload = function() {
@@ -778,40 +515,4 @@ Mouse = function(){
 	canvas.addEventListener('mousedown', mouseDown);
 	canvas.addEventListener('mouseup', mouseUp);
 	return mouse;
-}
-
-//COLLISION MANAGEMENT//
-function checkCollision(rect1, rect2) {
-	return  (checkCollisionX(rect1, rect2) && checkCollisionY(rect1, rect2));
-}
-function checkCollisionX(rect1, rect2) {	//takes the x-component of checkCollision
-	return  (rect1.x - rect1.width/2 < rect2.x + rect2.width/2 &&
-			rect1.x + rect1.width/2 > rect2.x - rect2.width/2);
-}
-function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollision
-	return (rect1.y - rect1.height/2 < rect2.y + rect2.height/2 &&
-			rect1.y + rect1.height/2 > rect2.y - rect2.height/2);
-}
-function mouseRectCollision(m, rect) {
-	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 &&
-		m.y > rect.y - rect.height/2 && m.y < rect.y + rect.height/2;
-}
-
-//COMMON MATH EQUATIONS//
-function distance(x, y) {
-	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-}
-function makeStandardWidth(width) {
-	//width is the width of the object on your screen.
-	return width * (canvas.width / 1920);
-}
-function makeStandardHeight(height) {
-	//height is the height of the object on your screen.
-	return height * (canvas.height / 969);
-}
-function inverseStandardWidth(width) {
-	return width * (1920 / canvas.width);
-}
-function inverseStandardHeight(height) {
-	return height * (969 / canvas.height);
 }
