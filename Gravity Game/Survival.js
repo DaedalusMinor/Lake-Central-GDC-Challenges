@@ -1,258 +1,41 @@
 //COMMENT YOUR STUFF PLEASE
 
-class Rectangle { //the base rectangle
-	constructor(x, y, w, h) {
-		this.x = x;
-		this.y = y;
-		this.width = w;
-		this.height = h;
-	}
-	update(){
-		ctx.fillStyle = "#FFFFFF";
-		this.render();
-	}
-	render() {
-		//drawing rectangles like this puts this.x and this.y at the center of the rectangle
-		ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
-	}
-}
-
-class RectColored extends Rectangle { //rectangles that you can modify the color of
-	constructor(x, y, w, h, color) {
-		super(x, y, w, h);
-		this.color = color;
-	}
-	update() { 
-		ctx.fillStyle = this.color;
-		this.render();
-	}
-}
-
-
-
-
-class Player extends Rectangle {
-	constructor(x, y, width, height) {
-		super(x, y, width, height);
-		this.condense = false;
-		this.gravityPoints = 150;
-		
-	}
-
-	update() {
-		if (this.left) {
-			this.x -= 3;
-		}
-		if (this.right) {
-			this.x += 3;
-		}
-		if (this.up) {
-			this.y -= 3;
-		}
-		if (this.down) {
-			this.y += 3;
-		}
-
-		//collision handling
-		for (var i = 0; i < enemyArray.length; i++) {
-			if(checkCollision(this, enemyArray[i])){
-				eject(this, enemyArray[i]);
+//.prototype allows you to edit class functions in base.js
+Bullet.prototype.update = function() {
+	this.y += this.dy;
+	this.x += this.dx;
+	for (var i = 0; i < barrierArray.length; i++) {
+		if (checkCollision(this, barrierArray[i])){	
+			var direct = eject(this, barrierArray[i]);
+			/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
+			its orientation appropriately*/
+			if (direct[0] || direct[1]){ //horizontal
+				this.dx *= -1;
 			}
+			if (direct[2] || direct[3]){ //vertical
+				this.dy *= -1;
+			}	
 		}
-		for (var i = 0; i < barrierArray.length; i++) {
-			if(checkCollision(this, barrierArray[i])){
-				eject(this, barrierArray[i]);
-			}
-		}
-		
-		
-		
-		for (var i = 0; i < bulletArray.length; i++) {
-			if (checkCollision(this, bulletArray[i])){
-				location.reload();
-				this.gravityPoints = 150;
-				shootTimer = 1;
-			}
-			if (this.condense && this.gravityPoints > 0){
-				//calculate distance
-				var xDist = this.x + this.width/2 - bulletArray[i].x;
-				var yDist = this.y + this.height/2 - bulletArray[i].y;
-				var dist = distance(xDist, yDist);
-				//calculate power of gravity
-				var pull = 20/dist;
-				if(xDist > 0){
-					bulletArray[i].dx += pull;
-				}
-				else{
-					bulletArray[i].dx -= pull;
-				}
-
-				if(yDist > 0){
-					bulletArray[i].dy += pull;
-				}
-				else{
-					bulletArray[i].dy -= pull;
-				}
-			}
-
-		}
-			//manage gravityPoints
-		if(this.condense && this.gravityPoints > 0){
-			this.gravityPoints -= 0.8;
-		}
-		else if(!this.condense && this.gravityPoints < 150){
-			this.gravityPoints += 0.3;
-		}
-			//bar cooldown when gravityPoints hits 0
-		if(this.gravityPoints <= 0) {
-			forceStop = true;
-			player.condense = false;
-		}
-		if(forceStop == true) {
-			this.condense == false;
-			if (this.gravityPoints >= 100) {
-				forceStop = false;
-			}
-		}
-	
-		gravityBar.width = this.gravityPoints;
-		this.render();
+	}	
+	if (checkCollision(this, player)){
+		location.reload();
 	}
-	render() {
-		if (this.condense == false) 
-			ctx.fillStyle = "#00cc00";
-		else {
-			ctx.fillStyle = "#00FFFF";
-		}
-		//draws a circle with (this.x, this.y) as the center point
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.width/2, 0, 2*Math.PI);
-		ctx.closePath();
-		ctx.fill();
-	}
+	this.render();
 }
-
-class Enemy extends Rectangle {
-	constructor(x, y, width, height) {
-		super(x, y, width, height);
-		this.buffer = this.width + 5;
-		this.theta = 0;
-	}
-
-	update(){
-		//for (var i = 0; i < bulletArray.length; i++) {
-			//if(checkCollision(this, bulletArray[i])){
-			//	eject(this, bulletArray[i]);
-				
-			//}
-		//}
-		//finds the angle to point at
-		this.theta = Math.atan2(player.y - this.y, player.x - this.x);	
-		if(shootTimer % FIRE_INTERVAL == 0){
-			shootTimer = 0;
-			this.shoot();
-		}
-		this.render();
-	}
-	shoot(){
-		//makes sure the bullet doesn't immediately shoot the enemy it came from
-		var yBuffer = this.y + this.buffer * Math.sin(this.theta);
-		var xBuffer = this.x + this.buffer * Math.cos(this.theta);
-		bulletArray.push(new Bullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
-	}
-	render() {
-		ctx.fillStyle="#B22222";
-		//A way to draw tilted squares! A corner of the square always points at the player, which is where the enemy fires from (in theory)
-		var r = this.width * Math.sqrt(2) / 2;
-		ctx.moveTo(this.x + r * Math.sin(-this.theta), this.y + r * Math.cos(-this.theta));
-		ctx.beginPath();
-		for (var c = 1; c <= 4; c++) {
-			ctx.lineTo(this.x + r * Math.sin(-this.theta + (c*Math.PI/2)), this.y + r * Math.cos(-this.theta + (c*Math.PI/2)));
-		}		
-		ctx.fill();
-	}
-}
-
-
-class Bullet extends RectColored {
-	constructor(x, y, dx, dy, c) {
-		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
-		this.dx = dx;
-		this.dy = dy;
-		this.collisionCounter;
-	}
-	update() {
-		this.y += this.dy;
-		this.x += this.dx;
-		var bulletDown = this.y + this.height;
-		var bulletRight = this.x + this.width;
-		for (var i = 0; i < barrierArray.length; i++) {
-			if (checkCollision(this, barrierArray[i])){	
-				var direct = eject(this, barrierArray[i]);
-				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
-				its orientation appropriately*/
-				if (direct[0] || direct[1]){ //horizontal
-					this.dx *= -1;
-				}
-				if (direct[2] || direct[3]){ //vertical
-					this.dy *= -1;
-				}
-				
-			}
-		}	
-		super.update();
-	}
-}
-
-
-class Wall extends Rectangle { //the walls
-	constructor(x,y,width, height){
-		super(x,y,width,height);
-	}
-}
-
-class EnergyBar extends RectColored { //gravityPoint refill pickup
-		constructor(x,y,width,height){
-		super(x,y,width,height,"#7FFF00");
-		this.xLeft = this.x - this.width/2;
-	}
-	update() {
-		//places the center of the bar at the midpoint of the edges 
-		this.x = (this.xLeft + this.width)/2;
-		//changes color of bar
-		if (forceStop == true)
-			this.color = "#A9A9A9";
-		else
-			this.color = "#00FFFF";
-		this.render();
-	}
-	render() {
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.xLeft, this.y - this.height/2, this.width, this.height);
-	}
-}
-
 
 ///adding things
-var player = new Player (1920/2, 969/2, 30, 30);
+var player = new Player (window.innerWidth/2, window.innerHeight/2, makeStandardWidth(30), makeStandardWidth(30));
 var gravityBarBack = new RectColored (95, 30, 150, 15, "#FFFFFF");
 var gravityBar = new EnergyBar (95, 30, 150, 15, null);
-var enemy = new Enemy (960, 200, 30, 30);
+var enemy = new Enemy (makeStandardWidth(960), makeStandardHeight(200), makeStandardWidth(30), makeStandardHeight(30));
 var topWall = new Wall(window.innerWidth/2, -20, window.innerWidth, 40);	//upper border
 var leftWall = new Wall(-20, window.innerHeight/2, 40, window.innerHeight);	//left border
 var rightWall = new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight);	//right border
 var bottomWall = new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40);	//lower border
 var fps = 0;
 var timer = 0;
-var shootTimer = 0;
-var FIRE_INTERVAL = 250;
-var forceStop = false;
-//arrays
-var rectArray = [];
-var enemyArray = [];
-var barrierArray = [];
-var bulletArray = [];
-//playerArray.push(player);
+
+//barriers
 barrierArray.push(topWall);
 barrierArray.push(leftWall);
 barrierArray.push(rightWall);
@@ -260,6 +43,7 @@ barrierArray.push(bottomWall);
 enemyArray.push(enemy);
 rectArray.push(gravityBarBack);
 rectArray.push(gravityBar);
+
 window.onload = function() {
 	canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth;
@@ -267,8 +51,6 @@ window.onload = function() {
 	ctx = canvas.getContext("2d");
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
-	//mouse = new Mouse();
-	//createLevel(0);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
@@ -279,8 +61,7 @@ function main() {
 	//clear screen
 	ctx.fillStyle = "#110422";
 	ctx.fillRect(0,0, window.innerWidth, window.innerHeight);
-
-	shootTimer += 1;
+	
 	fps += 1;
 	if (fps == 60) {
 		timer += 1;
@@ -302,41 +83,15 @@ function main() {
 		bulletArray[i].update();
 	}
 	
-	
 	//text
 	ctx.textAlign = "left";
 	ctx.fillStyle = "#ffffff";
 	ctx.font = "small-caps lighter 30px Montserrat";
-	//ctx.fillText("Level: " + (player.level+1), window.innerWidth - 100, 35);
-	ctx.fillText("Time: " + Math.trunc(timer), 200, 35); //shows time, Math.trunc(n) is a method to round down to the greatest integer of a floating number
-	if(timer > 0 && timer < 21)
-	{
-		ctx.fillText("Stay Alive For As Long As You Can!", 830, 35);
+	ctx.fillText("Time: " + Math.trunc(timer), makeStandardWidth(200), makeStandardHeight(100));
+	if (timer >= 0 && timer < 21)
+		ctx.fillText("Stay Alive For As Long As You Can!", window.innerWidth /2, makeStandardHeight(100));
 	}
 	
-	ctx.textAlign = "center";
-	
-	}
-
-
-
-
-//INPUT MEHTODS//
-/*Mouse = function(){
-	var mouse = {};
-	mouse.x = 0;
-	mouse.y = 0;	
-	function move(e){
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
-	}
-	function click(e){
-		//add stuff here when we know what we want clicking to do
-	}
-	canvas.addEventListener('mousemove', move);
-	canvas.addEventListener('click', click);
-	return mouse;
-}*/
 function keydown(e) {
 	switch(e.keyCode) {
 		case 65://move left
@@ -352,9 +107,7 @@ function keydown(e) {
 			player.down = true;
 			break;
 		case 32://activate gravity
-		if (forceStop == false) {
 			player.condense = true;
-		}
 			break;
 	}
 }
@@ -376,84 +129,4 @@ function keyup(e) {
 			player.condense = false;
 			break;
 	}
-}
-
-//COLLISION MANAGEMENT//
-function checkCollision(rect1, rect2) {
-	return  (checkCollisionX(rect1, rect2) && checkCollisionY(rect1, rect2));
-}
-function checkCollisionX(rect1, rect2) {	//takes the x-component of checkCollision
-	return  (rect1.x - rect1.width/2 < rect2.x + rect2.width/2 &&
-			rect1.x + rect1.width/2 > rect2.x - rect2.width/2);
-}
-function checkCollisionY(rect1, rect2) {	//takes the y-component of checkCollision
-	return (rect1.y - rect1.height/2 < rect2.y + rect2.height/2 &&
-			rect1.y + rect1.height/2 > rect2.y - rect2.height/2);
-}
-function mouseRectCollision(m, rect) {
-	return m.x > rect.x - rect.width/2 && m.x < rect.x + rect.width/2 && 
-		m.y > rect.y - rect.height/2 && m.y < rect.y + rect.height/2;
-}
-function eject(pushed, pusher) {
-	/** A function to handle collision between two objects. 
-	*	If object1 (pushed) is inside of object2 (pusher), object1 is pushed a small amount in each
-	*	cardinal direction to see if there is anywhere object1 is no longer touching object2.
-	*	If it doesn't find any direction which removes it, it increases the push radius and tries again.
-	*	Upon finding the correct direction(s), object1 is moved to where it was discovered to no longer
-	*	be touching object2.			- Wight_
-	*/
-	var delta = 0.01;
-	var flags = [false, false, false, false];
-	do
-	{
-		pushed.x += delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[0] = true;
-		}
-		pushed.x -= 2*delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[1] = true;
-		}
-		pushed.x += delta;
-		pushed.y += delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[2] = true;
-		}
-		pushed.y -= 2*delta;
-		if (!checkCollision(pushed, pusher)){
-			flags[3] = true;
-		}
-		pushed.y += delta;
-		delta += 0.01;
-	} while (!flags[0] && !flags[1] && !flags[2] && !flags[3]);
-	if (flags[0]) {
-		pushed.x += delta;
-	} else if (flags[1]) {
-		pushed.x -= delta;
-	}
-	if (flags[2]) {
-		pushed.y += delta;
-	} else if (flags[3]) {
-		pushed.y -= delta;
-	}
-	return flags;
-}
-
-//COMMON MATH EQUATIONS//
-function distance(x, y) {
-	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-}
-function makeStandardWidth(width) {
-	//width is the width of the object on your screen.
-	return width * (canvas.width / 1920);
-}
-function makeStandardHeight(height) {
-	//height is the height of the object on your screen.
-	return height * (canvas.height / 969);
-}
-function inverseStandardWidth(width) {
-	return width * (1920 / canvas.width);
-}
-function inverseStandardHeight(height) {
-	return height * (969 / canvas.height);
 }
