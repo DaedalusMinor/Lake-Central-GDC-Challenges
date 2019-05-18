@@ -1,6 +1,6 @@
 //COMMENT YOUR STUFF PLEASE
 
-var MAX_LEVEL = 27;
+var MAX_LEVEL = 28;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -168,7 +168,16 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			width: 30,
 			height: 30		
 		}, 
-		mobileWalls: [],
+		mobileWalls: [
+		{
+			x: 1030,
+			y: 200,
+			width: 400,
+			height: 20,
+			varArray: [750, 1660, 0, 0, 1.3],
+			funct: railMovement
+		}
+		],
 		invisWalls: [
 		{
 			x: 600 +1920/2,
@@ -210,7 +219,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				width: 30,
 				height: 30,
 				varArray: [200, 400, 250, 450, 0.5],
-				funct: railMovement	//<-- notice here: NO PARENTHESIS!
+				funct: railMovement	
 			}		
 		]
 	},
@@ -222,54 +231,17 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			width: 30,
 			height: 30
 		}, 
-		mobileWalls: [],
+		mobileWalls: [
+		{
+			x: 900,
+			y: 750,
+			width: 200,
+			height: 30,
+			varArray: [400, 1400, 0, 0, 0.6],
+			funct: railMovement	
+		}
+		],
 		invisWalls: [
-			{
-				x: 250, 
-				y: 45, 
-				width: 5, 
-				height: 90 
-			}, 
-			{
-				x: 1680, 
-				y: 300, 
-				width: 5, 
-				height: 200 
-			}, 
-			{
-				x: 250, 
-				y: 890, 
-				width: 5, 
-				height: 180
-			}
-		], 
-		absorbWalls:[
-		],
-		enemies: [
-			{
-				x: 910,
-				y: 110,
-				width: 20,
-				height: 20
-			},
-			
-			{
-				x: 110,
-				y: 210,
-				width: 20,
-				height: 20
-			},
-			
-			{
-				x: 1840, 
-				y: 210, 
-				width: 20, 
-				height: 20
-			}
-			
-		],
-		
-		barriers: [
 			{
 				x: 250,
 				y: 445,
@@ -289,8 +261,61 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				height: 580
 			}
 		], 
+		absorbWalls:[
+		{
+				x: 250, 
+				y: 45, 
+				width: 5, 
+				height: 90 
+			}, 
+			{
+				x: 1680, 
+				y: 300, 
+				width: 5, 
+				height: 200 
+			}, 
+			{
+				x: 250, 
+				y: 890, 
+				width: 5, 
+				height: 180
+			}
+		],
+		enemies: [
+			
+				
+		],
+		
+		barriers: [
+			
+		], 
 		mobileEnemies: [
-
+			{
+				x: 110,
+				y: 210,
+				width: 30,
+				height: 30,
+				varArray: [0, 0, 100, 940, 0.6],
+				funct: railMovement	
+			},
+			
+			{
+				x: 1840, 
+				y: 210, 
+				width: 30, 
+				height: 30,
+				varArray: [0, 0, 100, 940, 0.6],
+				funct: railMovement	
+			},
+			{
+				
+				x: null,
+				y: null,
+				width: 30,
+				height: 30,
+				varArray: [960, 400, 300, 300, 1100], //[x,yCenter, distance, distance, frames it takes to complete the orbit]
+				funct: ellipticalMovement
+			}
 		]
 	}, 
 	"5" : {	
@@ -1331,8 +1356,90 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 				width: 30,
 				height: 200
 			}
+			],
+		},
+			"28" : {	
+			player: {
+				x: 1870,
+				y: 60,
+				width: 30,
+				height: 30
+			},
+
+			invisWalls: [
+			{
+				x: 960,
+				y: 484.5,
+				width: 20,
+				height: 969
+			}
+			],
+
+			barriers : [
+			{
+				x: 1130,
+				y: 600,
+				width: 30,
+				height: 150
+			}
+			],
+
+			enemies : [
+			{
+				x: 1200, 
+				y: 100,
+				width: 30,
+				height: 30
+			},
+			{
+				x: 1700,
+				y: 550,
+				width: 30,
+				height: 30
+			}
+			],
+			mobileEnemies: [
+			{
+				x: null,
+				y: null,
+				width: 30,
+				height: 30,
+				varArray: [400, 484.5, 200, 200, 800], //[x,yCenter, distance, distance, frames it takes to complete the orbit]
+				funct: ellipticalMovement
+			}
+			],
+			absorbWalls: [
+			
+			],
+			mobileWalls: [
+			{
+				x: 400,
+				y: 484.5,
+				width: 10,
+				height: 150,
+				varArray: [0, 0, 300, 600, 0.9], //[x1, x2, y1, y2, d]
+				funct: railMovement
+			},
+			{
+				x: 1460,
+				y: 484.5,
+				width: 10,
+				height: 200,
+				varArray: [0, 0, 300, 600, 0.9], //[x1, x2, y1, y2, d]
+				funct: railMovement
+			},
+			{
+				x: 1460,
+				y: 800,
+				width: 150,
+				height: 10,
+				varArray: [1110, 1700, 0, 0, 0.9], //[x1, x2, y1, y2, d]
+				funct: railMovement
+			}
+			
 			]
 		}
+		
 }
 /*Template
 
