@@ -1,6 +1,6 @@
 //COMMENT YOUR STUFF PLEASE
 
-var MAX_LEVEL = 28;
+var MAX_LEVEL = 29;
 var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and simple database languages to use
 	/*	This variable is a JSON object, a big one.  This is where we are going to store the data for our levels
 	These JSON objects can be made up of a bunch of different objects or data types, like integers, strings,
@@ -1438,7 +1438,32 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 			}
 			
 			]
-		}
+		},
+		"29":{"player":{"x":993,"y":532,"width":20,"height":20},"invisWalls":[{"x":544,"y":508.5,"width":24,"height":339},{"x":1005,"y":666,"width":896,"height":24},{"x":1441,"y":496,"width":24,"height":314},{"x":993,"y":351,"width":872,"height":24},{"x":690,"y":447.5,"width":24,"height":169},{"x":859,"y":605,"width":24,"height":96},{"x":1017,"y":399,"width":48,"height":72},{"x":823,"y":435,"width":48,"height":48},{"x":1126,"y":605,"width":72,"height":96},{"x":1380,"y":569,"width":96,"height":24},{"x":1247,"y":399,"width":24,"height":72}],"barriers":[],"enemies":[{"x":217,"y":145,"width":48,"height":48},{"x":1719,"y":484,"width":48,"height":48}],"mobileEnemies":[
+		{
+			x: 600,
+			y: 100,
+			width: 30,
+			height: 30,
+			varArray: [600, 750, 0, 0, 0.9], //[x1, x2, y1, y2, d]
+			funct: railMovement
+		},
+		{
+			x: 960,
+			y: 800,
+			width: 30,
+			height: 30,
+			varArray: [300, 1500, 0, 0, 4.9], //[x1, x2, y1, y2, d]
+			funct: railMovement
+		},
+		{
+			x: 1100,
+			y: 100,
+			width: 30,
+			height: 30,
+			varArray: [1100, 1400, 0, 0, 0.9], //[x1, x2, y1, y2, d]
+			funct: railMovement}
+		],"mobileWalls":[],"absorbWalls":[],"dimensions":{"width":1920,"height":969}}
 		
 }
 /*Template
