@@ -305,6 +305,35 @@ class Bullet extends RectColored {
 				}
 			}
 		}
+		for (var i = 0; i < wallMobileArray.length; i++) {
+			if (checkCollision(this, wallMobileArray[i])){
+				var direct = eject(this, wallMobileArray[i]);
+				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
+				its orientation appropriately*/
+				if (direct[0]){ //horizontal
+					this.dx *= -1;
+					createSparks(this.x - this.width/2, this.y, "FFFF00");
+				}
+				else if(direct[1]){
+					this.dx *= -1
+					createSparks(this.x + this.width/2, this.y, "FFFF00");
+				}
+
+				if (direct[2]){ //vertical
+					this.dy *= -1;
+					createSparks(this.x, this.y - this.height/2, "FFFF00");
+				}
+				else if(direct[3]){
+					this.dy *= -1;
+					createSparks(this.x, this.y + this.height/2, "FFFF00");
+				}
+
+				this.collisionCounter+=1;
+				if(this.collisionCounter >= 4){
+					bulletArray.splice(bulletArray.indexOf(this), 1);
+				}
+			}
+		}
 		//handles everything the bullet can kill
 		for (var i = 0; i < enemyArray.length; i++) {
 			if(checkCollision(this, enemyArray[i])){
