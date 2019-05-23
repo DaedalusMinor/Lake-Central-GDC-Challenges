@@ -1,4 +1,16 @@
 //COMMENT YOUR STUFF PLEASE
+///NECESSARY VARIABLES AND ARRAYS///
+var HEIGHT = 1920;
+var WIDTH  = 969;
+var sparkArray = [];
+var rectArray = [];
+var enemyArray = [];
+var enemyMobileArray = [];
+var wallMobileArray = [];
+var barrierArray = [];
+var permArray = [];
+var absorbArray = [];
+var bulletArray = [];
 
 ///CLASSES USED BY MULTIPLE FILES///
 class Rectangle { //the base rectangle
@@ -37,7 +49,7 @@ class RectMobile extends RectColored { //base moving rectangle
 	}
 	update() {
 		this.funct();
-		super.update();	
+		super.update();
 	}
 }
 /** So in JavaScript, functions can be stored in variables! Rad! By doing this, we can define unique
@@ -47,7 +59,7 @@ class RectMobile extends RectColored { //base moving rectangle
 *	object if this.funct() is hard-coded to pass nothing? I used varArray, since it can have a variable
 *	size in JavaScript, which is defined when the object is instantiated, and the function takes those
 *	array values, and understands what to do with them. I note what should be given to the array at the
-*	beginning of each function, so that it is clear what each variable in the array does for the entire 
+*	beginning of each function, so that it is clear what each variable in the array does for the entire
 *	function.							- Wight_
 */
 function railMovement() {
@@ -65,7 +77,7 @@ function railMovement() {
 	if (this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2)) //determines whether to switch direction
 		this.direction *= -1;
 	d *= this.direction;
-	
+
 	this.x += d * Math.cos(Math.atan2(y2-y1,x2-x1));
 	this.y += d * Math.sin(Math.atan2(y2-y1,x2-x1));
 }
@@ -76,12 +88,12 @@ function ellipticalMovement() {
 	(this.x, this.y) MUST be a solution to the ellipse OR null, in which case it will be set to a valid point.
 	cenX is the x co-ordinate of the circle's center, cenY is the y co-ordinate,
 	axX is the distance between the center and a point on the ellipse with the same x-coordinate,
-	axY is the same for y, d is the number of frames the object needs to make one complete rotation 
+	axY is the same for y, d is the number of frames the object needs to make one complete rotation
 	(cenX + axX cost, cenY + axY sint) */
 	var cenX = makeStandardWidth(this.varArray[0]); var cenY = makeStandardHeight(this.varArray[1]);
 	var axX = makeStandardWidth(this.varArray[2]); var axY = makeStandardWidth(this.varArray[3]);
 	var d = this.varArray[4];
-	
+
 	if (this.x == null || this.y == null) {
 		this.x = cenX + axX;
 		this.y = cenY;
@@ -106,12 +118,12 @@ class Player extends Rectangle {
 		if (this.left)
 			this.x -= makeStandardWidth(3);
 		if (this.right)
-			this.x += makeStandardWidth(3);	
+			this.x += makeStandardWidth(3);
 		if (this.up)
 			this.y -= makeStandardHeight(3);
 		if (this.down)
 			this.y += makeStandardHeight(3);
-		
+
 		for (var i = 0; i < enemyArray.length; i++) {
 			eject(this, enemyArray[i]);
 		}
@@ -135,7 +147,7 @@ class Player extends Rectangle {
 		if (this.gravityPoints <= 0) {
 			this.forceStop = true;
 			this.condense = false;
-		} 
+		}
 		if (this.condense && !this.forceStop) {
 			this.gravityPoints -= 0.8;
 			//handle gravity interaction with bullets
@@ -159,7 +171,7 @@ class Player extends Rectangle {
 		}
 		else if (this.gravityPoints < 150) {
 			this.gravityPoints += 0.3;
-			if (this.gravityPoints > 100) 
+			if (this.gravityPoints > 100)
 				this.forceStop = false;
 		}
 
@@ -172,7 +184,7 @@ class Player extends Rectangle {
 		this.render();
 	}
 	render() {
-		if (this.condense && !this.forceStop) 
+		if (this.condense && !this.forceStop)
 			ctx.fillStyle = "#00FFFF";
 		else {
 			ctx.fillStyle = "#00CC00";
@@ -256,58 +268,54 @@ class EnemyMobile extends RectMobile { //moving enemies
 
 class Bullet extends RectColored {
 	constructor(x, y, dx, dy, c) {
-		super(x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
+		super (x, y, makeStandardWidth(10), makeStandardHeight(10), "#808000");
 		this.dx = dx;
 		this.dy = dy;
-		this.collisionCounter = 0;
+		this.collisionCounter=0;
 	}
 	update() {
-		//handles movement and collision with walls
 		this.y += this.dy;
 		this.x += this.dx;
 		for (var i = 0; i < barrierArray.length; i++) {
-			if (checkCollision(this, barrierArray[i])) {
+			if (checkCollision(this, barrierArray[i])){
 				var direct = eject(this, barrierArray[i]);
-				/*Checks to see whether the bullet entered the wall horizontally and/or vertically,
-				and changes its orientation appropriately*/
-				if (direct[0] || direct[1]) //horizontal
+				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
+				its orientation appropriately*/
+				if (direct[0]){ //horizontal
 					this.dx *= -1;
-				if (direct[2] || direct[3]) //vertical
+					createSparks(this.x - this.width/2, this.y, "FFFF00");
+				}
+				else if(direct[1]){
+					this.dx *= -1
+					createSparks(this.x + this.width/2, this.y, "FFFF00");
+				}
+
+				if (direct[2]){ //vertical
 					this.dy *= -1;
-				//checks to see if the bullet collided too many times
-				this.collisionCounter++;
-				if (this.collisionCounter >= 4)
-					bulletArray.splice(bulletArray.indexOf(this), 1);
-			}
-		}
-		for (var i = 0; i < wallMobileArray.length; i++) {
-			if (checkCollision(this, wallMobileArray[i])) {
-				var direct = eject(this, wallMobileArray[i]);
-				if (direct[0] || direct[1])
-					this.dx *= -1;
-				if (direct[2] || direct[3])
+					createSparks(this.x, this.y - this.height/2, "FFFF00");
+				}
+				else if(direct[3]){
 					this.dy *= -1;
-				this.collisionCounter++;
-				if (this.collisionCounter >= 4)
+					createSparks(this.x, this.y + this.height/2, "FFFF00");
+				}
+
+				this.collisionCounter+=1;
+				if(this.collisionCounter >= 4){
 					bulletArray.splice(bulletArray.indexOf(this), 1);
+				}
 			}
 		}
-		for (var i = 0; i < absorbArray.length; i++) {
-			if (checkCollision(this, absorbArray[i])) {
-				bulletArray.splice(bulletArray.indexOf(this), 1);
-				break;
-			}
-		}
-		
 		//handles everything the bullet can kill
 		for (var i = 0; i < enemyArray.length; i++) {
 			if(checkCollision(this, enemyArray[i])){
+				createSparks(enemyArray[i].x, enemyArray[i].y, "#B22222");
 				enemyArray.splice(i, 1);
 				bulletArray.splice(bulletArray.indexOf(this), 1);
 			}
 		}
 		for (var i = 0; i < enemyMobileArray.length; i++) {
 			if(checkCollision(this, enemyMobileArray[i])){
+				createSparks(enemyMobileArray[i].x, enemyMobileArray[i].y, "#B22222");
 				enemyMobileArray.splice(i, 1);
 				bulletArray.splice(bulletArray.indexOf(this), 1);
 			}
@@ -316,6 +324,13 @@ class Bullet extends RectColored {
 			createLevel(player.level);
 			player.gravityPoints = 150;
 			deathCounter += 1;
+			shootTimer = 1;
+		}
+		for (var i = 0; i < absorbArray.length; i++) {
+			if(checkCollision(this, absorbArray[i])){
+				createSparks(this.x, this.y, absorbArray[i].color);
+				bulletArray.splice(bulletArray.indexOf(this), 1);
+			}
 		}
 		super.update();
 	}
@@ -334,7 +349,7 @@ class WallMobile extends RectMobile {
 	}
 }
 
-class PermeableWall extends RectColored { 
+class PermeableWall extends RectColored {
 	constructor(x,y,width,height, color) {
 		super(x,y,width,height,"#00ff99");
 	}
@@ -362,17 +377,33 @@ class EnergyBar extends RectColored { //gravityPoint refill pickup
 	}
 }
 
-///NECESSARY VARIABLES AND ARRAYS///
-var HEIGHT = 1920;
-var WIDTH  = 969;
-var rectArray = [];
-var enemyArray = [];
-var enemyMobileArray = [];
-var wallMobileArray = [];
-var barrierArray = [];
-var permArray = [];
-var absorbArray = [];
-var bulletArray = [];
+class Spark{
+	constructor(x, y, dx, dy, color){
+		this.x = x;
+		this.y = y;
+		this.length = 4;
+		this.dx = dx;
+		this.dy = dy;
+		this.color = color;
+		this.lifetime = 250;
+	}
+
+	update(){
+		if(this.lifetime > 0){
+			this.dx *= 0.9;
+			this.dy *= 0.9;
+			this.x += this.dx;
+			this.y += this.dy;
+			this.lifetime -= (1000/60);
+			this.render();
+		}
+	}
+
+	render(){
+		ctx.fillStyle = this.color;
+		ctx.fillRect((this.length)/2 + this.x, (this.length)/2 + this.y, this.length, this.length);
+	}
+}
 
 ///LEVEL CREATION///
 function createLevel(n) {	//this function is going to use levelData to create the nth level
@@ -384,7 +415,8 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	permArray = [];
 	absorbArray = [];
 	bulletArray = [];
-
+	sparkArray = [];
+	
 	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
 		n = 0;
 		player.level = 0;
@@ -402,7 +434,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	var newMobileWall = levelData[nStr]["mobileWalls"];
 	var newPlayer = levelData[nStr]["player"];
 	var dimensions = levelData[nStr]["dimensions"];
-	
+
 	if(dimensions){
 		WIDTH = dimensions.width;
 		HEIGHT = dimensions.height;
@@ -411,7 +443,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 		WIDTH = 1920;
 		HEIGHT = 969;
 	}
-	
+
 	//searches through each array of levelData to create the new objects
 	for (var i = 0; i < newEnemies.length; i++){
 		enemyArray.push(new Enemy(makeStandardWidth(newEnemies[i].x), makeStandardHeight(newEnemies[i].y),
@@ -431,7 +463,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	barrierArray.push(new Wall(-20, window.innerHeight/2, 40, window.innerHeight));	//left border
 	barrierArray.push(new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight));	//right border
 	barrierArray.push(new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40));	//lower border
-	
+
 	for (var i = 0; i < newPermWall.length; i++){
 		permArray.push(new PermeableWall(makeStandardWidth(newPermWall[i].x), makeStandardHeight(newPermWall[i].y),
 			makeStandardWidth(newPermWall[i].width), makeStandardHeight(newPermWall[i].height), newPermWall[i].color));
@@ -518,6 +550,12 @@ function eject(pushed, pusher) {
 	return flags;
 }
 
+function createSparks(x, y, color){
+	sparkArray.push(new Spark(x,y,1,0,color));
+	sparkArray.push(new Spark(x,y,0,1,color));
+	sparkArray.push(new Spark(x,y,-1,0,color));
+	sparkArray.push(new Spark(x,y,0,-1,color));
+}
 ///COMMON MATH EQUATIONS///
 function distance(x, y) {
 	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));

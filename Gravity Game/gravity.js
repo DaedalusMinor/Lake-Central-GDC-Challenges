@@ -15,7 +15,9 @@ window.onload = function() {
 	document.addEventListener("keydown", keydown);
 	document.addEventListener("keyup", keyup);
 	mouse = new Mouse();
-	createLevel(0);
+	var n = parseInt(localStorage.getItem("level"));
+	console.log(n);
+	createLevel(n);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
 }
@@ -59,14 +61,16 @@ function main() {
 	for (var i = 0; i < wallMobileArray.length; i++){
 		wallMobileArray[i].update();
 	}
-
+	for (var i = 0; i < sparkArray.length; i++){
+		sparkArray[i].update();
+	}
 	//text
 	ctx.textAlign = "left";
 	ctx.fillStyle = "#ffffff";
 	ctx.font = "small-caps lighter 30px Montserrat";
 	ctx.fillText("Level: " + (player.level+1), makeStandardWidth(WIDTH - 200), makeStandardHeight(35));
 	//Math.trunc(n) is a method to round down to the greatest integer of a floating number
-	ctx.fillText("Time: " + Math.trunc(timer), makeStandardWidth(300), makeStandardHeight(35)); 
+	ctx.fillText("Time: " + Math.trunc(timer), makeStandardWidth(300), makeStandardHeight(35));
 	ctx.fillText("Deaths: " + (deathCounter), makeStandardWidth(500), makeStandardHeight(35));
 	ctx.textAlign = "center";
 	if (timer >= 0 && timer < 21) {
@@ -77,7 +81,7 @@ function main() {
 	//it will also help with designing levels since you can know where to place something
 	ctx.fillText("Converted Screen X: " + Math.trunc(inverseStandardWidth(mouse.x)), window.innerWidth/2, 20);
 	ctx.fillText("Converted Screen Y: " + Math.trunc(inverseStandardHeight(mouse.y)), window.innerWidth/2, 50);
-	
+
 	if (enemyArray.length == 0 && enemyMobileArray.length == 0){	//if there are no more enemies left, show animation and move to next level
 		player.level++;
 		createLevel(player.level);

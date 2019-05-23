@@ -10,26 +10,20 @@
 		background-color: #000000;
 		border: none;
 	}
-	
+
 	.btn:hover{
 		background-color: #FF0000;
 	}
 	#start{
 		top: 400;
 	}
-	
+
 	#help{
-		top: 700;
-	}
-	#builder{
-		top: 600;
-	}
-	#survival{
 		top: 500;
 	}
 </style>
 <body style = "margin: 0">
-		
+
 	<canvas id = "canvas" width = "0" height="0"></canvas>
 	<!-- Hey! This is an HTML Comment!
 	I was a total rebel and threw the JavaScript code straight into HTML!-->
@@ -57,7 +51,7 @@
 		ctx.textAlign = "center";
 		ctx.font = "100px Arial";
 		ctx.strokeStyle = "#ffffff";
-		ctx.strokeText("Gravitron", canvas.width/2, canvas.height/3);
+		ctx.strokeText("Gravitron", canvas.width/2, canvas.height/2);
 	}
 	window.onload = function() {
 		canvas = document.getElementById("canvas");
@@ -70,10 +64,8 @@
 	</script>
 	<div style="position:fixed; top:0px; left:0px; background-color: #110422A0; width: 100%; height: 100% "></div>
 	<form>
-	<button type = "submit" formaction = "gravity.html" id = "start" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Play</font></button>
+	<button type = "submit" formaction = "levelselect.html" id = "start" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Play</font></button>
 	<button type = "submit" formaction = "helpmenu.html" id = "help" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Help</font></button>
-	<button type = "submit" formaction = "playground.html" id = "builder" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Level Builder</font></button>
-	<button type = "submit" formaction = "Survival.html" id = "survival" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Survival</font></button>
 	</form>
 </body>
 </html>
