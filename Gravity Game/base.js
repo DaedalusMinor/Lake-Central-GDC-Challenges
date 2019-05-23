@@ -74,7 +74,7 @@ function railMovement() {
 	var d = makeStandardWidth(this.varArray[4]);
 	if (this.direction === undefined)	//determine the direction to be traveling
 		this.direction = (d > 0)?1:-1;	//Ignore the syntax. It works. Trust me. :P
-	if (this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2)) //determines whether to switch direction
+	if ((this.x < Math.min(x1, x2) || this.x > Math.max(x1,x2)) && x1 != x2) //determines whether to switch direction
 		this.direction *= -1;
 	d *= this.direction;
 
@@ -416,7 +416,7 @@ function createLevel(n) {	//this function is going to use levelData to create th
 	absorbArray = [];
 	bulletArray = [];
 	sparkArray = [];
-	
+
 	if(n > MAX_LEVEL + 1){	//this is a temporary fix, in case we make it to a level we haven't made yet, it'll just loop back to the first one.
 		n = 0;
 		player.level = 0;
