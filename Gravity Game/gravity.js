@@ -16,7 +16,6 @@ window.onload = function() {
 	document.addEventListener("keyup", keyup);
 	mouse = new Mouse();
 	var n = parseInt(localStorage.getItem("level"));
-	console.log(n);
 	createLevel(n);
 	//refresh rate / fps
 	setInterval(main, 1/60 * 1000);
