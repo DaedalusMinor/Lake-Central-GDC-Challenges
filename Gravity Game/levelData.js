@@ -10,7 +10,7 @@ var levelData = {	//welcome to JSON, one of the most intuitive, uncreative, and 
 	var jsnObject = {
 		"key name1" : <value>,
 		key2 : <value>
-	};
+	};"n":{"player":{"x":956,"y":302,"width":24,"height":24},"invisWalls":[{"x":872,"y":230,"width":436,"height":24},{"x":1077,"y":447.5,"width":24,"height":411},{"x":859.5,"y":641,"width":411,"height":24},{"x":666,"y":435.5,"width":24,"height":387},{"x":859,"y":363,"width":24,"height":48},{"x":823,"y":375,"width":48,"height":24},{"x":908,"y":423,"width":24,"height":72},{"x":859,"y":448,"width":72,"height":24},{"x":823,"y":423,"width":96,"height":24},{"x":799,"y":399,"width":48,"height":24}],"barriers":[],"enemies":[{"x":1211,"y":145,"width":48,"height":48},{"x":266,"y":145,"width":48,"height":48},{"x":1235,"y":629,"width":48,"height":48},{"x":411,"y":581,"width":48,"height":48},{"x":920,"y":847,"width":48,"height":48},{"x":1501,"y":314,"width":48,"height":48},{"x":653,"y":96,"width":48,"height":48},{"x":605,"y":774,"width":48,"height":48},{"x":1574,"y":508,"width":48,"height":48}],"mobileEnemies":[],"mobileWalls":[],"absorbWalls":[{"x":896,"y":363,"width":48,"height":48},{"x":811,"y":351,"width":72,"height":24},{"x":787,"y":375,"width":24,"height":24},{"x":859,"y":399,"width":72,"height":24},{"x":884,"y":423,"width":24,"height":24},{"x":847.5,"y":472,"width":145,"height":24},{"x":799,"y":448,"width":48,"height":24}],"dimensions":{"width":1920,"height":969}}
 	Notice the commas.  Also note that the only semicolon is at the end of the json object instantiation,
 	just like a regular var.  Also notice that the pattern is nested in levelData below, meaning we have multiple
 	JSON objects in our JSON object. <INCEPTION JOKE TAKEN OUT>.  I also stored some arrays in there.
