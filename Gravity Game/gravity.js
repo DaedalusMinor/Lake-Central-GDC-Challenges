@@ -35,9 +35,6 @@ function main() {
 	}
 
 	//The update() function calls render() and shoot()
-	for (var i = 0; i < rectArray.length; i++) {
-		rectArray[i].update();
-	}
 	player.update();
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
@@ -62,6 +59,9 @@ function main() {
 	}
 	for (var i = 0; i < sparkArray.length; i++){
 		sparkArray[i].update();
+	}
+	for (var i = 0; i < rectArray.length; i++) {
+		rectArray[i].update();
 	}
 	//text
 	ctx.textAlign = "left";
