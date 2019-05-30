@@ -10,15 +10,16 @@
 		background-color: #000000;
 		border: none;
 	}
-
 	.btn:hover{
 		background-color: #FF0000;
 	}
 	#start{
 		top: 400;
 	}
-
 	#help{
+		top: 600;
+	}
+	#survival{
 		top: 500;
 	}
 </style>
@@ -51,7 +52,7 @@
 		ctx.textAlign = "center";
 		ctx.font = "100px Arial";
 		ctx.strokeStyle = "#ffffff";
-		ctx.strokeText("Gravitron", canvas.width/2, canvas.height/2);
+		ctx.strokeText("Gravitron", canvas.width/2, canvas.height/3);
 	}
 	window.onload = function() {
 		canvas = document.getElementById("canvas");
@@ -66,6 +67,7 @@
 	<form>
 	<button type = "submit" formaction = "levelselect.html" id = "start" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Play</font></button>
 	<button type = "submit" formaction = "helpmenu.html" id = "help" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Help</font></button>
+	<button type = "submit" formaction = "Survival.html" id = "survival" class = "btn"><font face = "arial" size = "20" color = "white" letter-spacing: 4px;>Survival</font></button>
 	</form>
 </body>
 </html>
