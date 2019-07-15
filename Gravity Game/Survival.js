@@ -1,45 +1,60 @@
 //COMMENT YOUR STUFF PLEASE
 
-//.prototype allows you to edit class functions in base.js
-Bullet.prototype.update = function() {
-	this.y += this.dy;
-	this.x += this.dx;
-	for (var i = 0; i < barrierArray.length; i++) {
-		if (checkCollision(this, barrierArray[i])){	
-			var direct = eject(this, barrierArray[i]);
-			/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
-			its orientation appropriately*/
-			if (direct[0] || direct[1]){ //horizontal
-				this.dx *= -1;
+class EnemyFriendlyBullet extends Bullet {
+	//a bullet that does not kill enemies
+	update() {
+		this.y += this.dy;
+		this.x += this.dx;
+		for (var i = 0; i < barrierArray.length; i++) {
+			if (checkCollision(this, barrierArray[i])){	
+				var direct = eject(this, barrierArray[i]);
+				/*Checks to see whether the bullet entered the wall horizontally and/or vertically, and changes
+				its orientation appropriately*/
+				if (direct[0] || direct[1]){ //horizontal
+					this.dx *= -1;
+				}
+				if (direct[2] || direct[3]){ //vertical
+					this.dy *= -1;
+				}	
 			}
-			if (direct[2] || direct[3]){ //vertical
-				this.dy *= -1;
-			}	
+		}	
+		if (checkCollision(this, player)){
+			location.reload();
 		}
-	}	
-	if (checkCollision(this, player)){
-		location.reload();
+		ctx.fillStyle = this.color;
+		this.render();
 	}
-	this.render();
+}
+class SurvivalEnemy extends Enemy {
+	shoot() {
+		//shoots the enemy-friendly bullets
+		this.shootTimer = 0;
+		var yBuffer = this.y + this.buffer * Math.sin(this.theta);
+		var xBuffer = this.x + this.buffer * Math.cos(this.theta);
+		bulletArray.push(new EnemyFriendlyBullet(xBuffer, yBuffer, 4*Math.cos(this.theta), 4*Math.sin(this.theta)));
+	}
 }
 
 ///adding things
-var player = new Player (window.innerWidth/2, window.innerHeight/2, makeStandardWidth(30), makeStandardWidth(30));
+player = new Player(window.innerWidth/2, window.innerHeight/2,
+	makeStandardWidth(50), makeStandardHeight(50), -1);
 var gravityBarBack = new RectColored (95, 30, 150, 15, "#FFFFFF");
 var gravityBar = new EnergyBar (95, 30, 150, 15, null);
-var enemy = new Enemy (makeStandardWidth(960), makeStandardHeight(200), makeStandardWidth(30), makeStandardHeight(30));
-var topWall = new Wall(window.innerWidth/2, -20, window.innerWidth, 40);	//upper border
-var leftWall = new Wall(-20, window.innerHeight/2, 40, window.innerHeight);	//left border
-var rightWall = new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight);	//right border
-var bottomWall = new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40);	//lower border
+var enemy = new SurvivalEnemy(makeStandardWidth(960), makeStandardHeight(200),
+	makeStandardWidth(50), makeStandardHeight(50));
 var fps = 0;
 var timer = 0;
 
 //barriers
+var topWall = new Wall(window.innerWidth/2, -20, window.innerWidth, 40);	//upper border
+var leftWall = new Wall(-20, window.innerHeight/2, 40, window.innerHeight);	//left border
+var rightWall = new Wall(window.innerWidth+20, window.innerHeight/2, 40, window.innerHeight);	//right border
+var bottomWall = new Wall(window.innerWidth/2, window.innerHeight+20, window.innerWidth, 40);	//lower border
 barrierArray.push(topWall);
 barrierArray.push(leftWall);
 barrierArray.push(rightWall);
 barrierArray.push(bottomWall);
+
 enemyArray.push(enemy);
 rectArray.push(gravityBarBack);
 rectArray.push(gravityBar);
@@ -56,6 +71,10 @@ window.onload = function() {
 }
 
 function main() {
+	//somehow, these two values are swapped when loading Survival.js,
+	//if that problem could be found, this wouldn't be needed
+	HEIGHT = 969;
+	WIDTH  = 1920;
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	//clear screen
@@ -71,8 +90,8 @@ function main() {
 	//The update() function calls render() and shoot()
 	for (var i = 0; i < rectArray.length; i++) {
 		rectArray[i].update();
-	}	
-	player.update();	
+	}
+	player.update();
 	for (var i = 0; i < enemyArray.length; i++) {
 		enemyArray[i].update();
 	}
